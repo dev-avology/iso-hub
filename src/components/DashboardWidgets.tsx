@@ -5,7 +5,7 @@ export default function DashboardWidgets() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {/* Calendar Widget */}
-      <div className="bg-zinc-900 rounded-lg shadow-xl p-6 border border-yellow-400/20">
+      {/* <div className="bg-zinc-900 rounded-lg shadow-xl p-6 border border-yellow-400/20">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-white">Calendar</h3>
           <Calendar className="h-5 w-5 text-yellow-400" />
@@ -20,10 +20,10 @@ export default function DashboardWidgets() {
             <p className="text-sm text-gray-300">Team Sync - 4:30 PM</p>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Analytics Widget */}
-      <div className="bg-zinc-900 rounded-lg shadow-xl p-6 border border-yellow-400/20">
+      {/* <div className="bg-zinc-900 rounded-lg shadow-xl p-6 border border-yellow-400/20">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-white">Analytics</h3>
           <BarChart2 className="h-5 w-5 text-yellow-400" />
@@ -48,10 +48,10 @@ export default function DashboardWidgets() {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* AI Tasks Widget */}
-      <div className="bg-zinc-900 rounded-lg shadow-xl p-6 border border-yellow-400/20">
+      {/* <div className="bg-zinc-900 rounded-lg shadow-xl p-6 border border-yellow-400/20">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-white">Top Tasks</h3>
           <CheckSquare className="h-5 w-5 text-yellow-400" />
@@ -70,10 +70,10 @@ export default function DashboardWidgets() {
             <span className="ml-3 text-sm text-gray-300">Schedule follow-up calls</span>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Notifications Widget */}
-      <div className="bg-zinc-900 rounded-lg shadow-xl p-6 border border-yellow-400/20">
+      {/* <div className="bg-zinc-900 rounded-lg shadow-xl p-6 border border-yellow-400/20">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-white">Notifications</h3>
           <Bell className="h-5 w-5 text-yellow-400" />
@@ -102,7 +102,7 @@ export default function DashboardWidgets() {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

@@ -1,13 +1,18 @@
 import React from 'react';
-import { CreditCard, HardDrive, Router, Shield, Briefcase, MoreHorizontal, FileText } from 'lucide-react';
+import { Shield, FileText, Settings, Cpu } from 'lucide-react';
 
 const categories = [
-  { name: 'Processors', icon: CreditCard },
-  { name: 'Gateways', icon: Router },
-  { name: 'Hardware/Equipment', icon: HardDrive },
-  { name: 'Internal', icon: Briefcase },
-  { name: 'Misc', icon: MoreHorizontal },
-  { name: 'Residuals', icon: FileText, href: 'https://dev.tracerpos.com/'  },
+  // { name: 'Processors', icon: CreditCard },
+  // { name: 'Gateways', icon: Router },
+  // { name: 'Hardware/Equipment', icon: HardDrive },
+  // { name: 'Internal', icon: Briefcase },
+  // { name: 'Misc', icon: MoreHorizontal },
+  { name: 'ISO-Residuals', icon: FileText, href: 'https://dev.tracerpos.com/' },
+  { name: 'Settings', icon: Settings },
+  { name: 'ISO-AI', icon: Cpu },
+
+
+  // { name: 'Residuals', icon: FileText, href: 'https://dev.tracerpos.com/'  },
 ];
 
 export default function Sidebar({ 
