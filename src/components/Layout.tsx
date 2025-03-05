@@ -12,6 +12,7 @@ const topMenuItems = [
   { name: 'Secured Doc Portal', href: '/secure', icon: Shield },
 ];
 
+
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = React.useState(false);
 
