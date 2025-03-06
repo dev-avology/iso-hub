@@ -1,5 +1,5 @@
 import React from 'react';
-import { Shield, FileText, Settings, Cpu } from 'lucide-react';
+import { Shield, FileText, Settings, Cpu, User } from 'lucide-react';
 
 const categories = [
   // { name: 'Processors', icon: CreditCard },
@@ -10,6 +10,8 @@ const categories = [
   { name: 'ISO-Residuals', icon: FileText, href: 'https://dev.tracerpos.com/' },
   { name: 'Settings', icon: Settings },
   { name: 'ISO-AI', icon: Cpu },
+  { name: 'Users', icon: User, href: '/users' },
+
 
 
   // { name: 'Residuals', icon: FileText, href: 'https://dev.tracerpos.com/'  },
