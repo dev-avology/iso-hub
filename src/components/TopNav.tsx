@@ -1,6 +1,9 @@
 import React from 'react';
 import type { MenuItem } from '../types';
 import { LogOut } from 'lucide-react';
+import { useAuth } from '../providers/AuthProvider';
+import { useNavigate } from 'react-router-dom';
+
 export default function TopNav({ 
   items,
   onNavigate 
@@ -8,6 +11,18 @@ export default function TopNav({
   items: MenuItem[];
   onNavigate: (e: React.MouseEvent<HTMLAnchorElement>) => void;
 }) {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/login');
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
+
   return (
     <header className="bg-zinc-900 border-b border-yellow-400/20">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -35,14 +50,15 @@ export default function TopNav({
                   </svg>
                 </div>
               </button>
-              <button className="p-2 rounded-full bg-zinc-800 hover:bg-zinc-700 border border-yellow-400/20 text-white ">
-                
+              <button 
+                onClick={handleLogout}
+                className="p-2 rounded-full bg-zinc-800 hover:bg-zinc-700 border border-yellow-400/20 text-white hover:text-yellow-400 transition-colors"
+              >
                 <div className="relative">
-                  <LogOut className='w-[20px] h-[20px] '/>
+                  <LogOut className='w-[20px] h-[20px]'/>
                 </div>
               </button>
             </div>
-
         </div>
       </nav>
     </header>

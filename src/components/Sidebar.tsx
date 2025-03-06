@@ -1,5 +1,7 @@
 import React from 'react';
 import { Shield, FileText, Settings, Cpu, User, LogOut } from 'lucide-react';
+import { useAuth } from '../providers/AuthProvider';
+import { useNavigate } from 'react-router-dom';
 
 const categories = [
   // { name: 'Processors', icon: CreditCard },
@@ -7,7 +9,7 @@ const categories = [
   // { name: 'Hardware/Equipment', icon: HardDrive },
   // { name: 'Internal', icon: Briefcase },
   // { name: 'Misc', icon: MoreHorizontal },
-  { name: 'ISO-Residuals', icon: FileText, href: 'https://dev.tracerpos.com/' },
+  { name: 'ISO-Residuals', icon: FileText, href: 'https://dev.tracerpos.com/', external: true },
   { name: 'Settings', icon: Settings },
   { name: 'ISO-AI', icon: Cpu },
   { name: 'Users', icon: User, href: '/users' },
@@ -24,6 +26,18 @@ export default function Sidebar({
   open: boolean;
   setOpen: (open: boolean) => void;
 }) {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/login');
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
+
   return (
     <div className={`
       fixed inset-y-0 left-0 z-50 w-64 bg-zinc-900 shadow-lg transform border-r border-yellow-400/20
@@ -51,7 +65,9 @@ export default function Sidebar({
               {categories.map((category) => (
                 <a
                   key={category.name}
-                  href={ category.href || `#${category.name.toLowerCase()}`}
+                  href={category.href || `#${category.name.toLowerCase()}`}
+                  target={category.external ? "_blank" : undefined}
+                  rel={category.external ? "noopener noreferrer" : undefined}
                   className="group flex items-center px-3 py-2 text-sm font-medium text-gray-300 rounded-md hover:text-yellow-400 hover:bg-zinc-800"
                 >
                   <category.icon className="h-5 w-5 mr-3 text-gray-400 group-hover:text-yellow-400" />
@@ -60,9 +76,12 @@ export default function Sidebar({
               ))}
             </nav>
           </div>
-          <button className='absolute bottom-5 left-[50%] translate-x-[-50%] w-[90%] bg-yellow-400 rounded py-3 font-semibold uppercase flex item-center justify-center hover:bg-yellow-600 gap-2'>
-             <LogOut/>
-             logout
+          <button 
+            onClick={handleLogout}
+            className='absolute bottom-5 left-[50%] translate-x-[-50%] w-[90%] bg-yellow-400 rounded py-3 font-semibold uppercase flex items-center justify-center hover:bg-yellow-600 gap-2 text-black'
+          >
+            <LogOut className="w-5 h-5" />
+            Logout
           </button>
         </div>
       </div>
