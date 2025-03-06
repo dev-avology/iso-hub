@@ -2,13 +2,7 @@ import React from 'react';
 import { Edit, Trash } from 'lucide-react';
 
 const users = [
-  {
-    firstName: 'Avishek',
-    lastName: 'Thakur',
-    email: 'avishek.avology@gmail.com',
-    phone: '9876543210',
-    role: 'Admin',
-  },
+
   {
     firstName: 'John',
     lastName: 'Doe',
