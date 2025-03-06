@@ -1,5 +1,5 @@
 import React from 'react';
-import { Shield, FileText, Settings, Cpu, User } from 'lucide-react';
+import { Shield, FileText, Settings, Cpu, User, LogOut } from 'lucide-react';
 
 const categories = [
   // { name: 'Processors', icon: CreditCard },
@@ -44,7 +44,7 @@ export default function Sidebar({
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto relative">
           <div className="px-4 py-6">
             <h2 className="text-lg font-semibold text-white">Categories</h2>
             <nav className="mt-6">
@@ -60,6 +60,10 @@ export default function Sidebar({
               ))}
             </nav>
           </div>
+          <button className='absolute bottom-5 left-[50%] translate-x-[-50%] w-[90%] bg-yellow-400 rounded py-3 font-semibold uppercase flex item-center justify-center hover:bg-yellow-600 gap-2'>
+             <LogOut/>
+             logout
+          </button>
         </div>
       </div>
     </div>
