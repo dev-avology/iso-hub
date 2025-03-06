@@ -9,7 +9,10 @@ import PreApplications from './pages/PreApplications';
 import SecurePortal from './pages/SecurePortal';
 import JACC from './components/JACC';
 import LogIn  from './pages/logins/login'
+import Users from './pages/users/users'
+import AddUsers from './pages/users/addUsers'
 import { LayoutDashboard } from 'lucide-react';
+import EditUsers from './pages/users/editUser';
 
 function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname.replace(/\/$/, ''));
@@ -32,7 +35,13 @@ function App() {
         <div className="max-w-7xl mx-auto">
           {currentPath === '/logins' ? (
             <Logins />
-          ) : currentPath === '/documents' ? (
+          ) : currentPath === '/users' ? (
+            <Users />
+          ): currentPath === '/addusers' ? (
+            <AddUsers />
+          ): currentPath === '/edituser' ? (
+            <EditUsers />
+          ): currentPath === '/documents' ? (
             <DocumentCenter />
           ): currentPath === '/documents/new-vendor' ? (
             <VendorTemplate />
