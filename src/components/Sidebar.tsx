@@ -1,5 +1,6 @@
-import React from 'react';
-import { Shield, FileText, Settings, Cpu, User, LogOut } from 'lucide-react';
+import React, { useState } from 'react';
+import { Shield, FileText, Settings, Cpu, User, LogOut, File, Bell } from 'lucide-react';
+
 import { useAuth } from '../providers/AuthProvider';
 import { useNavigate } from 'react-router-dom';
 
@@ -13,6 +14,8 @@ const categories = [
   { name: 'Settings', icon: Settings },
   { name: 'ISO-AI', icon: Cpu },
   { name: 'Users', icon: User, href: '/users' },
+  { name: 'Admin', icon: User, href: '/admin' },
+
 
 
 
@@ -28,6 +31,7 @@ export default function Sidebar({
 }) {
   const { logout } = useAuth();
   const navigate = useNavigate();
+  const [currentPath, setCurrentPath] = useState(window.location.pathname.replace(/\/$/, ''));
 
   const handleLogout = async () => {
     try {
@@ -68,10 +72,29 @@ export default function Sidebar({
                   href={category.href || `#${category.name.toLowerCase()}`}
                   target={category.external ? "_blank" : undefined}
                   rel={category.external ? "noopener noreferrer" : undefined}
-                  className="group flex items-center px-3 py-2 text-sm font-medium text-gray-300 rounded-md hover:text-yellow-400 hover:bg-zinc-800"
+                  className="group flex items-center px-3 py-2 text-sm font-medium text-gray-300 rounded-md hover:text-yellow-400 hover:bg-zinc-800 relative"
                 >
                   <category.icon className="h-5 w-5 mr-3 text-gray-400 group-hover:text-yellow-400" />
                   {category.name}
+                  {category.name === "Admin" && (
+                  <ul className="sub_menu absolute top-[110%] left-0 w-full bg-zinc-800 px-2 z-[9] py-5 rounded  ">
+                    <li className="text-white">
+                      <a href="/teammember" className='bg-black rounded-md flex py-2 px-3 gap-2 items-center text-md hover:bg-yellow-600' > <User className='w-5 h-5'/>Team Member</a>
+                    </li>
+                    <li className="text-white mt-2">
+                      <a href="/vendor" className='bg-black rounded-md flex py-2 px-3 gap-2 items-center text-md hover:bg-yellow-600' > <User className='w-5 h-5'/> Vendor</a>
+                    </li>
+                    <li className="text-white mt-2">
+                      <a href="/master_database_documents" className='bg-black rounded-md flex py-2 px-3 gap-2 items-center text-md hover:bg-yellow-600' > <File className='w-5 h-5'/> Documents</a>
+                    </li>
+                    <li className="text-white mt-2">
+                      <a href="/all_reps" className='bg-black rounded-md flex py-2 px-3 gap-2 items-center text-md hover:bg-yellow-600' > <User className='w-5 h-5'/>  All Reps</a>
+                    </li>
+                    <li className="text-white mt-2">
+                      <a href="/application_notifications" className='bg-black rounded-md flex py-2 px-3 gap-2 items-center text-md hover:bg-yellow-600' > <Bell className='w-5 h-5'/>  Notifications</a>
+                    </li>
+                  </ul>
+                )}
                 </a>
               ))}
             </nav>
