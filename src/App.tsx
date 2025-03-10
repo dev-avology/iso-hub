@@ -22,7 +22,7 @@ import Vendor  from './pages/Vendor/vendor';
 import Documents from './pages/Documents/documents';
 import Reps from './pages/Reps/reps';
 import Notifications from './pages/notifications/notifications';
-import Marketing from './pages/Marketing/marketing';
+import Marketing from './pages/marketing/Marketing';
 
 
 
