@@ -42,7 +42,9 @@ const SecurePortal: React.FC = () => {
   };
 
   return (
-    <>
+    <div className='bg-black'>
+    <div className="max-w-[100%] w-[80%]  h-[100vh] flex items-center justify-center m-auto ">
+      <div className="sec-wrap">
       <div className="choose-wrap flex gap-5">
         {/* Display chosen files */}
         <div className="bg-zinc-900 rounded-lg shadow-xl p-6 border border-yellow-400/20 w-[40%]">
@@ -109,10 +111,6 @@ const SecurePortal: React.FC = () => {
           </div>
         </div>
       </div>
-
-
-
-
         <div className="added-wrap mt-10 text-white">
           <div >
             <div className='group mt-5 w-full px-5 py-3 rounded bg-zinc-900 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500 relative '>
@@ -207,29 +205,6 @@ const SecurePortal: React.FC = () => {
 
           </div>
         </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
       {showPopup && (
         <div className="popup bg-black rounded-lg shadow-xl p-12 border border-yellow-400/20 text-center w-[30%] mx-auto mt-6 absolute top-[50%] left-[50%] transform translate-y-[-50%] translate-x-[-50%]">
           <div
@@ -250,7 +225,10 @@ const SecurePortal: React.FC = () => {
           </button>
         </div>
       )}
-    </>
+      </div>
+ </div>
+
+    </div>
   );
 };
 

@@ -13,8 +13,9 @@ const categories = [
   { name: 'ISO-Residuals', icon: FileText, href: 'https://dev.tracerpos.com/', external: true },
   { name: 'Settings', icon: Settings },
   { name: 'ISO-AI', icon: Cpu },
-  { name: 'Users', icon: User, href: '/users' },
   { name: 'Admin', icon: User, href: '/admin' },
+
+  // { name: 'Users', icon: User, href: '/users' },
 
 
 
@@ -65,19 +66,19 @@ export default function Sidebar({
         <div className="flex-1 overflow-y-auto relative">
           <div className="px-4 py-6">
             <h2 className="text-lg font-semibold text-white">Categories</h2>
-            <nav className="mt-6">
+            <nav className="mt-6 navi-links">
               {categories.map((category) => (
                 <a
                   key={category.name}
                   href={category.href || `#${category.name.toLowerCase()}`}
                   target={category.external ? "_blank" : undefined}
                   rel={category.external ? "noopener noreferrer" : undefined}
-                  className="group flex items-center px-3 py-2 text-sm font-medium text-gray-300 rounded-md hover:text-yellow-400 hover:bg-zinc-800 relative"
+                  className="group flex items-center px-3 py-2 text-sm font-medium text-gray-300 rounded-md hover:text-yellow-400 hover:bg-zinc-800 relative group"
                 >
                   <category.icon className="h-5 w-5 mr-3 text-gray-400 group-hover:text-yellow-400" />
                   {category.name}
                   {category.name === "Admin" && (
-                  <ul className="sub_menu absolute top-[110%] left-0 w-full bg-zinc-800 px-2 z-[9] py-5 rounded  ">
+                  <ul className="sub_menu absolute top-[102%] left-0 w-full bg-zinc-800 px-2 z-[9] py-5 group rounded hidden hover:block group-hover:block ">
                     <li className="text-white">
                       <a href="/teammember" className='bg-black rounded-md flex py-2 px-3 gap-2 items-center text-md hover:bg-yellow-600' > <User className='w-5 h-5'/>Team Member</a>
                     </li>
