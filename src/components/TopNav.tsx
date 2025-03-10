@@ -39,7 +39,7 @@ export default function TopNav({
                 {item.name}
 
                 {item.name === "Secured Doc Portal" && (
-                  <ul className="sub_menu absolute top-[103%] left-0 w-full bg-zinc-800 px-2 z-[9] py-5 group rounded  hidden hover:block group-hover:block">
+                  <ul className="sub_menu absolute top-[103%] left-0 w-full bg-zinc-800 px-2 z-[99] py-5 group rounded  hidden hover:block group-hover:block">
                     <li className="text-white">
                       <a href="/marketing" className='bg-black rounded-md flex py-2 px-3 gap-2 items-center text-md hover:bg-yellow-600' > <Megaphone className='w-5 h-5'/>Marketing
                       </a>
