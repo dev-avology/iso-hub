@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Layout from './components/Layout';
 import DashboardWidgets from './components/DashboardWidgets';
 import Logins from './pages/Logins';
@@ -17,92 +17,71 @@ import Admin from './pages/admin/admin';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './providers/AuthProvider';
 import { ProtectedRoute } from './components/ProtectedRoute';
-import TeamMember  from './pages/team-member/teamMember';
-import Vendor  from './pages/Vendor/vendor';
+import TeamMember from './pages/team-member/teamMember';
+import Vendor from './pages/Vendor/vendor';
 import Documents from './pages/Documents/documents';
 import Reps from './pages/Reps/reps';
 import Notifications from './pages/notifications/notifications';
-import Marketing from './pages/marketing/Marketing';
+import Marketing from './pages/Marketing/marketing';
 
+function Dashboard() {
+  return (
+    <div className="max-w-7xl mx-auto">
+      <div className="mb-8 bg-yellow-400 rounded-lg p-6 shadow-lg">
+        <div className="flex items-center space-x-3">
+          <LayoutDashboard className="h-10 w-10 text-black" />
+          <div>
+            <h2 className="text-3xl font-bold text-black">Dashboard</h2>
+            <p className="text-black/80 mt-1">
+              Welcome back! Here's an overview of your ISO Hub.
+            </p>
+          </div>
+        </div>
+      </div>
+      <DashboardWidgets />
+    </div>
+  );
+}
 
+// Wrapper component for protected pages
+function ProtectedLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <ProtectedRoute>
+      <Layout>
+        <div className="max-w-7xl mx-auto">
+          {children}
+        </div>
+        <JACC />
+      </Layout>
+    </ProtectedRoute>
+  );
+}
 
 function App() {
-  const [currentPath, setCurrentPath] = useState(window.location.pathname.replace(/\/$/, ''));
-
-  useEffect(() => {
-    const handleLocationChange = () => {
-      setCurrentPath(window.location.pathname.replace(/\/$/, ''));
-    };
-
-    window.addEventListener('popstate', handleLocationChange);
-    return () => window.removeEventListener('popstate', handleLocationChange);
-  }, []);
-
   return (
     <Router>
       <AuthProvider>
         <Routes>
           <Route path="/login" element={<LogIn />} />
-          <Route path="/secure" element={<SecurePortal />} />
-
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute>
-                <Layout>
-                  <div className="max-w-7xl mx-auto">
-                    {currentPath === '/logins' ?  (
-                      <Logins />
-                    ) : currentPath === '/users' ? (
-                      <Users />
-                    ): currentPath === '/admin' ? (
-                      <Admin />
-                    ): currentPath === '/addusers' ? (
-                      <AddUsers />
-                    ): currentPath === '/teammember' ? (
-                      <TeamMember />
-                    ): currentPath === '/vendor' ? (
-                      <Vendor />
-                    ): currentPath === '/master_database_documents' ? (
-                      <Documents />
-                    ): currentPath === '/all_reps' ? (
-                      <Reps />
-                    ): currentPath === '/application_notifications' ? (
-                      <Notifications />
-                    ): currentPath === '/marketing' ? (
-                      <Marketing />
-                    ): currentPath === '/edituser' ? (
-                      <EditUsers />
-                    ): currentPath === '/documents' ? (
-                      <DocumentCenter />
-                    ): currentPath === '/documents/new-vendor' ? (
-                      <VendorTemplate />
-                    ) : currentPath.startsWith('/documents/') ? (
-                      <VendorDocuments vendorId={currentPath.split('/')[2]} />
-                    ) : currentPath === '/applications' ? (
-                      <PreApplications />
-                    ) : (
-                      <>
-                        <div className="mb-8 bg-yellow-400 rounded-lg p-6 shadow-lg">
-                          <div className="flex items-center space-x-3">
-                            <LayoutDashboard className="h-10 w-10 text-black" />
-                            <div>
-                              <h2 className="text-3xl font-bold text-black">Dashboard</h2>
-                              <p className="text-black/80 mt-1">
-                                Welcome back! Here's an overview of your ISO Hub.
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                        <DashboardWidgets />
-                      </>
-                    )}
-                  </div>
-                  <JACC />
-                </Layout>
-              </ProtectedRoute>
-            }
-          />
+          
+          <Route path="/" element={<ProtectedLayout><Dashboard /></ProtectedLayout>} />
+          <Route path="/logins" element={<ProtectedLayout><Logins /></ProtectedLayout>} />
+          <Route path="/users" element={<ProtectedLayout><Users /></ProtectedLayout>} />
+          <Route path="/admin" element={<ProtectedLayout><Admin /></ProtectedLayout>} />
+          <Route path="/addusers" element={<ProtectedLayout><AddUsers /></ProtectedLayout>} />
+          <Route path="/teammember" element={<ProtectedLayout><TeamMember /></ProtectedLayout>} />
+          <Route path="/vendor" element={<ProtectedLayout><Vendor /></ProtectedLayout>} />
+          <Route path="/master_database_documents" element={<ProtectedLayout><Documents /></ProtectedLayout>} />
+          <Route path="/all_reps" element={<ProtectedLayout><Reps /></ProtectedLayout>} />
+          <Route path="/application_notifications" element={<ProtectedLayout><Notifications /></ProtectedLayout>} />
+          <Route path="/marketing" element={<ProtectedLayout><Marketing /></ProtectedLayout>} />
+          <Route path="/edituser" element={<ProtectedLayout><EditUsers /></ProtectedLayout>} />
+          <Route path="/documents" element={<ProtectedLayout><DocumentCenter /></ProtectedLayout>} />
+          <Route path="/documents/new-vendor" element={<ProtectedLayout><VendorTemplate /></ProtectedLayout>} />
+          <Route path="/documents/:vendorId" element={<ProtectedLayout><VendorDocuments vendorId="1" /></ProtectedLayout>} />
+          <Route path="/applications" element={<ProtectedLayout><PreApplications /></ProtectedLayout>} />
+          <Route path="/secure" element={<ProtectedLayout><SecurePortal /></ProtectedLayout>} />
+          
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </AuthProvider>

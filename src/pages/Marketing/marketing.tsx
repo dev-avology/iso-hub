@@ -1,4 +1,3 @@
-import React from 'react';
 import { Edit, Download, Megaphone } from 'lucide-react';
 
 const socail = [
@@ -55,7 +54,7 @@ export default function Marketing() {
   return (
     <>
 
-<div class="mb-8 bg-yellow-400 rounded-lg p-6 shadow-lg"><div class="flex items-center space-x-3">  <Megaphone className="h-10 w-10 text-black"/>  <div><h1 class="text-3xl font-bold text-black"> Marketing</h1><p class="text-black/80 mt-1">Access and customize your marketing materials below:</p></div></div></div>
+<div className="mb-8 bg-yellow-400 rounded-lg p-6 shadow-lg"><div className="flex items-center space-x-3">  <Megaphone className="h-10 w-10 text-black"/>  <div><h1 className="text-3xl font-bold text-black"> Marketing</h1><p className="text-black/80 mt-1">Access and customize your marketing materials below:</p></div></div></div>
 
 
 

@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { Shield, FileText, Settings, Cpu, User, LogOut, File, Bell } from 'lucide-react';
-
 import { useAuth } from '../providers/AuthProvider';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 
 const categories = [
   // { name: 'Processors', icon: CreditCard },
@@ -23,6 +22,14 @@ const categories = [
   // { name: 'Residuals', icon: FileText, href: 'https://dev.tracerpos.com/'  },
 ];
 
+const adminSubMenu = [
+  { name: 'Team Member', icon: User, path: '/teammember' },
+  { name: 'Vendor', icon: User, path: '/vendor' },
+  { name: 'Documents', icon: File, path: '/master_database_documents' },
+  { name: 'All Reps', icon: User, path: '/all_reps' },
+  { name: 'Notifications', icon: Bell, path: '/application_notifications' },
+];
+
 export default function Sidebar({ 
   open, 
   setOpen 
@@ -32,7 +39,7 @@ export default function Sidebar({
 }) {
   const { logout } = useAuth();
   const navigate = useNavigate();
-  const [currentPath, setCurrentPath] = useState(window.location.pathname.replace(/\/$/, ''));
+  const location = useLocation();
 
   const handleLogout = async () => {
     try {
@@ -41,6 +48,14 @@ export default function Sidebar({
     } catch (error) {
       console.error('Logout failed:', error);
     }
+  };
+
+  const isActive = (path: string) => {
+    if (path === '/admin') {
+      // Check if current path is admin or any of its subpages
+      return location.pathname === path || adminSubMenu.some(item => item.path === location.pathname);
+    }
+    return location.pathname === path;
   };
 
   return (
@@ -68,35 +83,52 @@ export default function Sidebar({
             <h2 className="text-lg font-semibold text-white">Categories</h2>
             <nav className="mt-6 navi-links">
               {categories.map((category) => (
-                <a
-                  key={category.name}
-                  href={category.href || `#${category.name.toLowerCase()}`}
-                  target={category.external ? "_blank" : undefined}
-                  rel={category.external ? "noopener noreferrer" : undefined}
-                  className="group flex items-center px-3 py-2 text-sm font-medium text-gray-300 rounded-md hover:text-yellow-400 hover:bg-zinc-800 relative group"
-                >
-                  <category.icon className="h-5 w-5 mr-3 text-gray-400 group-hover:text-yellow-400" />
-                  {category.name}
-                  {category.name === "Admin" && (
-                  <ul className="sub_menu absolute top-[102%] left-0 w-full bg-zinc-800 px-2 z-[9] py-5 group rounded hidden hover:block group-hover:block ">
-                    <li className="text-white">
-                      <a href="/teammember" className='bg-black rounded-md flex py-2 px-3 gap-2 items-center text-md hover:bg-yellow-600' > <User className='w-5 h-5'/>Team Member</a>
-                    </li>
-                    <li className="text-white mt-2">
-                      <a href="/vendor" className='bg-black rounded-md flex py-2 px-3 gap-2 items-center text-md hover:bg-yellow-600' > <User className='w-5 h-5'/> Vendor</a>
-                    </li>
-                    <li className="text-white mt-2">
-                      <a href="/master_database_documents" className='bg-black rounded-md flex py-2 px-3 gap-2 items-center text-md hover:bg-yellow-600' > <File className='w-5 h-5'/> Documents</a>
-                    </li>
-                    <li className="text-white mt-2">
-                      <a href="/all_reps" className='bg-black rounded-md flex py-2 px-3 gap-2 items-center text-md hover:bg-yellow-600' > <User className='w-5 h-5'/>  All Reps</a>
-                    </li>
-                    <li className="text-white mt-2">
-                      <a href="/application_notifications" className='bg-black rounded-md flex py-2 px-3 gap-2 items-center text-md hover:bg-yellow-600' > <Bell className='w-5 h-5'/>  Notifications</a>
-                    </li>
-                  </ul>
-                )}
-                </a>
+                category.external ? (
+                  <a
+                    key={category.name}
+                    href={category.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex items-center px-3 py-2 text-sm font-medium text-gray-300 rounded-md hover:text-yellow-400 hover:border-l-4 hover:border-yellow-400 relative group"
+                  >
+                    <category.icon className="h-5 w-5 mr-3 text-gray-400 group-hover:text-yellow-400" />
+                    {category.name}
+                  </a>
+                ) : (
+                  <Link
+                    key={category.name}
+                    to={category.href || `/${category.name.toLowerCase()}`}
+                    className={`group flex items-center px-3 py-2 text-sm font-medium rounded-md hover:text-yellow-400 relative group transition-all
+                      ${isActive(category.href || `/${category.name.toLowerCase()}`) 
+                        ? 'text-yellow-400 border-l-4 border-yellow-400 pl-2' 
+                        : 'text-gray-300 hover:border-l-4 hover:border-yellow-400'}`}
+                  >
+                    <category.icon className={`h-5 w-5 mr-3 ${isActive(category.href || `/${category.name.toLowerCase()}`) 
+                      ? 'text-yellow-400' 
+                      : 'text-gray-400 group-hover:text-yellow-400'}`} />
+                    {category.name}
+                    {category.name === "Admin" && (
+                      <ul className={`sub_menu absolute top-[102%] left-0 w-full bg-zinc-800 px-2 z-[9] py-5 group rounded hover:block group-hover:block ${
+                        adminSubMenu.some(item => location.pathname === item.path) ? 'block' : 'hidden'
+                      }`}>
+                        {adminSubMenu.map((item) => (
+                          <li key={item.path} className="text-white mt-2 first:mt-0">
+                            <Link 
+                              to={item.path}
+                              className={`flex py-2 px-3 gap-2 items-center text-md rounded-md transition-all
+                                ${location.pathname === item.path 
+                                  ? 'bg-black border-l-4 border-yellow-400 text-yellow-400' 
+                                  : 'bg-black hover:border-l-4 hover:border-yellow-400 hover:text-yellow-400'}`}
+                            >
+                              <item.icon className={`w-5 h-5 ${location.pathname === item.path ? 'text-yellow-400' : ''}`}/> 
+                              {item.name}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </Link>
+                )
               ))}
             </nav>
           </div>
