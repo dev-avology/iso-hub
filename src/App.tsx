@@ -13,9 +13,16 @@ import Users from './pages/users/users';
 import AddUsers from './pages/users/addUsers';
 import { LayoutDashboard } from 'lucide-react';
 import EditUsers from './pages/users/editUser';
+import Admin from './pages/admin/admin';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './providers/AuthProvider';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import TeamMember  from './pages/team-member/teamMember';
+import Vendor  from './pages/Vendor/vendor';
+import Documents from './pages/Documents/documents';
+import Reps from './pages/Reps/reps'
+import Notifications from './pages/notifications/notifications';
+
 
 function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname.replace(/\/$/, ''));
@@ -44,8 +51,20 @@ function App() {
                       <Logins />
                     ) : currentPath === '/users' ? (
                       <Users />
+                    ): currentPath === '/admin' ? (
+                      <Admin />
                     ): currentPath === '/addusers' ? (
                       <AddUsers />
+                    ): currentPath === '/teammember' ? (
+                      <TeamMember />
+                    ): currentPath === '/vendor' ? (
+                      <Vendor />
+                    ): currentPath === '/master_database_documents' ? (
+                      <Documents />
+                    ): currentPath === '/all_reps' ? (
+                      <Reps />
+                    ): currentPath === '/application_notifications' ? (
+                      <Notifications />
                     ): currentPath === '/edituser' ? (
                       <EditUsers />
                     ): currentPath === '/documents' ? (

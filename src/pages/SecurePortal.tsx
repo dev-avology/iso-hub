@@ -1,206 +1,257 @@
-import React, { useEffect, useState } from 'react';
-import { Shield, FileText, Download, Eye, Calendar, Lock } from 'lucide-react';
-import { supabase } from '../lib/supabase';
-import type { Application, SecureDocument } from '../types';
+import React, { useState, useRef } from 'react';
+import { File as FileIcon, X, Download, Trash, Send } from 'lucide-react';
 
-export default function SecurePortal() {
-  const [applications, setApplications] = useState<Application[]>([]);
-  const [selectedApp, setSelectedApp] = useState<string | null>(null);
-  const [documents, setDocuments] = useState<SecureDocument[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+const SecurePortal: React.FC = () => {
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  const [showPopup, setShowPopup] = useState<boolean>(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    loadApplications();
-  }, []);
+  const handleBrowseClick = (): void => {
+    fileInputRef.current?.click();
+  };
 
-  useEffect(() => {
-    if (selectedApp) {
-      loadDocuments(selectedApp);
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    if (!e.target.files) return;
+    setUploadedFiles((prevFiles) => [...prevFiles, ...Array.from(e.target.files)]);
+    // Reset file input so the same file can be selected again if needed
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
     }
-  }, [selectedApp]);
+  };
 
-  async function loadApplications() {
-    try {
-      setError(null);
-      const { data, error: supabaseError } = await supabase
-        .from('applications')
-        .select('*')
-        .order('submitted_at', { ascending: false });
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>): void => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
 
-      if (supabaseError) throw supabaseError;
-      setApplications(data || []);
-    } catch (err) {
-      console.error('Error loading applications:', err);
-      setError('Failed to load applications. Please try again later.');
-    } finally {
-      setLoading(false);
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>): void => {
+    e.preventDefault();
+    e.stopPropagation();
+    const droppedFiles = e.dataTransfer.files;
+    if (droppedFiles && droppedFiles.length > 0) {
+      setUploadedFiles((prevFiles) => [...prevFiles, ...Array.from(droppedFiles)]);
     }
-  }
+  };
 
-  async function loadDocuments(applicationId: string) {
-    try {
-      setError(null);
-      const { data, error: supabaseError } = await supabase
-        .from('secure_documents')
-        .select(`
-          *,
-          document_shares!inner(
-            application_id,
-            access_expires_at
-          )
-        `)
-        .eq('document_shares.application_id', applicationId);
+  const handleRemoveFile = (index: number): void => {
+    setUploadedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+  };
 
-      if (supabaseError) throw supabaseError;
-      setDocuments(data || []);
-    } catch (err) {
-      console.error('Error loading documents:', err);
-      setError('Failed to load documents. Please try again later.');
-    }
-  }
-
-  async function downloadDocument(document: SecureDocument) {
-    try {
-      setError(null);
-      const { data, error: supabaseError } = await supabase.storage
-        .from('secure-documents')
-        .download(document.file_path);
-
-      if (supabaseError) throw supabaseError;
-
-      const url = URL.createObjectURL(data);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = document.title;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    } catch (err) {
-      console.error('Error downloading document:', err);
-      setError('Failed to download document. Please try again later.');
-    }
-  }
+  const handleSendClick = (): void => {
+    setShowPopup(true);
+  };
 
   return (
-    <div className="min-h-screen bg-black">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="mb-8 bg-yellow-400 rounded-lg p-6 shadow-lg">
-          <div className="flex items-center space-x-3">
-            <Lock className="h-10 w-10 text-black" />
-            <div>
-              <h1 className="text-3xl font-bold text-black">Secure Document Portal</h1>
-              <p className="text-black/80 mt-1">
-                Access your confidential documents and application materials securely
-              </p>
+    <>
+      <div className="choose-wrap flex gap-5">
+        {/* Display chosen files */}
+        <div className="bg-zinc-900 rounded-lg shadow-xl p-6 border border-yellow-400/20 w-[40%]">
+          <h2 className="text-xl font-semibold text-white mb-6 flex items-center">
+            <FileIcon className="h-5 w-5 mr-2 text-yellow-400" />
+            Chosen Files
+          </h2>
+          <div className="text-left text-white/60">
+            <div id="uploaded-files" className="mt-4">
+              {uploadedFiles.length > 0 ? (
+                uploadedFiles.map((file, idx) => (
+                  <div key={idx} className="flex items-center justify-between mb-2">
+                    <p className="text-white flex items-center justify-between w-full">Uploaded: {file.name}                     <div 
+                      className="remove-file cursor-pointer"
+                      onClick={() => handleRemoveFile(idx)}
+                    >
+                      <X className="text-white" />
+                    </div></p>
+
+                  </div>
+                ))
+              ) : (
+                <p className="text-white">No files uploaded yet.</p>
+              )}
             </div>
           </div>
+          {/* Conditionally render the Send button */}
+          {uploadedFiles.length > 0 && (
+            <button
+              className="bg-yellow-400 rounded py-2 px-6 font-semibold uppercase hover:bg-yellow-600 text-black mt-5"
+            >
+              Add
+            </button>
+          )}
         </div>
 
-        {error && (
-          <div className="mb-6 bg-red-500/10 border border-red-500/20 rounded-lg p-4 text-red-400">
-            {error}
-          </div>
-        )}
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Applications List */}
-          <div className="bg-zinc-900 rounded-lg shadow-xl p-6 border border-yellow-400/20">
-            <h2 className="text-xl font-semibold text-white mb-6 flex items-center">
-              <Calendar className="h-5 w-5 mr-2 text-yellow-400" />
-              Applications
-            </h2>
-            {loading ? (
-              <div className="text-center py-4 text-white/60">Loading...</div>
-            ) : applications.length === 0 ? (
-              <div className="text-center py-4 text-white/60">
-                No applications found
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {applications.map((app) => (
-                  <button
-                    key={app.id}
-                    onClick={() => setSelectedApp(app.id)}
-                    className={`w-full text-left p-4 rounded-lg transition-all duration-200 border ${
-                      selectedApp === app.id
-                        ? 'bg-yellow-400/10 border-yellow-400'
-                        : 'bg-zinc-800/50 border-transparent hover:bg-zinc-800'
-                    }`}
-                  >
-                    <div className="font-medium text-white">{app.business_name}</div>
-                    <div className="text-sm text-yellow-400/80">
-                      Submitted: {new Date(app.submitted_at).toLocaleDateString()}
-                    </div>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Documents List */}
-          <div className="lg:col-span-2">
-            {selectedApp ? (
-              <div className="bg-zinc-900 rounded-lg shadow-xl p-6 border border-yellow-400/20">
-                <h2 className="text-xl font-semibold text-white mb-6 flex items-center">
-                  <FileText className="h-5 w-5 mr-2 text-yellow-400" />
-                  Shared Documents
-                </h2>
-                {documents.length === 0 ? (
-                  <div className="text-center py-4 text-white/60">
-                    No documents available for this application
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {documents.map((doc) => (
-                      <div
-                        key={doc.id}
-                        className="flex items-center justify-between p-4 bg-zinc-800/50 rounded-lg border border-zinc-700 hover:border-yellow-400/50 transition-colors duration-200"
-                      >
-                        <div className="flex items-center space-x-3">
-                          <div className="p-2 bg-yellow-400/10 rounded-lg">
-                            <FileText className="h-6 w-6 text-yellow-400" />
-                          </div>
-                          <div>
-                            <div className="font-medium text-white">{doc.title}</div>
-                            <div className="text-sm text-gray-400">{doc.description}</div>
-                          </div>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <button
-                            onClick={() => downloadDocument(doc)}
-                            className="p-2 text-yellow-400 hover:text-yellow-300 transition-colors duration-200"
-                            title="Download"
-                          >
-                            <Download className="h-5 w-5" />
-                          </button>
-                          <button
-                            onClick={() => window.open(doc.file_path, '_blank')}
-                            className="p-2 text-yellow-400 hover:text-yellow-300 transition-colors duration-200"
-                            title="View"
-                          >
-                            <Eye className="h-5 w-5" />
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ) : (
-              <div className="bg-zinc-900 rounded-lg shadow-xl p-12 border border-yellow-400/20 text-center">
-                <Lock className="h-12 w-12 text-yellow-400 mx-auto mb-4" />
-                <h3 className="text-white text-lg font-medium mb-2">No Documents Selected</h3>
-                <p className="text-gray-400">
-                  Select an application from the list to view its secure documents
-                </p>
-              </div>
-            )}
+        {/* Drop zone & file selection area */}
+        <div
+          className="bg-zinc-900 rounded-lg shadow-xl p-12 border border-yellow-400/20 text-center w-[60%]"
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
+        >
+          <FileIcon className="h-12 w-12 text-yellow-400 mx-auto mb-4" />
+          <div className="choose-file">
+            <h3 className="text-white text-lg font-medium mb-2">
+              Drag &amp; Drop files here or
+            </h3>
+            <p className='text-gray-500 mb-5'>
+            This secure portal lets you send a document exchange link to your prospect. Files uploaded here (up to 200 PDF pages) will be automatically deleted after 180 days.
+            </p>
+            <button
+              className="bg-yellow-400 rounded py-2 px-5 font-semibold uppercase hover:bg-yellow-600 text-black"
+              onClick={handleBrowseClick}
+            >
+              Browse
+            </button>
+            <input
+              type="file"
+              ref={fileInputRef}
+              className="hidden"
+              multiple
+              onChange={handleFileChange}
+            />
           </div>
         </div>
       </div>
-    </div>
+
+
+
+
+        <div className="added-wrap mt-10 text-white">
+          <div >
+            <div className='group mt-5 w-full px-5 py-3 rounded bg-zinc-900 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500 relative '>
+              <p className='uploaded-file-name'>
+              <span className='cursor-pointer hover:text-yellow-600'> Filename.zip</span>
+              <span className='total-v pl-5 '>(Expired after 180day)</span>
+              </p>
+
+              <div className="addedDetail absolute right-[20px] top-[50%] translate-y-[-50%] hidden group-hover:block"  >
+                  <ul className='flex gap-4 align-center'>
+                    <li className='cursor-pointer hover:text-yellow-600'>
+                      <Download/>
+                    </li>
+                    <li className='cursor-pointer hover:text-red-600'>
+                      <Trash/>
+                    </li>
+                    <li className='cursor-pointer hover:text-yellow-600'>
+                      <Send  onClick={handleSendClick}/>
+                    </li>
+                  </ul>
+              </div>
+
+            </div>
+            <div className='group mt-5 w-full px-5 py-3 rounded bg-zinc-900 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500 relative '>
+              <p className='uploaded-file-name'>
+              <span className='cursor-pointer hover:text-yellow-600'> Filename.zip</span>
+              <span className='total-v pl-5 '>(Expired after 180day)</span>
+              </p>
+
+              <div className="addedDetail absolute right-[20px] top-[50%] translate-y-[-50%] hidden group-hover:block"  >
+                  <ul className='flex gap-4 align-center'>
+                    <li className='cursor-pointer hover:text-yellow-600'>
+                      <Download/>
+                    </li>
+                    <li className='cursor-pointer hover:text-red-600'>
+                      <Trash/>
+                    </li>
+                    <li className='cursor-pointer hover:text-yellow-600'>
+                      <Send  onClick={handleSendClick}/>
+                    </li>
+                  </ul>
+              </div>
+
+            </div>
+            <div className='group mt-5 w-full px-5 py-3 rounded bg-zinc-900 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500 relative '>
+              <p className='uploaded-file-name'>
+              <span className='cursor-pointer hover:text-yellow-600'> Filename.zip</span>
+              <span className='total-v pl-5 '>(Expired after 180day)</span>
+              </p>
+
+              <div className="addedDetail absolute right-[20px] top-[50%] translate-y-[-50%] hidden group-hover:block"  >
+                  <ul className='flex gap-4 align-center'>
+                    <li className='cursor-pointer hover:text-yellow-600'>
+                      <Download/>
+                    </li>
+                    <li className='cursor-pointer hover:text-red-600'>
+                      <Trash/>
+                    </li>
+                    <li className='cursor-pointer hover:text-yellow-600'>
+                      <Send  onClick={handleSendClick}/>
+                    </li>
+                  </ul>
+              </div>
+
+            </div>
+            <div className='group mt-5 w-full px-5 py-3 rounded bg-zinc-900 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500 relative '>
+              <p className='uploaded-file-name'>
+              <span className='cursor-pointer hover:text-yellow-600'> Filename.zip</span>
+              <span className='total-v pl-5 '>(Expired after 180day)</span>
+              </p>
+
+              <div className="addedDetail absolute right-[20px] top-[50%] translate-y-[-50%] hidden group-hover:block"  >
+                  <ul className='flex gap-4 align-center'>
+                    <li className='cursor-pointer hover:text-yellow-600'>
+                      <Download/>
+                    </li>
+                    <li className='cursor-pointer hover:text-red-600'>
+                      <Trash/>
+                    </li>
+                    <li className='cursor-pointer hover:text-yellow-600'>
+                      <Send  onClick={handleSendClick}/>
+                    </li>
+                  </ul>
+              </div>
+
+            </div>
+            
+
+
+
+
+
+          </div>
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      {showPopup && (
+        <div className="popup bg-black rounded-lg shadow-xl p-12 border border-yellow-400/20 text-center w-[30%] mx-auto mt-6 absolute top-[50%] left-[50%] transform translate-y-[-50%] translate-x-[-50%]">
+          <div
+            className="close-pop absolute top-[10px] right-[15px] text-white cursor-pointer"
+            onClick={() => setShowPopup(false)}
+          >
+            <X />
+          </div>
+          <input
+            type="email"
+            id="email"
+            placeholder="Enter Email"
+            className="w-full px-4 py-3 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
+            required
+          />
+          <button className="bg-yellow-400 rounded py-3 px-5 font-semibold uppercase hover:bg-yellow-600 text-black mt-5">
+            Send To Email
+          </button>
+        </div>
+      )}
+    </>
   );
-}
+};
+
+export default SecurePortal;
