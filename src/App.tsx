@@ -20,8 +20,10 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import TeamMember  from './pages/team-member/teamMember';
 import Vendor  from './pages/Vendor/vendor';
 import Documents from './pages/Documents/documents';
-import Reps from './pages/Reps/reps'
+import Reps from './pages/Reps/reps';
 import Notifications from './pages/notifications/notifications';
+import Marketing from './pages/Marketing/marketing';
+
 
 
 function App() {
@@ -41,13 +43,15 @@ function App() {
       <AuthProvider>
         <Routes>
           <Route path="/login" element={<LogIn />} />
+          <Route path="/secure" element={<SecurePortal />} />
+
           <Route
             path="/"
             element={
               <ProtectedRoute>
                 <Layout>
                   <div className="max-w-7xl mx-auto">
-                    {currentPath === '/logins' ? (
+                    {currentPath === '/logins' ?  (
                       <Logins />
                     ) : currentPath === '/users' ? (
                       <Users />
@@ -65,6 +69,8 @@ function App() {
                       <Reps />
                     ): currentPath === '/application_notifications' ? (
                       <Notifications />
+                    ): currentPath === '/marketing' ? (
+                      <Marketing />
                     ): currentPath === '/edituser' ? (
                       <EditUsers />
                     ): currentPath === '/documents' ? (
@@ -75,8 +81,6 @@ function App() {
                       <VendorDocuments vendorId={currentPath.split('/')[2]} />
                     ) : currentPath === '/applications' ? (
                       <PreApplications />
-                    ) : currentPath === '/secure' ? (
-                      <SecurePortal />
                     ) : (
                       <>
                         <div className="mb-8 bg-yellow-400 rounded-lg p-6 shadow-lg">

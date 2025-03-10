@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, Key, FileText, FormInput, Shield, Menu } from 'lucide-react';
+import { LayoutDashboard, Key, FileText, FormInput, Shield, Menu, Megaphone } from 'lucide-react';
 import Sidebar from './Sidebar';
 import TopNav from './TopNav';
 
@@ -10,6 +10,8 @@ const topMenuItems = [
   { name: 'Document Center', href: '/documents', icon: FileText },
   { name: 'Pre-Applications', href: '/applications', icon: FormInput },
   { name: 'Secured Doc Portal', href: '/secure', icon: Shield },
+  // { name: 'Marketing', href: '/marketing', icon: Megaphone },
+
 ];
 
 
@@ -44,6 +46,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         {/* Main content */}
         <div className="flex-1 flex flex-col overflow-hidden">
           <TopNav items={topMenuItems} onNavigate={handleNavigation} />
+
+          
           <main className="flex-1 overflow-y-auto p-6">
             {children}
           </main>

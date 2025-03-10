@@ -1,6 +1,6 @@
 import React from 'react';
 import type { MenuItem } from '../types';
-import { LogOut } from 'lucide-react';
+import { LogOut, Megaphone } from 'lucide-react';
 import { useAuth } from '../providers/AuthProvider';
 import { useNavigate } from 'react-router-dom';
 
@@ -33,10 +33,20 @@ export default function TopNav({
                 key={item.name}
                 href={item.href}
                 onClick={item.href.startsWith('http') ? undefined : onNavigate}
-                className="inline-flex items-center px-4 py-2 border-b-2 border-transparent hover:border-yellow-400 text-sm font-medium text-gray-300 hover:text-yellow-400"
+                className="inline-flex items-center px-4 py-2 border-b-2 border-transparent hover:border-yellow-400 text-sm font-medium text-gray-300 hover:text-yellow-400 relative group"
               >
                 <item.icon className="h-5 w-5 mr-2" />
                 {item.name}
+
+                {item.name === "Secured Doc Portal" && (
+                  <ul className="sub_menu absolute top-[103%] left-0 w-full bg-zinc-800 px-2 z-[9] py-5 group rounded  hidden hover:block group-hover:block">
+                    <li className="text-white">
+                      <a href="/marketing" className='bg-black rounded-md flex py-2 px-3 gap-2 items-center text-md hover:bg-yellow-600' > <Megaphone className='w-5 h-5'/>Marketing
+                      </a>
+                    </li>
+                   
+                  </ul>
+                )}
               </a>
             ))}
           </div>
