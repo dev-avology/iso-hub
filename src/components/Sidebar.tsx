@@ -1,8 +1,16 @@
 import { Shield, FileText, Settings, Cpu, User, LogOut, File, Bell } from 'lucide-react';
 import { useAuth } from '../providers/AuthProvider';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { LucideIcon } from 'lucide-react';
 
-const nonAdminCategories = [
+interface Category {
+  name: string;
+  icon: LucideIcon;
+  href?: string;
+  external?: boolean;
+}
+
+const nonAdminCategories: Category[] = [
   // { name: 'Processors', icon: CreditCard },
   // { name: 'Gateways', icon: Router },
   // { name: 'Hardware/Equipment', icon: HardDrive },
