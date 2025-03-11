@@ -57,6 +57,27 @@ function ProtectedLayout({ children }: { children: React.ReactNode }) {
   );
 }
 
+// Wrapper component for protected admin pages
+function ProtectedAdminLayout({ children }: { children: React.ReactNode }) {
+  const authUser = JSON.parse(localStorage.getItem('auth_user') || '{}');
+  const isAdmin = authUser?.role_id === 2;
+
+  if (!isAdmin) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return (
+    <ProtectedRoute>
+      <Layout>
+        <div className="max-w-7xl mx-auto">
+          {children}
+        </div>
+        <JACC />
+      </Layout>
+    </ProtectedRoute>
+  );
+}
+
 function App() {
   return (
     <Router>
@@ -64,23 +85,26 @@ function App() {
         <Routes>
           <Route path="/login" element={<LogIn />} />
           
+          {/* Regular protected routes */}
           <Route path="/" element={<ProtectedLayout><Dashboard /></ProtectedLayout>} />
           <Route path="/logins" element={<ProtectedLayout><Logins /></ProtectedLayout>} />
           <Route path="/users" element={<ProtectedLayout><Users /></ProtectedLayout>} />
-          <Route path="/admin" element={<ProtectedLayout><Admin /></ProtectedLayout>} />
-          <Route path="/addusers" element={<ProtectedLayout><AddUsers /></ProtectedLayout>} />
-          <Route path="/teammember" element={<ProtectedLayout><TeamMember /></ProtectedLayout>} />
-          <Route path="/vendor" element={<ProtectedLayout><Vendor /></ProtectedLayout>} />
-          <Route path="/master_database_documents" element={<ProtectedLayout><Documents /></ProtectedLayout>} />
-          <Route path="/all_reps" element={<ProtectedLayout><Reps /></ProtectedLayout>} />
-          <Route path="/application_notifications" element={<ProtectedLayout><Notifications /></ProtectedLayout>} />
-          <Route path="/marketing" element={<ProtectedLayout><Marketing /></ProtectedLayout>} />
-          <Route path="/edituser" element={<ProtectedLayout><EditUsers /></ProtectedLayout>} />
           <Route path="/documents" element={<ProtectedLayout><DocumentCenter /></ProtectedLayout>} />
           <Route path="/documents/new-vendor" element={<ProtectedLayout><VendorTemplate /></ProtectedLayout>} />
           <Route path="/documents/:vendorId" element={<ProtectedLayout><VendorDocuments vendorId="1" /></ProtectedLayout>} />
           <Route path="/applications" element={<ProtectedLayout><PreApplications /></ProtectedLayout>} />
           <Route path="/secure" element={<ProtectedLayout><SecurePortal /></ProtectedLayout>} />
+          <Route path="/marketing" element={<ProtectedLayout><Marketing /></ProtectedLayout>} />
+          
+          {/* Admin protected routes */}
+          <Route path="/admin" element={<ProtectedAdminLayout><Admin /></ProtectedAdminLayout>} />
+          <Route path="/teammember" element={<ProtectedAdminLayout><TeamMember /></ProtectedAdminLayout>} />
+          <Route path="/vendor" element={<ProtectedAdminLayout><Vendor /></ProtectedAdminLayout>} />
+          <Route path="/master_database_documents" element={<ProtectedAdminLayout><Documents /></ProtectedAdminLayout>} />
+          <Route path="/all_reps" element={<ProtectedAdminLayout><Reps /></ProtectedAdminLayout>} />
+          <Route path="/application_notifications" element={<ProtectedAdminLayout><Notifications /></ProtectedAdminLayout>} />
+          <Route path="/addusers" element={<ProtectedAdminLayout><AddUsers /></ProtectedAdminLayout>} />
+          <Route path="/edituser" element={<ProtectedAdminLayout><EditUsers /></ProtectedAdminLayout>} />
           
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

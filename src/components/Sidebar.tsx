@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
 import { Shield, FileText, Settings, Cpu, User, LogOut, File, Bell } from 'lucide-react';
 import { useAuth } from '../providers/AuthProvider';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 
-const categories = [
+const nonAdminCategories = [
   // { name: 'Processors', icon: CreditCard },
   // { name: 'Gateways', icon: Router },
   // { name: 'Hardware/Equipment', icon: HardDrive },
@@ -12,14 +11,13 @@ const categories = [
   { name: 'ISO-Residuals', icon: FileText, href: 'https://dev.tracerpos.com/', external: true },
   { name: 'Settings', icon: Settings },
   { name: 'ISO-AI', icon: Cpu },
-  { name: 'Admin', icon: User, href: '/admin' },
-
   // { name: 'Users', icon: User, href: '/users' },
-
-
-
-
   // { name: 'Residuals', icon: FileText, href: 'https://dev.tracerpos.com/'  },
+];
+
+const adminCategories = [
+  ...nonAdminCategories,
+  { name: 'Admin', icon: User, href: '/admin' },
 ];
 
 const adminSubMenu = [
@@ -40,6 +38,10 @@ export default function Sidebar({
   const { logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  
+  // Get role_id from auth_user in localStorage
+  const authUser = JSON.parse(localStorage.getItem('auth_user') || '{}');
+  const isAdmin = authUser?.role_id === 2;
 
   const handleLogout = async () => {
     try {
@@ -52,11 +54,12 @@ export default function Sidebar({
 
   const isActive = (path: string) => {
     if (path === '/admin') {
-      // Check if current path is admin or any of its subpages
       return location.pathname === path || adminSubMenu.some(item => item.path === location.pathname);
     }
     return location.pathname === path;
   };
+
+  const categories = isAdmin ? adminCategories : nonAdminCategories;
 
   return (
     <div className={`

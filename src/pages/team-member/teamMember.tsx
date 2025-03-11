@@ -20,11 +20,14 @@ interface TeamMemberFormData {
 
 interface ApiResponse {
   message: string;
-  team_members: TeamMember[];
+  data: TeamMember[];
 }
 
 export default function TeamMember() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [formData, setFormData] = useState<TeamMemberFormData>({
@@ -37,10 +40,12 @@ export default function TeamMember() {
   const fetchTeamMembers = async (id?: string) => {
     try {
       setIsLoading(true);
+      const token = localStorage.getItem('auth_token');
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/team-member/lists`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
         body: id ? JSON.stringify({ id }) : undefined,
       });
@@ -49,7 +54,7 @@ export default function TeamMember() {
         throw new Error('Failed to fetch team members');
       }
       const data: ApiResponse = await response.json();
-      setTeamMembers(data.team_members);
+      setTeamMembers(data.data);
     } catch (error) {
       console.error('Error fetching team members:', error);
     } finally {
@@ -76,10 +81,12 @@ export default function TeamMember() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const token = localStorage.getItem('auth_token');
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/team-member/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify(formData),
       });
@@ -101,6 +108,81 @@ export default function TeamMember() {
       fetchTeamMembers();
     } catch (error) {
       console.error('Error creating team member:', error);
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    try {
+      const token = localStorage.getItem('auth_token');
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/team-member/destroy/${id}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete team member');
+      }
+
+      // Close the delete modal
+      setDeleteModalOpen(false);
+      setSelectedMember(null);
+
+      // Refresh the team members list after successful deletion
+      fetchTeamMembers();
+    } catch (error) {
+      console.error('Error deleting team member:', error);
+    }
+  };
+
+  const handleEdit = (member: TeamMember) => {
+    setSelectedMember(member);
+    setFormData({
+      name: member.name,
+      email: member.email,
+      phone: member.phone,
+      address: member.address
+    });
+    setIsEditModalOpen(true);
+  };
+
+  const handleUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedMember) return;
+
+    try {
+      const token = localStorage.getItem('auth_token');
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/team-member/update`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          ...formData,
+          id: selectedMember.id
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update team member');
+      }
+
+      // Reset form and close modal
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        address: ''
+      });
+      setIsEditModalOpen(false);
+      setSelectedMember(null);
+      
+      // Refresh the team members list
+      fetchTeamMembers();
+    } catch (error) {
+      console.error('Error updating team member:', error);
     }
   };
 
@@ -141,10 +223,19 @@ export default function TeamMember() {
               <div className="userdata w-[20%]">{member.address}</div>
               <div className="edit-delete-btn absolute right-5 hidden group-hover:block">
                 <div className="edit_data flex gap-2 items-center">
-                  <button className="hover:text-yellow-500">
+                  <button 
+                    onClick={() => handleEdit(member)}
+                    className="hover:text-yellow-500"
+                  >
                     <Edit />
                   </button>
-                  <button className="hover:text-red-500">
+                  <button 
+                    onClick={() => {
+                      setSelectedMember(member);
+                      setDeleteModalOpen(true);
+                    }}
+                    className="hover:text-red-500"
+                  >
                     <Trash />
                   </button>
                 </div>
@@ -225,6 +316,138 @@ export default function TeamMember() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Team Member Modal */}
+      {isEditModalOpen && selectedMember && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-zinc-900 p-8 rounded-lg w-full max-w-xl relative">
+            <button 
+              onClick={() => {
+                setIsEditModalOpen(false);
+                setSelectedMember(null);
+                setFormData({
+                  name: '',
+                  email: '',
+                  phone: '',
+                  address: ''
+                });
+              }}
+              className="absolute top-4 right-4 text-gray-400 hover:text-white"
+            >
+              <X className="w-6 h-6" />
+            </button>
+            
+            <h2 className="text-2xl font-bold text-white mb-6">Edit Team Member</h2>
+            
+            <form onSubmit={handleUpdate} className="space-y-4">
+              <div>
+                <label className="block text-gray-300 mb-2">Name</label>
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label className="block text-gray-300 mb-2">Email</label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label className="block text-gray-300 mb-2">Phone Number</label>
+                <input
+                  type="tel"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label className="block text-gray-300 mb-2">Address</label>
+                <input
+                  type="text"
+                  name="address"
+                  value={formData.address}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                  required
+                />
+              </div>
+
+              <div className="pt-4">
+                <button
+                  type="submit"
+                  className="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-3 px-5 rounded font-medium uppercase transition duration-200"
+                >
+                  Update Team Member
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteModalOpen && selectedMember && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-zinc-900 p-8 rounded-lg w-full max-w-md relative">
+            <button 
+              onClick={() => {
+                setDeleteModalOpen(false);
+                setSelectedMember(null);
+              }}
+              className="absolute top-4 right-4 text-gray-400 hover:text-white"
+            >
+              <X className="w-6 h-6" />
+            </button>
+            
+            <div className="text-center">
+              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
+                <Trash className="h-6 w-6 text-red-600" />
+              </div>
+              
+              <h3 className="text-2xl font-bold text-white mb-2">Delete Team Member</h3>
+              
+              <p className="text-gray-300 mb-6">
+                Are you sure you want to delete <span className="font-semibold">{selectedMember.name}</span>? 
+                This action cannot be undone.
+              </p>
+              
+              <div className="flex gap-4 justify-center">
+                <button
+                  onClick={() => {
+                    setDeleteModalOpen(false);
+                    setSelectedMember(null);
+                  }}
+                  className="px-4 py-2 rounded bg-gray-700 text-white hover:bg-gray-600 transition duration-200"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => handleDelete(selectedMember.id)}
+                  className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700 transition duration-200"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}

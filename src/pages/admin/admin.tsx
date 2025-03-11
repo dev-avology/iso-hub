@@ -1,140 +1,238 @@
-import { useState, ChangeEvent, FormEvent } from 'react';
+import { useState, useEffect } from 'react';
 import { Edit, Trash, X } from 'lucide-react';
 
 interface User {
-  firstName: string;
-  lastName: string;
+  id: number;
+  first_name: string;
+  last_name: string;
   email: string;
   phone: string;
-  role: string;
+  role_id: number;
+  email_verified_at: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
-const users = [
-  {
-    firstName: 'John',
-    lastName: 'Doe',
-    email: 'john@example.com',
-    phone: '1234567890',
-    role: 'manager',
-  },
-  {
-    firstName: 'John',
-    lastName: 'Doe',
-    email: 'john@example.com',
-    phone: '1234567890',
-    role: 'team lead',
-  },
-  {
-    firstName: 'John',
-    lastName: 'Doe',
-    email: 'john@example.com',
-    phone: '1234567890',
-    role: 'user',
-  },
-  {
-    firstName: 'John',
-    lastName: 'Doe',
-    email: 'john@example.com',
-    phone: '1234567890',
-    role: 'manager',
-  },
-  {
-    firstName: 'John',
-    lastName: 'Doe',
-    email: 'john@example.com',
-    phone: '1234567890',
-    role: 'team lead',
-  },
-  {
-    firstName: 'John',
-    lastName: 'Doe',
-    email: 'john@example.com',
-    phone: '1234567890',
-    role: 'user',
-  },
-  {
-    firstName: 'John',
-    lastName: 'Doe',
-    email: 'john@example.com',
-    phone: '1234567890',
-    role: 'manager',
-  },
-  {
-    firstName: 'John',
-    lastName: 'Doe',
-    email: 'john@example.com',
-    phone: '1234567890',
-    role: 'team lead',
-  },
-  {
-    firstName: 'John',
-    lastName: 'Doe',
-    email: 'john@example.com',
-    phone: '1234567890',
-    role: 'user',
-  },
-];
+interface UserFormData {
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string;
+  password: string;
+  role_id: string;
+}
+
+interface ApiResponse {
+  status: string;
+  message: string;
+  data: User[];
+}
+
+const ROLE_MAPPING = {
+  '3': 'Manager',
+  '4': 'Team Leader',
+  '5': 'User'
+};
 
 export default function Admin() {
-  // State to track checkbox selections for each role filter
-  const [managerChecked, setManagerChecked] = useState(false);
-  const [teamLeadersChecked, setTeamLeadersChecked] = useState(false);
-  const [usersChecked, setUsersChecked] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newUser, setNewUser] = useState<User>({
-    firstName: '',
-    lastName: '',
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [users, setUsers] = useState<User[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [formData, setFormData] = useState<UserFormData>({
+    first_name: '',
+    last_name: '',
     email: '',
     phone: '',
-    role: 'user'
+    password: '',
+    role_id: '5' // Default to user role
   });
 
-  // Update handlers for each checkbox
-  const handleManagerChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setManagerChecked(e.target.checked);
+  // Filter states
+  const [managersChecked, setManagersChecked] = useState(false);
+  const [teamLeadersChecked, setTeamLeadersChecked] = useState(false);
+  const [usersChecked, setUsersChecked] = useState(false);
+
+  const fetchUsers = async (id?: string) => {
+    try {
+      setIsLoading(true);
+      const token = localStorage.getItem('auth_token');
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/user/lists`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: id ? JSON.stringify({ user_id: id }) : undefined,
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch users');
+      }
+      const data: ApiResponse = await response.json();
+      setUsers(data.data);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleTeamLeadersChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setTeamLeadersChecked(e.target.checked);
+  const fetchUserById = async (id: string) => {
+    await fetchUsers(id);
   };
 
-  const handleUsersChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setUsersChecked(e.target.checked);
-  };
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setNewUser(prev => ({
+    setFormData(prev => ({
       ...prev,
       [name]: value
     }));
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Here you would typically make an API call to add the user
-    console.log('New user:', newUser);
-    // Reset form and close modal
-    setNewUser({
-      firstName: '',
-      lastName: '',
-      email: '',
-      phone: '',
-      role: 'user'
-    });
-    setIsModalOpen(false);
+    try {
+      const token = localStorage.getItem('auth_token');
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/user/create`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create user');
+      }
+
+      // Reset form and close modal
+      setFormData({
+        first_name: '',
+        last_name: '',
+        email: '',
+        phone: '',
+        password: '',
+        role_id: '5'
+      });
+      setIsModalOpen(false);
+      
+      // Refresh the users list
+      fetchUsers();
+    } catch (error) {
+      console.error('Error creating user:', error);
+    }
   };
 
-  const currentUser = localStorage.getItem('auth_user');
-  console.log('currentUser: ', currentUser);
+  const handleDelete = async (id: number) => {
+    try {
+      const token = localStorage.getItem('auth_token');
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/user/destroy/${id}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
 
-  // Filter the users array based on checked roles.
-  // If no checkboxes are selected, show all users.
+      if (!response.ok) {
+        throw new Error('Failed to delete user');
+      }
+
+      // Close the delete modal
+      setDeleteModalOpen(false);
+      setSelectedUser(null);
+
+      // Refresh the users list after successful deletion
+      fetchUsers();
+    } catch (error) {
+      console.error('Error deleting user:', error);
+    }
+  };
+
+  const handleEdit = (user: User) => {
+    setSelectedUser(user);
+    setFormData({
+      first_name: user.first_name,
+      last_name: user.last_name,
+      email: user.email,
+      phone: user.phone,
+      password: '', // Password field is empty for security
+      role_id: user.role_id.toString()
+    });
+    setIsEditModalOpen(true);
+  };
+
+  const handleUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedUser) return;
+
+    try {
+      const token = localStorage.getItem('auth_token');
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/user/update`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          ...formData,
+          id: selectedUser.id
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update user');
+      }
+
+      // Reset form and close modal
+      setFormData({
+        first_name: '',
+        last_name: '',
+        email: '',
+        phone: '',
+        password: '',
+        role_id: '5'
+      });
+      setIsEditModalOpen(false);
+      setSelectedUser(null);
+      
+      // Refresh the users list
+      fetchUsers();
+    } catch (error) {
+      console.error('Error updating user:', error);
+    }
+  };
+
+  // Filter handlers
+  const handleManagersChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setManagersChecked(e.target.checked);
+  };
+
+  const handleTeamLeadersChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTeamLeadersChecked(e.target.checked);
+  };
+
+  const handleUsersChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUsersChecked(e.target.checked);
+  };
+
+  // Filter the users array based on checked roles and exclude role_id 1 and 2
   const filteredUsers = users.filter((user) => {
-    if (!managerChecked && !teamLeadersChecked && !usersChecked) return true;
-    if (managerChecked && user.role.toLowerCase() === 'manager') return true;
-    if (teamLeadersChecked && user.role.toLowerCase() === 'team lead') return true;
-    if (usersChecked && user.role.toLowerCase() === 'user') return true;
+    // First exclude role_id 1 and 2
+    if (user.role_id === 1 || user.role_id === 2) return false;
+    
+    // Then apply checkbox filters
+    if (!managersChecked && !teamLeadersChecked && !usersChecked) return true;
+    if (managersChecked && user.role_id === 3) return true;
+    if (teamLeadersChecked && user.role_id === 4) return true;
+    if (usersChecked && user.role_id === 5) return true;
     return false;
   });
 
@@ -145,10 +243,10 @@ export default function Admin() {
           <input
             type="checkbox"
             className="h-[20px] w-[20px]"
-            onChange={handleManagerChange}
-            checked={managerChecked}
+            onChange={handleManagersChange}
+            checked={managersChecked}
           />
-          <span>Manager</span>
+          <span>Managers</span>
         </div>
         <div className="short text-white font-medium flex items-center gap-2">
           <input
@@ -179,7 +277,57 @@ export default function Admin() {
         </button>
       </div>
 
-      {/* Modal */}
+      <div className="user_data_wrap">
+        <div className="user_dataHead w-full px-5 py-4 rounded bg-gray-700 text-white flex gap-4">
+          <div className="userData w-[20%] font-bold">First Name</div>
+          <div className="userData w-[20%] font-bold">Last Name</div>
+          <div className="userData w-[20%] font-bold">Email</div>
+          <div className="userData w-[20%] font-bold">Phone Number</div>
+          <div className="userData w-[20%] font-bold">Role</div>
+        </div>
+      </div>
+
+      <div className="user_body w-full text-white mt-5">
+        {isLoading ? (
+          <div className="text-center py-4">Loading users...</div>
+        ) : filteredUsers.length === 0 ? (
+          <div className="text-center py-4">No users found</div>
+        ) : (
+          filteredUsers.map((user) => (
+            <div
+              key={user.id}
+              className="UserDataRow group px-5 py-3 rounded flex gap-4 border border-gray-700 mt-4 hover:bg-gray-700 cursor-pointer relative"
+            >
+              <div className="userdata w-[20%]">{user.first_name}</div>
+              <div className="userdata w-[20%]">{user.last_name}</div>
+              <div className="userdata w-[20%]">{user.email}</div>
+              <div className="userdata w-[20%]">{user.phone}</div>
+              <div className="userdata w-[20%]">{ROLE_MAPPING[user.role_id.toString() as keyof typeof ROLE_MAPPING]}</div>
+              <div className="edit-delete-btn absolute right-5 hidden group-hover:block">
+                <div className="edit_data flex gap-2 items-center">
+                  <button 
+                    onClick={() => handleEdit(user)}
+                    className="hover:text-yellow-500"
+                  >
+                    <Edit />
+                  </button>
+                  <button 
+                    onClick={() => {
+                      setSelectedUser(user);
+                      setDeleteModalOpen(true);
+                    }}
+                    className="hover:text-red-500"
+                  >
+                    <Trash />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* Add User Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-zinc-900 p-8 rounded-lg w-full max-w-xl relative">
@@ -197,8 +345,8 @@ export default function Admin() {
                 <label className="block text-gray-300 mb-2">First Name</label>
                 <input
                   type="text"
-                  name="firstName"
-                  value={newUser.firstName}
+                  name="first_name"
+                  value={formData.first_name}
                   onChange={handleInputChange}
                   className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
                   required
@@ -209,8 +357,8 @@ export default function Admin() {
                 <label className="block text-gray-300 mb-2">Last Name</label>
                 <input
                   type="text"
-                  name="lastName"
-                  value={newUser.lastName}
+                  name="last_name"
+                  value={formData.last_name}
                   onChange={handleInputChange}
                   className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
                   required
@@ -222,7 +370,7 @@ export default function Admin() {
                 <input
                   type="email"
                   name="email"
-                  value={newUser.email}
+                  value={formData.email}
                   onChange={handleInputChange}
                   className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
                   required
@@ -234,7 +382,19 @@ export default function Admin() {
                 <input
                   type="tel"
                   name="phone"
-                  value={newUser.phone}
+                  value={formData.phone}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-gray-300 mb-2">Password</label>
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
                   onChange={handleInputChange}
                   className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
                   required
@@ -244,63 +404,190 @@ export default function Admin() {
               <div>
                 <label className="block text-gray-300 mb-2">Role</label>
                 <select
-                  name="role"
-                  value={newUser.role}
+                  name="role_id"
+                  value={formData.role_id}
                   onChange={handleInputChange}
                   className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
                   required
                 >
-                  <option value="manager">Manager</option>
-                  <option value="team lead">Team Lead</option>
-                  <option value="user">User</option>
+                  <option value="3">Manager</option>
+                  <option value="4">Team Leader</option>
+                  <option value="5">User</option>
                 </select>
               </div>
-              
-              <button
-                type="submit"
-                className="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-3 rounded font-medium uppercase transition duration-200 mt-6"
-              >
-                Add User
-              </button>
+
+              <div className="pt-4">
+                <button
+                  type="submit"
+                  className="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-3 px-5 rounded font-medium uppercase transition duration-200"
+                >
+                  Add User
+                </button>
+              </div>
             </form>
           </div>
         </div>
       )}
 
-      <div className="user_data_wrap">
-        <div className="user_dataHead w-full px-5 py-4 rounded bg-gray-700 text-white flex gap-4">
-          <div className="userData w-[20%] font-bold">First Name</div>
-          <div className="userData w-[20%] font-bold">Last Name</div>
-          <div className="userData w-[20%] font-bold">Email</div>
-          <div className="userData w-[20%] font-bold">Phone Number</div>
-          <div className="userData w-[20%] font-bold">Role</div>
-        </div>
-      </div>
+      {/* Edit User Modal */}
+      {isEditModalOpen && selectedUser && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-zinc-900 p-8 rounded-lg w-full max-w-xl relative">
+            <button 
+              onClick={() => {
+                setIsEditModalOpen(false);
+                setSelectedUser(null);
+                setFormData({
+                  first_name: '',
+                  last_name: '',
+                  email: '',
+                  phone: '',
+                  password: '',
+                  role_id: '5'
+                });
+              }}
+              className="absolute top-4 right-4 text-gray-400 hover:text-white"
+            >
+              <X className="w-6 h-6" />
+            </button>
+            
+            <h2 className="text-2xl font-bold text-white mb-6">Edit User</h2>
+            
+            <form onSubmit={handleUpdate} className="space-y-4">
+              <div>
+                <label className="block text-gray-300 mb-2">First Name</label>
+                <input
+                  type="text"
+                  name="first_name"
+                  value={formData.first_name}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label className="block text-gray-300 mb-2">Last Name</label>
+                <input
+                  type="text"
+                  name="last_name"
+                  value={formData.last_name}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label className="block text-gray-300 mb-2">Email</label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label className="block text-gray-300 mb-2">Phone Number</label>
+                <input
+                  type="tel"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                  required
+                />
+              </div>
 
-      <div className="user_body w-full text-white mt-5">
-        {filteredUsers.map((user, index) => (
-          <div
-            key={index}
-            className="UserDataRow group px-5 py-3 rounded flex gap-4 border border-gray-700 mt-4 hover:bg-gray-700 cursor-pointer relative"
-          >
-            <div className="userdata w-[20%]">{user.firstName}</div>
-            <div className="userdata w-[20%]">{user.lastName}</div>
-            <div className="userdata w-[20%]">{user.email}</div>
-            <div className="userdata w-[20%]">{user.phone}</div>
-            <div className="userdata w-[20%]">{user.role}</div>
-            <div className="edit-delete-btn absolute right-5 hidden group-hover:block">
-              <div className="edit_data flex gap-2 items-center">
-                <a href="/edituser" className="hover:text-yellow-500">
-                  <Edit />
-                </a>
-                <button className="hover:text-red-500">
-                  <Trash />
+              <div>
+                <label className="block text-gray-300 mb-2">Password (leave blank to keep current)</label>
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-gray-300 mb-2">Role</label>
+                <select
+                  name="role_id"
+                  value={formData.role_id}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                  required
+                >
+                  <option value="3">Manager</option>
+                  <option value="4">Team Leader</option>
+                  <option value="5">User</option>
+                </select>
+              </div>
+
+              <div className="pt-4">
+                <button
+                  type="submit"
+                  className="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-3 px-5 rounded font-medium uppercase transition duration-200"
+                >
+                  Update User
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteModalOpen && selectedUser && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-zinc-900 p-8 rounded-lg w-full max-w-md relative">
+            <button 
+              onClick={() => {
+                setDeleteModalOpen(false);
+                setSelectedUser(null);
+              }}
+              className="absolute top-4 right-4 text-gray-400 hover:text-white"
+            >
+              <X className="w-6 h-6" />
+            </button>
+            
+            <div className="text-center">
+              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
+                <Trash className="h-6 w-6 text-red-600" />
+              </div>
+              
+              <h3 className="text-2xl font-bold text-white mb-2">Delete User</h3>
+              
+              <p className="text-gray-300 mb-6">
+                Are you sure you want to delete <span className="font-semibold">{selectedUser.first_name} {selectedUser.last_name}</span>? 
+                This action cannot be undone.
+              </p>
+              
+              <div className="flex gap-4 justify-center">
+                <button
+                  onClick={() => {
+                    setDeleteModalOpen(false);
+                    setSelectedUser(null);
+                  }}
+                  className="px-4 py-2 rounded bg-gray-700 text-white hover:bg-gray-600 transition duration-200"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => handleDelete(selectedUser.id)}
+                  className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700 transition duration-200"
+                >
+                  Delete
                 </button>
               </div>
             </div>
           </div>
-        ))}
-      </div>
+        </div>
+      )}
     </>
   );
 }
