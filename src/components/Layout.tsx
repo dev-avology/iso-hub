@@ -10,7 +10,7 @@ const topMenuItems = [
   { name: 'Document Center', href: '/documents', icon: FileText },
   { name: 'Pre-Applications', href: '/applications', icon: FormInput },
   { name: 'Secured Doc Portal', href: '/secure', icon: Shield },
-  // { name: 'Marketing', href: '/marketing', icon: Megaphone },
+  { name: 'Marketing', href: '/marketing', icon: Megaphone },
 
 ];
 

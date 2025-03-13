@@ -58,23 +58,6 @@ export default function TopNav({
                 >
                   <item.icon className={`h-5 w-5 mr-2 ${isActive(item.href) ? 'text-yellow-400' : 'text-gray-400 group-hover:text-yellow-400'}`} />
                   {item.name}
-
-                  {item.name === "Secured Doc Portal" && (
-                    <ul className={`sub_menu absolute top-[103%] left-0 w-full bg-zinc-800 px-2 z-[99] py-5 group rounded hover:block group-hover:block hidden`}>
-                      <li className="text-white">
-                        <Link 
-                          to="/marketing" 
-                          className={`bg-black rounded-md flex py-2 px-3 gap-2 items-center text-md transition-all
-                            ${location.pathname === '/marketing'
-                              ? 'bg-black border-l-4 border-yellow-400 text-yellow-400'
-                              : 'hover:border-l-4 hover:border-yellow-400 hover:text-yellow-400'}`}
-                        >
-                          <Megaphone className={`w-5 h-5 ${location.pathname === '/marketing' ? 'text-yellow-400' : ''}`}/>
-                          Marketing
-                        </Link>
-                      </li>
-                    </ul>
-                  )}
                 </Link>
               )
             ))}

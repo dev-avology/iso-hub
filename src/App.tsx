@@ -7,6 +7,7 @@ import VendorDocuments from './pages/VendorDocuments';
 import VendorTemplate from './pages/VendorTemplate';
 import PreApplications from './pages/PreApplications';
 import SecurePortal from './pages/SecurePortal';
+import SecureUpload from './pages/SecureUpload';
 import JACC from './components/JACC';
 import LogIn from './pages/logins/login';
 import Users from './pages/users/users';
@@ -84,6 +85,7 @@ function App() {
       <AuthProvider>
         <Routes>
           <Route path="/login" element={<LogIn />} />
+          <Route path="/secure-upload" element={<SecureUpload />} />
           
           {/* Regular protected routes */}
           <Route path="/" element={<ProtectedLayout><Dashboard /></ProtectedLayout>} />
