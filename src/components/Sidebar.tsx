@@ -17,8 +17,8 @@ const nonAdminCategories: Category[] = [
   // { name: 'Internal', icon: Briefcase },
   // { name: 'Misc', icon: MoreHorizontal },
   { name: 'ISO-Residuals', icon: FileText, href: 'https://dev.tracerpos.com/', external: true },
-  { name: 'Settings', icon: Settings },
   { name: 'ISO-AI', icon: Cpu },
+  { name: 'Settings', icon: Settings },
   // { name: 'Users', icon: User, href: '/users' },
   // { name: 'Residuals', icon: FileText, href: 'https://dev.tracerpos.com/'  },
 ];

@@ -1,11 +1,22 @@
-import React, { useState, useRef } from 'react';
-import { File as FileIcon, Shield, Clock, Upload } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { File as FileIcon, Shield, Clock, Upload, AlertCircle } from 'lucide-react';
 import { toast, Toaster } from 'react-hot-toast';
+import { useSearchParams } from 'react-router-dom';
 
 const SecureUpload: React.FC = () => {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [isUploading, setIsUploading] = useState<boolean>(false);
+  const [isValidLink, setIsValidLink] = useState<boolean>(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [searchParams] = useSearchParams();
+  const data = searchParams.get('data');
+
+  useEffect(() => {
+    if (!data) {
+      setIsValidLink(false);
+      toast.error('Invalid upload link');
+    }
+  }, [data]);
 
   const handleBrowseClick = (): void => {
     fileInputRef.current?.click();
@@ -41,6 +52,11 @@ const SecureUpload: React.FC = () => {
   };
 
   const handleUpload = async (): Promise<void> => {
+    if (!data) {
+      toast.error('Invalid upload link');
+      return;
+    }
+
     if (uploadedFiles.length === 0) {
       toast.error('Please select files to upload');
       return;
@@ -50,7 +66,7 @@ const SecureUpload: React.FC = () => {
       setIsUploading(true);
       
       const formData = new FormData();
-      formData.append('user_id', '1');
+      formData.append('unique_string', data);
       
       // Append each file to FormData
       uploadedFiles.forEach((file) => {
@@ -70,10 +86,10 @@ const SecureUpload: React.FC = () => {
         throw new Error('Upload failed');
       }
 
-      const data = await response.json();
-      console.log('Upload response:', data);
+      const responseData = await response.json();
+      console.log('Upload response:', responseData);
       
-      toast.success('Files uploaded successfully!');
+      toast.success(responseData.message || 'Files uploaded successfully!');
       setUploadedFiles([]);
     } catch (error) {
       console.error('Upload error:', error);
@@ -90,6 +106,27 @@ const SecureUpload: React.FC = () => {
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
+
+  if (!data) {
+    return (
+      <div className="min-h-screen bg-black flex flex-col items-center justify-center p-4">
+        <Toaster position="top-right" />
+        <div className="bg-zinc-900 rounded-lg shadow-xl p-8 border border-yellow-400/20 text-center max-w-md w-full">
+          <AlertCircle className="h-16 w-16 text-red-500 mx-auto mb-4" />
+          <h1 className="text-2xl font-bold text-white mb-4">
+            Invalid Upload Link
+          </h1>
+          <p className="text-gray-400 mb-6">
+            This upload link is invalid or has expired. Please contact your administrator to request a new secure upload link.
+          </p>
+          <div className="flex items-center justify-center gap-2 text-yellow-400/60 text-sm">
+            <Shield className="w-4 h-4" />
+            <span>Secure Document Exchange</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-black flex flex-col">

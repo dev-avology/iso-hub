@@ -1,233 +1,338 @@
-import React, { useState, useRef } from 'react';
-import { File as FileIcon, X, Download, Trash, Send } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Download, Trash, Mail } from 'lucide-react';
+import { toast, Toaster } from 'react-hot-toast';
+
+interface FileData {
+  id: number;
+  user_id: number;
+  file_path: string;
+  prospect_name: string | null;
+  uploaded_at: string;
+  created_at: string;
+  updated_at: string;
+}
+
+interface ApiResponse {
+  status: string;
+  message: string;
+  data: FileData[];
+}
+
+interface EmailFormData {
+  email: string;
+  name: string;
+}
 
 const SecurePortal: React.FC = () => {
-  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
-  const [showPopup, setShowPopup] = useState<boolean>(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [fileToDelete, setFileToDelete] = useState<FileData | null>(null);
+  const [formData, setFormData] = useState<EmailFormData>({
+    email: '',
+    name: ''
+  });
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [files, setFiles] = useState<FileData[]>([]);
+  const [isLoadingFiles, setIsLoadingFiles] = useState(true);
 
-  const handleBrowseClick = (): void => {
-    fileInputRef.current?.click();
-  };
+  useEffect(() => {
+    fetchFiles();
+  }, []);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    if (!e.target.files) return;
-    setUploadedFiles((prevFiles) => [...prevFiles, ...Array.from(e.target.files)]);
-    // Reset file input so the same file can be selected again if needed
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+  const fetchFiles = async () => {
+    try {
+      setIsLoadingFiles(true);
+      const token = localStorage.getItem('auth_token');
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/file/lists/1`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch files');
+      }
+
+      const data: ApiResponse = await response.json();
+      setFiles(data.data);
+    } catch (error) {
+      console.error('Error fetching files:', error);
+      toast.error('Failed to fetch files');
+    } finally {
+      setIsLoadingFiles(false);
     }
   };
 
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>): void => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>): void => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    e.stopPropagation();
-    const droppedFiles = e.dataTransfer.files;
-    if (droppedFiles && droppedFiles.length > 0) {
-      setUploadedFiles((prevFiles) => [...prevFiles, ...Array.from(droppedFiles)]);
+    setIsLoading(true);
+
+    try {
+      const token = localStorage.getItem('auth_token');
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/user/send-mail`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          ...formData,
+          user_id: '1'
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to send email');
+      }
+
+      const data = await response.json();
+      toast.success(data.message || 'Email sent successfully!');
+      setIsModalOpen(false);
+      setFormData({ email: '', name: '' });
+      fetchFiles(); // Refresh the file list after sending email
+    } catch (error) {
+      console.error('Error sending email:', error);
+      toast.error('Failed to send email');
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleRemoveFile = (index: number): void => {
-    setUploadedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+  const handleDeleteClick = (file: FileData) => {
+    setFileToDelete(file);
+    setIsDeleteModalOpen(true);
   };
 
-  const handleSendClick = (): void => {
-    setShowPopup(true);
+  const handleDeleteConfirm = async () => {
+    if (!fileToDelete) return;
+
+    try {
+      setIsDeleting(true);
+      const token = localStorage.getItem('auth_token');
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/file/delete/${fileToDelete.id}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete file');
+      }
+
+      const data = await response.json();
+      toast.success(data.message || 'File deleted successfully');
+      fetchFiles(); // Refresh the file list
+      setIsDeleteModalOpen(false);
+      setFileToDelete(null);
+    } catch (error) {
+      console.error('Error deleting file:', error);
+      toast.error('Failed to delete file');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
   };
 
   return (
-    <div className='bg-black'>
-    <div className="max-w-[100%] w-[80%]  h-[100vh] flex items-center justify-center m-auto ">
-      <div className="sec-wrap">
-      <div className="choose-wrap flex gap-5">
-        {/* Display chosen files */}
-        <div className="bg-zinc-900 rounded-lg shadow-xl p-6 border border-yellow-400/20 w-[40%]">
-          <h2 className="text-xl font-semibold text-white mb-6 flex items-center">
-            <FileIcon className="h-5 w-5 mr-2 text-yellow-400" />
-            Chosen Files
-          </h2>
-          <div className="text-left text-white/60">
-            <div id="uploaded-files" className="mt-4">
-              {uploadedFiles.length > 0 ? (
-                uploadedFiles.map((file, idx) => (
-                  <div key={idx} className="flex items-center justify-between mb-2">
-                    <p className="text-white flex items-center justify-between w-full">Uploaded: {file.name}                     <div 
-                      className="remove-file cursor-pointer"
-                      onClick={() => handleRemoveFile(idx)}
-                    >
-                      <X className="text-white" />
-                    </div></p>
-
-                  </div>
-                ))
-              ) : (
-                <p className="text-white">No files uploaded yet.</p>
-              )}
-            </div>
+    <div className='bg-black min-h-screen'>
+      <Toaster position="top-right" />
+      <div className="max-w-[100%] h-[100vh] flex justify-center m-auto">
+        <div className="sec-wrap w-[100%]">
+          {/* Add Email Button */}
+          <div className="flex mb-6">
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded flex items-center gap-2"
+            >
+              <Mail className="w-4 h-4" />
+              Send Upload Link
+            </button>
           </div>
-          {/* Conditionally render the Send button */}
-          {uploadedFiles.length > 0 && (
-            <button
-              className="bg-yellow-400 rounded py-2 px-6 font-semibold uppercase hover:bg-yellow-600 text-black mt-5"
-            >
-              Add
-            </button>
-          )}
-        </div>
 
-        {/* Drop zone & file selection area */}
-        <div
-          className="bg-zinc-900 rounded-lg shadow-xl p-12 border border-yellow-400/20 text-center w-[60%]"
-          onDragOver={handleDragOver}
-          onDrop={handleDrop}
-        >
-          <FileIcon className="h-12 w-12 text-yellow-400 mx-auto mb-4" />
-          <div className="choose-file">
-            <h3 className="text-white text-lg font-medium mb-2">
-              Drag &amp; Drop files here or
-            </h3>
-            <p className='text-gray-500 mb-5'>
-            This secure portal lets you send a document exchange link to your prospect. Files uploaded here (up to 200 PDF pages) will be automatically deleted after 180 days.
-            </p>
-            <button
-              className="bg-yellow-400 rounded py-2 px-5 font-semibold uppercase hover:bg-yellow-600 text-black"
-              onClick={handleBrowseClick}
-            >
-              Browse
-            </button>
-            <input
-              type="file"
-              ref={fileInputRef}
-              className="hidden"
-              multiple
-              onChange={handleFileChange}
-            />
+          <div className="added-wrap mt-10 text-white">
+            {isLoadingFiles ? (
+              <div className="text-center py-8">
+                <div className="w-8 h-8 border-2 border-yellow-400 border-t-transparent rounded-full animate-spin mx-auto"></div>
+                <p className="mt-4 text-gray-400">Loading files...</p>
+              </div>
+            ) : files.length === 0 ? (
+              <div className="text-center py-8 text-gray-400">
+                No files uploaded yet
+              </div>
+            ) : (
+              <div>
+                {files.map((file) => (
+                  <div key={file.id} className='group mt-5 w-full px-5 py-3 rounded bg-zinc-900 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500 relative'>
+                    <p className='uploaded-file-name'>
+                      <span className='cursor-pointer hover:text-yellow-600'>
+                        {file.file_path.split('/').pop()}
+                      </span>
+                      <span className='total-v pl-5'>
+                        (Uploaded: {formatDate(file.uploaded_at)})
+                      </span>
+                    </p>
+
+                    <div className="addedDetail absolute right-[20px] top-[50%] translate-y-[-50%] hidden group-hover:block">
+                      <ul className='flex gap-4 align-center'>
+                        <li className='cursor-pointer hover:text-yellow-600'>
+                          <Download />
+                        </li>
+                        <li 
+                          className='cursor-pointer hover:text-red-600'
+                          onClick={() => handleDeleteClick(file)}
+                        >
+                          <Trash />
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
-        <div className="added-wrap mt-10 text-white">
-          <div >
-            <div className='group mt-5 w-full px-5 py-3 rounded bg-zinc-900 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500 relative '>
-              <p className='uploaded-file-name'>
-              <span className='cursor-pointer hover:text-yellow-600'> Filename.zip</span>
-              <span className='total-v pl-5 '>(Expired after 180day)</span>
-              </p>
 
-              <div className="addedDetail absolute right-[20px] top-[50%] translate-y-[-50%] hidden group-hover:block"  >
-                  <ul className='flex gap-4 align-center'>
-                    <li className='cursor-pointer hover:text-yellow-600'>
-                      <Download/>
-                    </li>
-                    <li className='cursor-pointer hover:text-red-600'>
-                      <Trash/>
-                    </li>
-                    <li className='cursor-pointer hover:text-yellow-600'>
-                      <Send  onClick={handleSendClick}/>
-                    </li>
-                  </ul>
-              </div>
-
-            </div>
-            <div className='group mt-5 w-full px-5 py-3 rounded bg-zinc-900 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500 relative '>
-              <p className='uploaded-file-name'>
-              <span className='cursor-pointer hover:text-yellow-600'> Filename.zip</span>
-              <span className='total-v pl-5 '>(Expired after 180day)</span>
-              </p>
-
-              <div className="addedDetail absolute right-[20px] top-[50%] translate-y-[-50%] hidden group-hover:block"  >
-                  <ul className='flex gap-4 align-center'>
-                    <li className='cursor-pointer hover:text-yellow-600'>
-                      <Download/>
-                    </li>
-                    <li className='cursor-pointer hover:text-red-600'>
-                      <Trash/>
-                    </li>
-                    <li className='cursor-pointer hover:text-yellow-600'>
-                      <Send  onClick={handleSendClick}/>
-                    </li>
-                  </ul>
-              </div>
-
-            </div>
-            <div className='group mt-5 w-full px-5 py-3 rounded bg-zinc-900 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500 relative '>
-              <p className='uploaded-file-name'>
-              <span className='cursor-pointer hover:text-yellow-600'> Filename.zip</span>
-              <span className='total-v pl-5 '>(Expired after 180day)</span>
-              </p>
-
-              <div className="addedDetail absolute right-[20px] top-[50%] translate-y-[-50%] hidden group-hover:block"  >
-                  <ul className='flex gap-4 align-center'>
-                    <li className='cursor-pointer hover:text-yellow-600'>
-                      <Download/>
-                    </li>
-                    <li className='cursor-pointer hover:text-red-600'>
-                      <Trash/>
-                    </li>
-                    <li className='cursor-pointer hover:text-yellow-600'>
-                      <Send  onClick={handleSendClick}/>
-                    </li>
-                  </ul>
-              </div>
-
-            </div>
-            <div className='group mt-5 w-full px-5 py-3 rounded bg-zinc-900 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500 relative '>
-              <p className='uploaded-file-name'>
-              <span className='cursor-pointer hover:text-yellow-600'> Filename.zip</span>
-              <span className='total-v pl-5 '>(Expired after 180day)</span>
-              </p>
-
-              <div className="addedDetail absolute right-[20px] top-[50%] translate-y-[-50%] hidden group-hover:block"  >
-                  <ul className='flex gap-4 align-center'>
-                    <li className='cursor-pointer hover:text-yellow-600'>
-                      <Download/>
-                    </li>
-                    <li className='cursor-pointer hover:text-red-600'>
-                      <Trash/>
-                    </li>
-                    <li className='cursor-pointer hover:text-yellow-600'>
-                      <Send  onClick={handleSendClick}/>
-                    </li>
-                  </ul>
-              </div>
-
-            </div>
+      {/* Email Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-zinc-900 p-8 rounded-lg w-full max-w-md relative">
+            <button 
+              onClick={() => setIsModalOpen(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-white"
+            >
+              <span className="sr-only">Close</span>
+              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
             
+            <h2 className="text-2xl font-bold text-white mb-6">Send Secure Upload Link</h2>
+            
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="block text-gray-300 mb-2">Client Name</label>
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label className="block text-gray-300 mb-2">Client Email</label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                  required
+                />
+              </div>
 
-
-
-
-
+              <div className="pt-4">
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-3 px-5 rounded font-medium uppercase transition duration-200 disabled:opacity-50 flex items-center justify-center gap-2"
+                >
+                  {isLoading ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      <Mail className="w-5 h-5" />
+                      Send Link
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
           </div>
-        </div>
-      {showPopup && (
-        <div className="popup bg-black rounded-lg shadow-xl p-12 border border-yellow-400/20 text-center w-[30%] mx-auto mt-6 absolute top-[50%] left-[50%] transform translate-y-[-50%] translate-x-[-50%]">
-          <div
-            className="close-pop absolute top-[10px] right-[15px] text-white cursor-pointer"
-            onClick={() => setShowPopup(false)}
-          >
-            <X />
-          </div>
-          <input
-            type="email"
-            id="email"
-            placeholder="Enter Email"
-            className="w-full px-4 py-3 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
-            required
-          />
-          <button className="bg-yellow-400 rounded py-3 px-5 font-semibold uppercase hover:bg-yellow-600 text-black mt-5">
-            Send To Email
-          </button>
         </div>
       )}
-      </div>
- </div>
 
+      {/* Delete Confirmation Modal */}
+      {isDeleteModalOpen && fileToDelete && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-zinc-900 p-8 rounded-lg w-full max-w-md relative">
+            <button 
+              onClick={() => {
+                setIsDeleteModalOpen(false);
+                setFileToDelete(null);
+              }}
+              className="absolute top-4 right-4 text-gray-400 hover:text-white"
+            >
+              <span className="sr-only">Close</span>
+              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            
+            <h2 className="text-2xl font-bold text-white mb-6">Delete File</h2>
+            
+            <div className="space-y-4">
+              <p className="text-gray-300">
+                Are you sure you want to delete this file?
+              </p>
+              <p className="text-yellow-400 font-medium">
+                {fileToDelete.file_path.split('/').pop()}
+              </p>
+              
+              <div className="flex gap-4 pt-4">
+                <button
+                  onClick={() => {
+                    setIsDeleteModalOpen(false);
+                    setFileToDelete(null);
+                  }}
+                  className="flex-1 bg-gray-700 hover:bg-gray-600 text-white py-3 px-5 rounded font-medium uppercase transition duration-200"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleDeleteConfirm}
+                  disabled={isDeleting}
+                  className="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 px-5 rounded font-medium uppercase transition duration-200 disabled:opacity-50 flex items-center justify-center gap-2"
+                >
+                  {isDeleting ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      Deleting...
+                    </>
+                  ) : (
+                    'Delete'
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
