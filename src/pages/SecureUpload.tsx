@@ -1,21 +1,44 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { File as FileIcon, Shield, Clock, Upload, AlertCircle } from 'lucide-react';
 import { toast, Toaster } from 'react-hot-toast';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 
 const SecureUpload: React.FC = () => {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [isUploading, setIsUploading] = useState<boolean>(false);
-  const [isValidLink, setIsValidLink] = useState<boolean>(true);
+  const [isValidLink, setIsValidLink] = useState<boolean>(false);
+  const [isCheckingLink, setIsCheckingLink] = useState<boolean>(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [searchParams] = useSearchParams();
   const data = searchParams.get('data');
 
   useEffect(() => {
-    if (!data) {
-      setIsValidLink(false);
-      toast.error('Invalid upload link');
-    }
+    const checkUniqueString = async () => {
+      if (!data) {
+        setIsValidLink(false);
+        setIsCheckingLink(false);
+        return;
+      }
+
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/file/check-unique-string/${data}`);
+        
+        if (response.ok) {
+          setIsValidLink(true);
+        } else {
+          setIsValidLink(false);
+          toast.error('Invalid or expired upload link');
+        }
+      } catch (error) {
+        console.error('Error checking link:', error);
+        setIsValidLink(false);
+        toast.error('Failed to validate upload link');
+      } finally {
+        setIsCheckingLink(false);
+      }
+    };
+
+    checkUniqueString();
   }, [data]);
 
   const handleBrowseClick = (): void => {
@@ -107,7 +130,21 @@ const SecureUpload: React.FC = () => {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
-  if (!data) {
+  if (isCheckingLink) {
+    return (
+      <div className="min-h-screen bg-black flex flex-col items-center justify-center p-4">
+        <Toaster position="top-right" />
+        <div className="bg-zinc-900 rounded-lg shadow-xl p-8 border border-yellow-400/20 text-center max-w-md w-full">
+          <div className="w-8 h-8 border-2 border-yellow-400 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-400">
+            Validating upload link...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isValidLink) {
     return (
       <div className="min-h-screen bg-black flex flex-col items-center justify-center p-4">
         <Toaster position="top-right" />

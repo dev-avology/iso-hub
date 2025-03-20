@@ -42,12 +42,38 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const TOKEN_EXPIRY_DAYS = 29; // 1 day less than the actual 30-day expiry
+const TOKEN_CREATED_KEY = 'auth_token_created';
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [roles, setRoles] = useState<string[]>([]);
   const [permissions, setPermissions] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  const checkTokenExpiry = () => {
+    const tokenCreated = localStorage.getItem(TOKEN_CREATED_KEY);
+    if (!tokenCreated) return false;
+
+    const createdDate = new Date(tokenCreated);
+    const currentDate = new Date();
+    const daysDifference = (currentDate.getTime() - createdDate.getTime()) / (1000 * 60 * 60 * 24);
+
+    return daysDifference >= TOKEN_EXPIRY_DAYS;
+  };
+
+  const clearAuthData = () => {
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('auth_user');
+    localStorage.removeItem('auth_roles');
+    localStorage.removeItem('auth_permissions');
+    localStorage.removeItem(TOKEN_CREATED_KEY);
+    setToken(null);
+    setUser(null);
+    setRoles([]);
+    setPermissions([]);
+  };
 
   useEffect(() => {
     // Check for stored auth data on mount
@@ -57,14 +83,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const storedPermissions = localStorage.getItem('auth_permissions');
     
     if (storedToken && storedUser) {
-      setToken(storedToken);
-      setUser(JSON.parse(storedUser));
-      setRoles(storedRoles ? JSON.parse(storedRoles) : []);
-      setPermissions(storedPermissions ? JSON.parse(storedPermissions) : []);
+      // Check if token is expired
+      if (checkTokenExpiry()) {
+        clearAuthData();
+      } else {
+        setToken(storedToken);
+        setUser(JSON.parse(storedUser));
+        setRoles(storedRoles ? JSON.parse(storedRoles) : []);
+        setPermissions(storedPermissions ? JSON.parse(storedPermissions) : []);
+      }
     }
     
     setIsLoading(false);
   }, []);
+
+  // Set up interval to check token expiry
+  useEffect(() => {
+    if (token) {
+      const interval = setInterval(() => {
+        if (checkTokenExpiry()) {
+          logout();
+        }
+      }, 1000 * 60 * 60); // Check every hour
+
+      return () => clearInterval(interval);
+    }
+  }, [token]);
 
   const login = async (email: string, password: string) => {
     try {
@@ -103,6 +147,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       localStorage.setItem('auth_user', JSON.stringify(cleanUser));
       localStorage.setItem('auth_roles', JSON.stringify(userRoles));
       localStorage.setItem('auth_permissions', JSON.stringify(userPermissions));
+      localStorage.setItem(TOKEN_CREATED_KEY, new Date().toISOString());
       
       setToken(userToken);
       setUser(cleanUser);
@@ -132,15 +177,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
-      // Clear all auth data
-      localStorage.removeItem('auth_token');
-      localStorage.removeItem('auth_user');
-      localStorage.removeItem('auth_roles');
-      localStorage.removeItem('auth_permissions');
-      setToken(null);
-      setUser(null);
-      setRoles([]);
-      setPermissions([]);
+      clearAuthData();
     }
   };
 
