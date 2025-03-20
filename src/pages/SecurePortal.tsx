@@ -229,9 +229,9 @@ const SecurePortal: React.FC = () => {
   };
 
   return (
-    <div className='bg-black min-h-screen'>
+    <div className='bg-black'>
       <Toaster position="top-right" />
-      <div className="max-w-[100%] h-[100vh] flex justify-center m-auto">
+      <div className="max-w-[100%] flex justify-center m-auto">
         <div className="sec-wrap w-[100%]">
           {/* Add Email Button */}
           <div className="flex mb-6">
