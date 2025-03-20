@@ -6,6 +6,7 @@ interface FileData {
   id: number;
   user_id: number;
   file_path: string;
+  file_original_name: string;
   prospect_name: string | null;
   uploaded_at: string;
   created_at: string;
@@ -35,6 +36,7 @@ const SecurePortal: React.FC = () => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [files, setFiles] = useState<FileData[]>([]);
   const [isLoadingFiles, setIsLoadingFiles] = useState(true);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   useEffect(() => {
     fetchFiles();
@@ -44,7 +46,16 @@ const SecurePortal: React.FC = () => {
     try {
       setIsLoadingFiles(true);
       const token = localStorage.getItem('auth_token');
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/file/lists/1`, {
+      const userData = localStorage.getItem('auth_user');
+      
+      if (!userData) {
+        throw new Error('User data not found');
+      }
+
+      const user = JSON.parse(userData);
+      const userId = user.id;
+
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/file/lists/${userId}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -55,7 +66,7 @@ const SecurePortal: React.FC = () => {
       }
 
       const data: ApiResponse = await response.json();
-      setFiles(data.data);
+      setFiles(data.data || []);
     } catch (error) {
       console.error('Error fetching files:', error);
       toast.error('Failed to fetch files');
@@ -78,6 +89,15 @@ const SecurePortal: React.FC = () => {
 
     try {
       const token = localStorage.getItem('auth_token');
+      const userData = localStorage.getItem('auth_user');
+      
+      if (!userData) {
+        throw new Error('User data not found');
+      }
+
+      const user = JSON.parse(userData);
+      const userId = user.id;
+
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/user/send-mail`, {
         method: 'POST',
         headers: {
@@ -86,7 +106,7 @@ const SecurePortal: React.FC = () => {
         },
         body: JSON.stringify({
           ...formData,
-          user_id: '1'
+          user_id: userId.toString()
         }),
       });
 
@@ -142,6 +162,50 @@ const SecurePortal: React.FC = () => {
     }
   };
 
+  const handleDownload = async (file: FileData) => {
+    try {
+      setIsDownloading(true);
+      const token = localStorage.getItem('auth_token');
+      
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/file/download/${file.id}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to download file');
+      }
+
+      // Get the blob from the response
+      const blob = await response.blob();
+      
+      // Create a URL for the blob
+      const url = window.URL.createObjectURL(blob);
+      
+      // Create a temporary link element
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = file.file_original_name; // Use the original filename
+      
+      // Append to body, click, and remove
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      // Clean up the URL
+      window.URL.revokeObjectURL(url);
+      
+      toast.success('File downloaded successfully');
+    } catch (error) {
+      console.error('Error downloading file:', error);
+      toast.error('Failed to download file');
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -150,6 +214,18 @@ const SecurePortal: React.FC = () => {
       hour: '2-digit',
       minute: '2-digit'
     });
+  };
+
+  const calculateRemainingDays = (uploadedAt: string): number => {
+    const uploadDate = new Date(uploadedAt);
+    const expiryDate = new Date(uploadDate);
+    expiryDate.setDate(uploadDate.getDate() + 180); // Add 180 days
+    
+    const today = new Date();
+    const diffTime = expiryDate.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    return Math.max(0, diffDays);
   };
 
   return (
@@ -180,32 +256,42 @@ const SecurePortal: React.FC = () => {
               </div>
             ) : (
               <div>
-                {files.map((file) => (
-                  <div key={file.id} className='group mt-5 w-full px-5 py-3 rounded bg-zinc-900 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500 relative'>
-                    <p className='uploaded-file-name'>
-                      <span className='cursor-pointer hover:text-yellow-600'>
-                        {file.file_path.split('/').pop()}
-                      </span>
-                      <span className='total-v pl-5'>
-                        (Uploaded: {formatDate(file.uploaded_at)})
-                      </span>
-                    </p>
+                {files.map((file) => {
+                  const remainingDays = calculateRemainingDays(file.uploaded_at);
+                  return (
+                    <div key={file.id} className='group mt-5 w-full px-5 py-3 rounded bg-zinc-900 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500 relative'>
+                      <p className='uploaded-file-name'>
+                        <span className='cursor-pointer hover:text-yellow-600'>
+                          {file.file_original_name}
+                        </span>
+                        <span className='total-v pl-5'>
+                          (Expires in {remainingDays} days)
+                        </span>
+                      </p>
 
-                    <div className="addedDetail absolute right-[20px] top-[50%] translate-y-[-50%] hidden group-hover:block">
-                      <ul className='flex gap-4 align-center'>
-                        <li className='cursor-pointer hover:text-yellow-600'>
-                          <Download />
-                        </li>
-                        <li 
-                          className='cursor-pointer hover:text-red-600'
-                          onClick={() => handleDeleteClick(file)}
-                        >
-                          <Trash />
-                        </li>
-                      </ul>
+                      <div className="addedDetail absolute right-[20px] top-[50%] translate-y-[-50%] hidden group-hover:block">
+                        <ul className='flex gap-4 align-center'>
+                          <li 
+                            className='cursor-pointer hover:text-yellow-600'
+                            onClick={() => handleDownload(file)}
+                          >
+                            {isDownloading ? (
+                              <div className="w-5 h-5 border-2 border-yellow-400 border-t-transparent rounded-full animate-spin" />
+                            ) : (
+                              <Download />
+                            )}
+                          </li>
+                          <li 
+                            className='cursor-pointer hover:text-red-600'
+                            onClick={() => handleDeleteClick(file)}
+                          >
+                            <Trash />
+                          </li>
+                        </ul>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>

@@ -80,10 +80,6 @@ export default function Admin() {
     }
   };
 
-  const fetchUserById = async (id: string) => {
-    await fetchUsers(id);
-  };
-
   useEffect(() => {
     fetchUsers();
   }, []);
