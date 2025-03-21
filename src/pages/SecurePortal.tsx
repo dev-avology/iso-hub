@@ -8,6 +8,7 @@ interface FileData {
   file_path: string;
   file_original_name: string;
   prospect_name: string | null;
+  email: string | null;
   uploaded_at: string;
   created_at: string;
   updated_at: string;
@@ -260,14 +261,23 @@ const SecurePortal: React.FC = () => {
                   const remainingDays = calculateRemainingDays(file.uploaded_at);
                   return (
                     <div key={file.id} className='group mt-5 w-full px-5 py-3 rounded bg-zinc-900 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500 relative'>
-                      <p className='uploaded-file-name'>
-                        <span className='cursor-pointer hover:text-yellow-600'>
-                          {file.file_original_name}
-                        </span>
-                        <span className='total-v pl-5'>
-                          (Expires in {remainingDays} days)
-                        </span>
-                      </p>
+                      <div className="flex flex-col">
+                        <p className='uploaded-file-name'>
+                          <span className='cursor-pointer hover:text-yellow-600'>
+                            {file.file_original_name}
+                          </span>
+                          <span className='total-v pl-5'>
+                            (Expires in {remainingDays} days)
+                          </span>
+                        </p>
+                        {(file.prospect_name || file.email) && (
+                          <p className="text-sm text-gray-400 mt-1">
+                            {file.prospect_name && `Sender: ${file.prospect_name}`}
+                            {file.prospect_name && file.email && ' • '}
+                            {file.email && `Email: ${file.email}`}
+                          </p>
+                        )}
+                      </div>
 
                       <div className="addedDetail absolute right-[20px] top-[50%] translate-y-[-50%] hidden group-hover:block">
                         <ul className='flex gap-4 align-center'>
