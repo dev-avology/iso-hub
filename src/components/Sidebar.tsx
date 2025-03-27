@@ -1,4 +1,4 @@
-import { Shield, FileText, Settings, Cpu, User, LogOut, File, Bell } from 'lucide-react';
+import { Shield, FileText, Settings, Cpu, User, LogOut, File, Bell, FormInput } from 'lucide-react';
 import { useAuth } from '../providers/AuthProvider';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { LucideIcon } from 'lucide-react';
@@ -34,6 +34,7 @@ const adminSubMenu = [
   { name: 'Documents', icon: File, path: '/master_database_documents' },
   { name: 'All Reps', icon: User, path: '/all_reps' },
   { name: 'Notifications', icon: Bell, path: '/application_notifications' },
+  // { name: 'Forms', icon: FormInput, path: '/forms' },
 ];
 
 export default function Sidebar({ 
