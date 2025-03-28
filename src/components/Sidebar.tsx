@@ -96,13 +96,13 @@ export default function Sidebar({
           <h2 className="text-lg font-semibold text-white">Categories</h2>
           <nav className="mt-6 navi-links">
             {categories.map((category) => (
-              <div key={category.name} className="relative">
+              <div key={category.name} className="relative group">
                 {category.external ? (
                   <a
                     href={category.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group flex items-center px-3 py-2 text-sm font-medium text-gray-300 rounded-md hover:text-yellow-400 hover:border-l-4 hover:border-yellow-400 relative group"
+                    className="group flex items-center px-3 py-2 text-sm font-medium text-gray-300 rounded-md hover:text-yellow-400 hover:border-l-4 hover:border-yellow-400 relative"
                   >
                     <category.icon className="h-5 w-5 mr-3 text-gray-400 group-hover:text-yellow-400" />
                     {category.name}
@@ -111,7 +111,7 @@ export default function Sidebar({
                   <>
                     <Link
                       to={category.href || `/${category.name.toLowerCase()}`}
-                      className={`group flex items-center px-3 py-2 text-sm font-medium rounded-md hover:text-yellow-400 relative group transition-all
+                      className={`group flex items-center px-3 py-2 text-sm font-medium rounded-md hover:text-yellow-400 relative transition-all
                         ${isActive(category.href || `/${category.name.toLowerCase()}`) 
                           ? 'text-yellow-400 border-l-4 border-yellow-400 pl-2' 
                           : 'text-gray-300 hover:border-l-4 hover:border-yellow-400'}`}
@@ -123,9 +123,9 @@ export default function Sidebar({
                     </Link>
                     
                     {category.name === 'Admin' && (
-                      <div className={`sub_menu absolute top-[102%] left-0 w-full bg-zinc-800 px-2 z-[9] py-5 rounded ${
-                        adminSubMenu.some(item => location.pathname === item.path) ? 'block' : 'hidden group-hover:block'
-                      }`}>
+                      <div className={`sub_menu absolute top-full left-0 w-full bg-zinc-800 px-2 z-[9] py-5 rounded 
+                        ${adminSubMenu.some(item => location.pathname === item.path) ? 'block' : 'hidden group-hover:block'}`}
+                      >
                         <ul>
                           {adminSubMenu.map((item) => (
                             <li key={item.path} className="text-white mt-2 first:mt-0">
