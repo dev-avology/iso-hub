@@ -42,6 +42,7 @@ export default function JotForm() {
   const [searchParams] = useSearchParams();
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const data = searchParams.get('data');
+  const [errors, setErrors] = useState<{ [key: string]: string[] }>({});
 
   useEffect(() => {
     const checkUniqueString = async () => {
@@ -103,14 +104,14 @@ export default function JotForm() {
       };
 
       if (!data) {
-        toast.error('Invalid upload link');
+        toast.error('Invalid form link');
         return;
       }
   
       setIsSubmitting(true);
       
       const token = localStorage.getItem('auth_token');
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/jot-froms`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/jot-forms`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -118,13 +119,26 @@ export default function JotForm() {
         },
         body: JSON.stringify(finalFormData)
       });
-
-      if (!response.ok) {
-        throw new Error('Upload failed');
-      }
       
       const responseData = await response.json();
-      
+
+      if (!response.ok) {
+        if (response.status === 422) {
+          // Set Laravel validation errors in state
+          setErrors(responseData.errors || {});
+          
+          // Loop through errors and show in toaster
+          Object.keys(responseData.errors).forEach((key) => {
+            responseData.errors[key].forEach((errorMsg: string) => {
+              toast.error(errorMsg); // Show each error in a loop
+            });
+          });
+
+        } else {
+          throw new Error(responseData.message || 'Form submission failed');
+        }
+        return;
+      }
     
       console.log('Form submission response:', responseData);
       
@@ -153,6 +167,7 @@ export default function JotForm() {
       }
     } finally {
       setIsSubmitting(false);
+      setErrors({});
     }
   };
 
@@ -206,7 +221,7 @@ export default function JotForm() {
         <form onSubmit={handleSubmit} className="space-y-6 bg-zinc-900 p-6 rounded-lg border border-yellow-400/20">
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
             <div>
-              <label htmlFor="firstName" className="block text-sm font-medium text-gray-300">
+              <label htmlFor="first_name" className="block text-sm font-medium text-gray-300">
                 First Name
               </label>
               <input
@@ -218,10 +233,15 @@ export default function JotForm() {
                 onChange={handleInputChange}
                 className="mt-1 block w-full rounded bg-gray-700 text-white border border-gray-600 focus:border-yellow-400 focus:ring-yellow-400"
               />
+
+              {errors.first_name && (
+                  <p className="text-red-500 text-sm mt-1">{errors.first_name[0]}</p>
+                )}
+
             </div>
 
             <div>
-              <label htmlFor="lastName" className="block text-sm font-medium text-gray-300">
+              <label htmlFor="last_name" className="block text-sm font-medium text-gray-300">
                 Last Name
               </label>
               <input
@@ -233,6 +253,10 @@ export default function JotForm() {
                 onChange={handleInputChange}
                 className="mt-1 block w-full rounded bg-gray-700 text-white border border-gray-600 focus:border-yellow-400 focus:ring-yellow-400"
               />
+
+              {errors.last_name && <p className="text-red-500 text-sm mt-1">{errors.last_name[0]}</p>}
+
+
             </div>
           </div>
 
@@ -250,6 +274,10 @@ export default function JotForm() {
                 onChange={handleInputChange}
                 className="mt-1 block w-full rounded bg-gray-700 text-white border border-gray-600 focus:border-yellow-400 focus:ring-yellow-400"
               />
+
+              {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email[0]}</p>}
+
+
             </div>
 
             <div>
@@ -265,6 +293,9 @@ export default function JotForm() {
                 onChange={handleInputChange}
                 className="mt-1 block w-full rounded bg-gray-700 text-white border border-gray-600 focus:border-yellow-400 focus:ring-yellow-400"
               />
+
+              {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone[0]}</p>}
+
             </div>
           </div>
 
@@ -280,6 +311,10 @@ export default function JotForm() {
               onChange={handleInputChange}
               className="mt-1 block w-full rounded bg-gray-700 text-white border border-gray-600 focus:border-yellow-400 focus:ring-yellow-400"
             />
+
+            {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description[0]}</p>}
+
+
           </div>
 
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
@@ -297,6 +332,10 @@ export default function JotForm() {
                   onChange={handleInputChange}
                   className="mt-1 block w-full rounded bg-gray-700 text-white border border-gray-600 focus:border-yellow-400 focus:ring-yellow-400 px-3 py-2"
                 />
+
+                {errors.signature_date && <p className="text-red-500 text-sm mt-1">{errors.signature_date[0]}</p>}
+
+
                 <Calendar className="absolute right-3 top-2.5 h-5 w-5 text-gray-400 pointer-events-none" />
               </div>
             </div>
@@ -313,6 +352,10 @@ export default function JotForm() {
                   className: 'w-full h-40 bg-white rounded'
                 }}
               />
+
+              {errors.signature && <p className="text-red-500 text-sm mt-1">{errors.signature[0]}</p>}
+
+
             </div>
             <button
               type="button"
