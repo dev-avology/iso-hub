@@ -6,11 +6,13 @@ import { toast, Toaster } from 'react-hot-toast';
 import { AlertCircle } from 'lucide-react';
 
 interface FormData {
-  first_name: string;
-  last_name: string;
-  email: string;
-  phone: string;
+  dba: string;
   description: string;
+  address2: string;
+  city: string;
+  state: string;
+  pincode: string;
+  is_same_shipping_address: string;
   signature_date: string;
   signature: string;
 }
@@ -26,11 +28,13 @@ const datePickerStyles = `
 
 export default function JotForm() {
   const [formData, setFormData] = useState<FormData>({
-    first_name: '',
-    last_name: '',
-    email: '',
-    phone: '',
+    dba: '',
     description: '',
+    address2: '',
+    city: '',
+    state: '',
+    pincode: '',
+    is_same_shipping_address: '0',
     signature_date: '',
     signature: ''
   });
@@ -53,7 +57,7 @@ export default function JotForm() {
       }
 
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/file/check-unique-string/${data}`);
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/jotform-check-unique-string/${data}`);
         
         if (response.ok) {
           setIsValidLink(true);
@@ -74,8 +78,12 @@ export default function JotForm() {
   }, [data]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = e.target as HTMLInputElement;
+    if (type === 'checkbox') {
+      setFormData(prev => ({ ...prev, [name]: checked ? '1' : '0' }));
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
+    }
   };
 
   const clearSignature = () => {
@@ -146,11 +154,13 @@ export default function JotForm() {
       
       // Clear form after successful submission
       setFormData({
-        first_name: '',
-        last_name: '',
-        email: '',
-        phone: '',
+        dba: '',
         description: '',
+        address2: '',
+        city: '',
+        state: '',
+        pincode: '',
+        is_same_shipping_address: '0',
         signature_date: '',
         signature: ''
       });
@@ -210,98 +220,35 @@ export default function JotForm() {
           <div className="flex items-center space-x-3">
             <FileText className="h-10 w-10 text-black" />
             <div>
-              <h1 className="text-3xl font-bold text-black">Jot Form</h1>
+              <h1 className="text-3xl font-bold text-black">CoCard Merchant Services Pre-Application
+              </h1>
               <p className="text-black/80 mt-1">
-                Please fill out all required fields below
+                Tracer C2 Financial Services
               </p>
             </div>
           </div>
         </div>
         
         <form onSubmit={handleSubmit} className="space-y-6 bg-zinc-900 p-6 rounded-lg border border-yellow-400/20">
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-            <div>
-              <label htmlFor="first_name" className="block text-sm font-medium text-gray-300">
-                First Name
-              </label>
-              <input
-                type="text"
-                id="firstName"
-                name="first_name"
-                required
-                value={formData.first_name}
-                onChange={handleInputChange}
-                className="mt-1 block w-full rounded bg-gray-700 text-white border border-gray-600 focus:border-yellow-400 focus:ring-yellow-400"
-              />
-
-              {errors.first_name && (
-                  <p className="text-red-500 text-sm mt-1">{errors.first_name[0]}</p>
-                )}
-
-            </div>
-
-            <div>
-              <label htmlFor="last_name" className="block text-sm font-medium text-gray-300">
-                Last Name
-              </label>
-              <input
-                type="text"
-                id="lastName"
-                name="last_name"
-                required
-                value={formData.last_name}
-                onChange={handleInputChange}
-                className="mt-1 block w-full rounded bg-gray-700 text-white border border-gray-600 focus:border-yellow-400 focus:ring-yellow-400"
-              />
-
-              {errors.last_name && <p className="text-red-500 text-sm mt-1">{errors.last_name[0]}</p>}
-
-
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-300">
-                Email
-              </label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                required
-                value={formData.email}
-                onChange={handleInputChange}
-                className="mt-1 block w-full rounded bg-gray-700 text-white border border-gray-600 focus:border-yellow-400 focus:ring-yellow-400"
-              />
-
-              {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email[0]}</p>}
-
-
-            </div>
-
-            <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-gray-300">
-                Phone
-              </label>
-              <input
-                type="tel"
-                id="phone"
-                name="phone"
-                required
-                value={formData.phone}
-                onChange={handleInputChange}
-                className="mt-1 block w-full rounded bg-gray-700 text-white border border-gray-600 focus:border-yellow-400 focus:ring-yellow-400"
-              />
-
-              {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone[0]}</p>}
-
-            </div>
+          <div>
+            <label htmlFor="dba" className="block text-sm font-medium text-gray-300">
+              DBA (Doing Business As)
+            </label>
+            <input
+              type="text"
+              id="dba"
+              name="dba"
+              required
+              value={formData.dba}
+              onChange={handleInputChange}
+              className="mt-1 block w-full rounded bg-gray-700 text-white border border-gray-600 focus:border-yellow-400 focus:ring-yellow-400"
+            />
+            {errors.dba && <p className="text-red-500 text-sm mt-1">{errors.dba[0]}</p>}
           </div>
 
           <div>
             <label htmlFor="description" className="block text-sm font-medium text-gray-300">
-              Description
+              Street Address
             </label>
             <textarea
               id="description"
@@ -311,33 +258,107 @@ export default function JotForm() {
               onChange={handleInputChange}
               className="mt-1 block w-full rounded bg-gray-700 text-white border border-gray-600 focus:border-yellow-400 focus:ring-yellow-400"
             />
-
             {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description[0]}</p>}
+          </div>
 
+          <div>
+            <label htmlFor="address2" className="block text-sm font-medium text-gray-300">
+              Street Address Line 2
+            </label>
+            <input
+              type="text"
+              id="address2"
+              name="address2"
+              required
+              value={formData.address2}
+              onChange={handleInputChange}
+              className="mt-1 block w-full rounded bg-gray-700 text-white border border-gray-600 focus:border-yellow-400 focus:ring-yellow-400"
+            />
+            {errors.address2 && <p className="text-red-500 text-sm mt-1">{errors.address2[0]}</p>}
+          </div>
 
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+            <div>
+              <label htmlFor="city" className="block text-sm font-medium text-gray-300">
+                City
+              </label>
+              <input
+                type="text"
+                id="city"
+                name="city"
+                required
+                value={formData.city}
+                onChange={handleInputChange}
+                className="mt-1 block w-full rounded bg-gray-700 text-white border border-gray-600 focus:border-yellow-400 focus:ring-yellow-400"
+              />
+              {errors.city && <p className="text-red-500 text-sm mt-1">{errors.city[0]}</p>}
+            </div>
+
+            <div>
+              <label htmlFor="state" className="block text-sm font-medium text-gray-300">
+               State / Province
+              </label>
+              <input
+                type="text"
+                id="state"
+                name="state"
+                required
+                value={formData.state}
+                onChange={handleInputChange}
+                className="mt-1 block w-full rounded bg-gray-700 text-white border border-gray-600 focus:border-yellow-400 focus:ring-yellow-400"
+              />
+              {errors.state && <p className="text-red-500 text-sm mt-1">{errors.state[0]}</p>}
+            </div>
+
+            <div>
+              <label htmlFor="pincode" className="block text-sm font-medium text-gray-300">
+                Postal / Zip Code
+              </label>
+              <input
+                type="text"
+                id="pincode"
+                name="pincode"
+                required
+                value={formData.pincode}
+                onChange={handleInputChange}
+                className="mt-1 block w-full rounded bg-gray-700 text-white border border-gray-600 focus:border-yellow-400 focus:ring-yellow-400"
+              />
+              {errors.pincode && <p className="text-red-500 text-sm mt-1">{errors.pincode[0]}</p>}
+            </div>
+          </div>
+
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              id="is_same_shipping_address"
+              name="is_same_shipping_address"
+              checked={formData.is_same_shipping_address === '1'}
+              onChange={handleInputChange}
+              className="h-4 w-4 rounded border-gray-300 text-yellow-400 focus:ring-yellow-400"
+            />
+            <label htmlFor="is_same_shipping_address" className="ml-2 block text-sm text-gray-300">
+              Shipping Address is the Same
+            </label>
           </div>
 
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
             <div>
-              <label htmlFor="date" className="block text-sm font-medium text-gray-300">
+              <label htmlFor="signature_date" className="block text-sm font-medium text-gray-300">
                 Date
               </label>
               <div className="relative">
                 <input
                   type="date"
-                  id="date"
+                  id="signature_date"
                   name="signature_date"
                   required
                   value={formData.signature_date}
                   onChange={handleInputChange}
                   className="mt-1 block w-full rounded bg-gray-700 text-white border border-gray-600 focus:border-yellow-400 focus:ring-yellow-400 px-3 py-2"
                 />
-
-                {errors.signature_date && <p className="text-red-500 text-sm mt-1">{errors.signature_date[0]}</p>}
-
-
                 <Calendar className="absolute right-3 top-2.5 h-5 w-5 text-gray-400 pointer-events-none" />
               </div>
+              {errors.signature_date && <p className="text-red-500 text-sm mt-1">{errors.signature_date[0]}</p>}
             </div>
           </div>
 
@@ -352,10 +373,6 @@ export default function JotForm() {
                   className: 'w-full h-40 bg-white rounded'
                 }}
               />
-
-              {errors.signature && <p className="text-red-500 text-sm mt-1">{errors.signature[0]}</p>}
-
-
             </div>
             <button
               type="button"
@@ -364,6 +381,7 @@ export default function JotForm() {
             >
               Clear Signature
             </button>
+            {errors.signature && <p className="text-red-500 text-sm mt-1">{errors.signature[0]}</p>}
           </div>
 
           <div className="flex justify-end">

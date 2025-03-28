@@ -90,14 +90,13 @@ export default function Sidebar({
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto relative">
-          <div className="px-4 py-6">
-            <h2 className="text-lg font-semibold text-white">Categories</h2>
-            <nav className="mt-6 navi-links">
-              {categories.map((category) => (
-                category.external ? (
+        <div className="px-4 py-6">
+          <h2 className="text-lg font-semibold text-white">Categories</h2>
+          <nav className="mt-6 navi-links">
+            {categories.map((category) => (
+              <div key={category.name} className="relative">
+                {category.external ? (
                   <a
-                    key={category.name}
                     href={category.href}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -107,51 +106,55 @@ export default function Sidebar({
                     {category.name}
                   </a>
                 ) : (
-                  <Link
-                    key={category.name}
-                    to={category.href || `/${category.name.toLowerCase()}`}
-                    className={`group flex items-center px-3 py-2 text-sm font-medium rounded-md hover:text-yellow-400 relative group transition-all
-                      ${isActive(category.href || `/${category.name.toLowerCase()}`) 
-                        ? 'text-yellow-400 border-l-4 border-yellow-400 pl-2' 
-                        : 'text-gray-300 hover:border-l-4 hover:border-yellow-400'}`}
-                  >
-                    <category.icon className={`h-5 w-5 mr-3 ${isActive(category.href || `/${category.name.toLowerCase()}`) 
-                      ? 'text-yellow-400' 
-                      : 'text-gray-400 group-hover:text-yellow-400'}`} />
-                    {category.name}
-                    {category.name === "Admin" && (
-                      <ul className={`sub_menu absolute top-[102%] left-0 w-full bg-zinc-800 px-2 z-[9] py-5 group rounded hover:block group-hover:block ${
-                        adminSubMenu.some(item => location.pathname === item.path) ? 'block' : 'hidden'
+                  <>
+                    <Link
+                      to={category.href || `/${category.name.toLowerCase()}`}
+                      className={`group flex items-center px-3 py-2 text-sm font-medium rounded-md hover:text-yellow-400 relative group transition-all
+                        ${isActive(category.href || `/${category.name.toLowerCase()}`) 
+                          ? 'text-yellow-400 border-l-4 border-yellow-400 pl-2' 
+                          : 'text-gray-300 hover:border-l-4 hover:border-yellow-400'}`}
+                    >
+                      <category.icon className={`h-5 w-5 mr-3 ${isActive(category.href || `/${category.name.toLowerCase()}`) 
+                        ? 'text-yellow-400' 
+                        : 'text-gray-400 group-hover:text-yellow-400'}`} />
+                      {category.name}
+                    </Link>
+                    
+                    {category.name === 'Admin' && (
+                      <div className={`sub_menu absolute top-[102%] left-0 w-full bg-zinc-800 px-2 z-[9] py-5 rounded ${
+                        adminSubMenu.some(item => location.pathname === item.path) ? 'block' : 'hidden group-hover:block'
                       }`}>
-                        {adminSubMenu.map((item) => (
-                          <li key={item.path} className="text-white mt-2 first:mt-0">
-                            <Link 
-                              to={item.path}
-                              className={`flex py-2 px-3 gap-2 items-center text-md rounded-md transition-all
-                                ${location.pathname === item.path 
-                                  ? 'bg-black border-l-4 border-yellow-400 text-yellow-400' 
-                                  : 'bg-black hover:border-l-4 hover:border-yellow-400 hover:text-yellow-400'}`}
-                            >
-                              <item.icon className={`w-5 h-5 ${location.pathname === item.path ? 'text-yellow-400' : ''}`}/> 
-                              {item.name}
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
+                        <ul>
+                          {adminSubMenu.map((item) => (
+                            <li key={item.path} className="text-white mt-2 first:mt-0">
+                              <Link 
+                                to={item.path}
+                                className={`flex py-2 px-3 gap-2 items-center text-md rounded-md transition-all
+                                  ${location.pathname === item.path 
+                                    ? 'bg-black border-l-4 border-yellow-400 text-yellow-400' 
+                                    : 'bg-black hover:border-l-4 hover:border-yellow-400 hover:text-yellow-400'}`}
+                              >
+                                <item.icon className={`w-5 h-5 ${location.pathname === item.path ? 'text-yellow-400' : ''}`}/> 
+                                {item.name}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     )}
-                  </Link>
-                )
-              ))}
-            </nav>
-          </div>
-          <button 
-            onClick={handleLogout}
-            className='absolute bottom-5 left-[50%] translate-x-[-50%] w-[90%] bg-yellow-400 rounded py-3 font-semibold uppercase flex items-center justify-center hover:bg-yellow-600 gap-2 text-black'
-          >
-            <LogOut className="w-5 h-5" />
-            Logout
-          </button>
+                  </>
+                )}
+              </div>
+            ))}
+          </nav>
         </div>
+        <button 
+          onClick={handleLogout}
+          className='absolute bottom-5 left-[50%] translate-x-[-50%] w-[90%] bg-yellow-400 rounded py-3 font-semibold uppercase flex items-center justify-center hover:bg-yellow-600 gap-2 text-black'
+        >
+          <LogOut className="w-5 h-5" />
+          Logout
+        </button>
       </div>
     </div>
   );
