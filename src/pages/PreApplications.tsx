@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FormInput, Eye, Loader2, X } from 'lucide-react';
+import { FormInput, Eye, Loader2, X, Copy, CheckCircle, ExternalLink } from 'lucide-react';
 import { toast, Toaster } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
@@ -44,8 +44,23 @@ export default function PreApplications() {
   const [selectedForm, setSelectedForm] = useState<FormData | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
+  const [copied, setCopied] = useState(false);
   const navigate = useNavigate();
   const [errors, setErrors] = useState<{ [key: string]: string[] }>({});
+
+  const preAppLink = `${window.location.origin}/jot-forms?data=eyJpdiI6IlVsRnJidStaYVJxZnNhektpZFBLc1E9PSIsInZhbHVlIjoidWNqVTFXNzZEWHN5MjBRWG05SldLMDFZQnE4TVZ2SWxFZ2NMcTBXWDR0VWtjNnZqeU1PbnkwUnNURE5ZQktpVDlmUzFtOW9TSXNZeHQzUE9waUYxd05uQ0JQUDIyNWZqb3dBY1lsdEwwQW89IiwibWFjIjoiZGVkODEwN2Q4OWM4MWY4MjUwZGJiZDZlMjc3YmUzYWFhZGU2MWUzOWQ2ZjRhYzZiMjQ2NzRmY2E2YTM0NWFjMCIsInRhZyI6IiJ9`; // The base URL for your form
+
+  const copyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(preAppLink);
+      setCopied(true);
+      toast.success('Link copied to clipboard!');
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy link:', err);
+      toast.error('Failed to copy link');
+    }
+  };
 
   useEffect(() => {
     const token = localStorage.getItem('auth_token');
@@ -165,6 +180,49 @@ export default function PreApplications() {
               Manage and track merchant pre-applications.
             </p>
           </div>
+        </div>
+      </div>
+
+      {/* Pre-Application Link Section */}
+      <div className="bg-zinc-900 rounded-lg shadow-sm p-6 mb-8 border border-yellow-400/20">
+        <h2 className="text-lg font-semibold text-white mb-4">Pre-Application Form Link</h2>
+        <div className="flex items-center space-x-4">
+          <div className="flex-1 min-w-0">
+            <div className="relative flex items-center">
+              <input
+                type="text"
+                readOnly
+                value={preAppLink}
+                className="block w-full pr-10 truncate bg-zinc-800 border-zinc-700 text-white rounded-md focus:ring-yellow-400 focus:border-yellow-400"
+              />
+              <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+                <a
+                  href={preAppLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-400 hover:text-yellow-400"
+                >
+                  <ExternalLink className="h-5 w-5" />
+                </a>
+              </div>
+            </div>
+          </div>
+          <button
+            onClick={copyLink}
+            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-yellow-400 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400"
+          >
+            {copied ? (
+              <>
+                <CheckCircle className="h-5 w-5 mr-2" />
+                Copied!
+              </>
+            ) : (
+              <>
+                <Copy className="h-5 w-5 mr-2" />
+                Copy Link
+              </>
+            )}
+          </button>
         </div>
       </div>
 
