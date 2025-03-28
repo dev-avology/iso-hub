@@ -68,7 +68,9 @@ export default function Sidebar({
     return location.pathname === path;
   };
 
+  
   const categories = isAdmin ? adminCategories : nonAdminCategories;
+  console.log(categories,'categories');
 
   return (
     <div className={`
