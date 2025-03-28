@@ -24,6 +24,8 @@ import Documents from './pages/Documents/documents';
 import Reps from './pages/Reps/reps';
 import Notifications from './pages/notifications/notifications';
 import Marketing from './pages/Marketing/marketing';
+import Forms from './pages/Forms/forms';
+import JotForm from './pages/JotForms/JotForm';
 
 function Dashboard() {
   return (
@@ -86,6 +88,7 @@ function App() {
         <Routes>
           <Route path="/login" element={<LogIn />} />
           <Route path="/secure-upload" element={<SecureUpload />} />
+          <Route path="/jot-forms" element={<JotForm />} />
           
           {/* Regular protected routes */}
           <Route path="/" element={<ProtectedLayout><Dashboard /></ProtectedLayout>} />
@@ -107,6 +110,7 @@ function App() {
           <Route path="/application_notifications" element={<ProtectedAdminLayout><Notifications /></ProtectedAdminLayout>} />
           <Route path="/addusers" element={<ProtectedAdminLayout><AddUsers /></ProtectedAdminLayout>} />
           <Route path="/edituser" element={<ProtectedAdminLayout><EditUsers /></ProtectedAdminLayout>} />
+          <Route path="/forms" element={<ProtectedAdminLayout><Forms /></ProtectedAdminLayout>} />
           
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

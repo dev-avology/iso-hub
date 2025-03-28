@@ -1,79 +1,175 @@
-import React, { useState } from 'react';
-import { Copy, CheckCircle, ExternalLink, FormInput } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { FormInput, Eye, Loader2, X, Copy, CheckCircle, ExternalLink } from 'lucide-react';
+import { toast, Toaster } from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
-interface Application {
-  id: string;
-  submittedAt: string;
-  businessName: string;
-  contactName: string;
-  email: string;
-  phone: string;
-  status: 'new' | 'in_review' | 'approved' | 'declined';
+interface FormData {
+  id: number;
+  dba: string;
+  description: string;
+  address2: string;
+  state: string;
+  city: string;
+  pincode: string;
+  status: number;
+  first_name: string | null;
+  last_name: string | null;
+  email: string | null;
+  phone: string | null;
+  is_same_shipping_address: string;
+  signature: string;
+  signature_date: string;
+  created_at: string;
+  updated_at: string;
+  user_id: number;
 }
 
-// Sample data - in a real app, this would come from JotForm API
-const applications: Application[] = [
-  {
-    id: '1',
-    submittedAt: '2024-03-15T10:30:00Z',
-    businessName: 'Acme Corp',
-    contactName: 'John Doe',
-    email: 'john@acmecorp.com',
-    phone: '(555) 123-4567',
-    status: 'new'
-  },
-  {
-    id: '2',
-    submittedAt: '2024-03-14T15:45:00Z',
-    businessName: 'Tech Solutions LLC',
-    contactName: 'Jane Smith',
-    email: 'jane@techsolutions.com',
-    phone: '(555) 987-6543',
-    status: 'in_review'
-  }
-];
+interface ApiResponse {
+  status: string;
+  message: string;
+  data: FormData[];
+  errors?: { [key: string]: string[] };
+}
+
+interface FormDetailsResponse {
+  status: string;
+  message: string;
+  data: FormData[];
+  errors?: { [key: string]: string[] };
+}
 
 export default function PreApplications() {
+  const [forms, setForms] = useState<FormData[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedForm, setSelectedForm] = useState<FormData | null>(null);
+  const [showModal, setShowModal] = useState(false);
+  const [isLoadingDetails, setIsLoadingDetails] = useState(false);
   const [copied, setCopied] = useState(false);
-  const preAppLink = 'https://form.jotform.com/your-form-id'; // Replace with actual JotForm link
+  const navigate = useNavigate();
+  const [errors, setErrors] = useState<{ [key: string]: string[] }>({});
+
+  const preAppLink = `${window.location.origin}/jot-forms?data=eyJpdiI6IlVsRnJidStaYVJxZnNhektpZFBLc1E9PSIsInZhbHVlIjoidWNqVTFXNzZEWHN5MjBRWG05SldLMDFZQnE4TVZ2SWxFZ2NMcTBXWDR0VWtjNnZqeU1PbnkwUnNURE5ZQktpVDlmUzFtOW9TSXNZeHQzUE9waUYxd05uQ0JQUDIyNWZqb3dBY1lsdEwwQW89IiwibWFjIjoiZGVkODEwN2Q4OWM4MWY4MjUwZGJiZDZlMjc3YmUzYWFhZGU2MWUzOWQ2ZjRhYzZiMjQ2NzRmY2E2YTM0NWFjMCIsInRhZyI6IiJ9`; // The base URL for your form
 
   const copyLink = async () => {
     try {
       await navigator.clipboard.writeText(preAppLink);
       setCopied(true);
+      toast.success('Link copied to clipboard!');
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       console.error('Failed to copy link:', err);
+      toast.error('Failed to copy link');
     }
   };
 
-  const getStatusColor = (status: Application['status']) => {
-    switch (status) {
-      case 'new':
-        return 'bg-blue-100 text-blue-800';
-      case 'in_review':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'approved':
-        return 'bg-green-100 text-green-800';
-      case 'declined':
-        return 'bg-red-100 text-red-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
+  useEffect(() => {
+    const token = localStorage.getItem('auth_token');
+    if (!token) {
+      toast.error('Please login to view pre-applications');
+      navigate('/login');
+      return;
+    }
+    fetchForms();
+  }, [navigate]);
+
+  const fetchForms = async (id?: string) => {
+    try {
+      setIsLoading(true);
+      const token = localStorage.getItem('auth_token');
+      
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/jotform/lists`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: id ? JSON.stringify({ id: id }) : undefined,
+      });
+
+      const responseData: ApiResponse = await response.json();
+
+      if (!response.ok) {
+        if (response.status === 422) {
+          setErrors(responseData.errors || {});
+          Object.keys(responseData.errors || {}).forEach((key) => {
+            responseData.errors?.[key].forEach((errorMsg: string) => {
+              toast.error(errorMsg);
+            });
+          });
+        } else if (response.status === 401) {
+          localStorage.removeItem('auth_token');
+          toast.error('Session expired. Please login again');
+          navigate('/login');
+        } else {
+          throw new Error(responseData.message || 'Form submission failed');
+        }
+        return;
+      }
+
+      if (responseData.status === 'error') {
+        throw new Error(responseData.message || 'Failed to fetch forms');
+      }
+      
+      setForms(responseData.data || []);
+    } catch (error) {
+      console.error('Error fetching forms:', error);
+      toast.error(error instanceof Error ? error.message : 'Failed to load pre-applications');
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: 'numeric',
-      minute: 'numeric'
-    });
+  const fetchFormDetails = async (id: number) => {
+    try {
+      setIsLoadingDetails(true);
+      const token = localStorage.getItem('auth_token');
+      
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/jotform/${id}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      const responseData: FormDetailsResponse = await response.json();
+
+      if (!response.ok) {
+        if (response.status === 422) {
+          setErrors(responseData.errors || {});
+          Object.keys(responseData.errors || {}).forEach((key) => {
+            responseData.errors?.[key].forEach((errorMsg: string) => {
+              toast.error(errorMsg);
+            });
+          });
+        } else if (response.status === 401) {
+          localStorage.removeItem('auth_token');
+          toast.error('Session expired. Please login again');
+          navigate('/login');
+        } else {
+          throw new Error(responseData.message || 'Form submission failed');
+        }
+        return;
+      }
+
+      if (responseData.status === 'error') {
+        throw new Error(responseData.message || 'Failed to fetch form details');
+      }
+      
+      setSelectedForm(responseData.data[0]);
+      setShowModal(true);
+    } catch (error) {
+      console.error('Error fetching form details:', error);
+      toast.error(error instanceof Error ? error.message : 'Failed to load form details');
+    } finally {
+      setIsLoadingDetails(false);
+    }
   };
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <Toaster position="top-right" />
+      
       {/* Header */}
       <div className="mb-8 bg-yellow-400 rounded-lg p-6 shadow-lg">
         <div className="flex items-center space-x-3">
@@ -88,8 +184,8 @@ export default function PreApplications() {
       </div>
 
       {/* Pre-Application Link Section */}
-      <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Pre-Application Form Link</h2>
+      <div className="bg-zinc-900 rounded-lg shadow-sm p-6 mb-8 border border-yellow-400/20">
+        <h2 className="text-lg font-semibold text-white mb-4">Pre-Application Form Link</h2>
         <div className="flex items-center space-x-4">
           <div className="flex-1 min-w-0">
             <div className="relative flex items-center">
@@ -97,14 +193,14 @@ export default function PreApplications() {
                 type="text"
                 readOnly
                 value={preAppLink}
-                className="block w-full pr-10 truncate border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500"
+                className="block w-full pr-10 truncate bg-zinc-800 border-zinc-700 text-white rounded-md focus:ring-yellow-400 focus:border-yellow-400"
               />
               <div className="absolute inset-y-0 right-0 flex items-center pr-3">
                 <a
                   href={preAppLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-400 hover:text-gray-500"
+                  className="text-gray-400 hover:text-yellow-400"
                 >
                   <ExternalLink className="h-5 w-5" />
                 </a>
@@ -113,7 +209,7 @@ export default function PreApplications() {
           </div>
           <button
             onClick={copyLink}
-            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-yellow-400 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400"
           >
             {copied ? (
               <>
@@ -130,59 +226,191 @@ export default function PreApplications() {
         </div>
       </div>
 
-      {/* Applications Table */}
-      <div className="bg-white shadow-sm rounded-lg overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Submitted
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Business
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Contact
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th scope="col" className="relative px-6 py-3">
-                  <span className="sr-only">Actions</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {applications.map((application) => (
-                <tr key={application.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {formatDate(application.submittedAt)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">{application.businessName}</div>
-                    <div className="text-sm text-gray-500">{application.email}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{application.contactName}</div>
-                    <div className="text-sm text-gray-500">{application.phone}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(application.status)}`}>
-                      {application.status.replace('_', ' ').toUpperCase()}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <button className="text-green-600 hover:text-green-900">
-                      View Details
-                    </button>
-                  </td>
+      {/* Pre-Application List */}
+      <div className="bg-zinc-900 rounded-lg shadow-sm p-6 mb-8">
+        <h2 className="text-lg font-semibold text-white mb-4">Pre-Application List</h2>
+        
+        {isLoading ? (
+          <div className="flex justify-center items-center py-8">
+            <Loader2 className="h-8 w-8 animate-spin text-yellow-400" />
+          </div>
+        ) : forms.length === 0 ? (
+          <p className="text-gray-400 text-center py-8">No pre-applications found.</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-700">
+              <thead>
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">DBA</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Street Address</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Street Address Line 2</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">City</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">State/Province</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Pincode</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Status</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="divide-y divide-gray-700">
+                {forms.map((form) => (
+                  <tr key={form.id} className="hover:bg-zinc-800">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{form.dba}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{form.description}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{form.address2}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{form.city}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{form.state}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{form.pincode}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                        ${form.status === 0 ? 'bg-yellow-100 text-yellow-800' : 
+                          form.status === 1 ? 'bg-blue-100 text-blue-800' :
+                          form.status === 2 ? 'bg-green-100 text-green-800' : 
+                          form.status === 3 ? 'bg-red-100 text-red-800' :
+                          'bg-gray-100 text-gray-800'}`}>
+                        {form.status === 0 ? 'New' : 
+                         form.status === 1 ? 'In Review' :
+                         form.status === 2 ? 'Approved' : 
+                         form.status === 3 ? 'Declined' :
+                         'Unknown'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                      <button
+                        onClick={() => fetchFormDetails(form.id)}
+                        className="text-yellow-400 hover:text-yellow-500 flex items-center gap-1"
+                      >
+                        <Eye className="h-4 w-4" />
+                        View
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
+
+      {/* Form Details Modal */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-zinc-900 rounded-lg p-8 max-w-3xl w-full mx-4 relative max-h-[90vh] overflow-y-auto border border-yellow-400/20">
+            <button
+              onClick={() => setShowModal(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-yellow-400 transition-colors"
+            >
+              <X className="h-6 w-6" />
+            </button>
+            
+            <div className="text-center mb-8">
+              <h2 className="text-2xl font-bold text-yellow-400">Form Details</h2>
+              <div className="mt-2 h-1 w-24 bg-yellow-400 mx-auto rounded-full"></div>
+            </div>
+            
+            {isLoadingDetails ? (
+              <div className="flex justify-center items-center py-8">
+                <Loader2 className="h-8 w-8 animate-spin text-yellow-400" />
+              </div>
+            ) : selectedForm ? (
+              <div className="space-y-8">
+                {/* Business Information */}
+                <div className="bg-zinc-800/50 rounded-lg p-6 border border-zinc-700">
+                  <h3 className="text-lg font-semibold text-yellow-400 mb-4">Business Information</h3>
+                  <div className="grid grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-400">DBA(Doing Business As)</label>
+                      <p className="mt-1 text-white font-medium">{selectedForm.dba}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Address Information */}
+                <div className="bg-zinc-800/50 rounded-lg p-6 border border-zinc-700">
+                  <h3 className="text-lg font-semibold text-yellow-400 mb-4">Address Information</h3>
+                  <div className="grid grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-400">Street Address
+                      </label>
+                      <p className="mt-1 text-white font-medium">{selectedForm.description}</p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-400">Street Address Line 2
+                      </label>
+                      <p className="mt-1 text-white font-medium">{selectedForm.address2}</p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-400">City</label>
+                      <p className="mt-1 text-white font-medium">{selectedForm.city}</p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-400">State</label>
+                      <p className="mt-1 text-white font-medium">{selectedForm.state}</p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-400">Pincode</label>
+                      <p className="mt-1 text-white font-medium">{selectedForm.pincode}</p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-400">Same Shipping Address</label>
+                      <p className="mt-1 text-white font-medium">{selectedForm.is_same_shipping_address === '1' ? 'Yes' : 'No'}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Status Information */}
+                <div className="bg-zinc-800/50 rounded-lg p-6 border border-zinc-700">
+                  <h3 className="text-lg font-semibold text-yellow-400 mb-4">Status Information</h3>
+                  <div className="grid grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-400">Status</label>
+                      <span className={`mt-2 px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full 
+                        ${selectedForm.status === 0 ? 'bg-yellow-100 text-yellow-800' : 
+                          selectedForm.status === 1 ? 'bg-blue-100 text-blue-800' :
+                          selectedForm.status === 2 ? 'bg-green-100 text-green-800' : 
+                          selectedForm.status === 3 ? 'bg-red-100 text-red-800' :
+                          'bg-gray-100 text-gray-800'}`}>
+                        {selectedForm.status === 0 ? 'New' : 
+                         selectedForm.status === 1 ? 'In Review' :
+                         selectedForm.status === 2 ? 'Approved' : 
+                         selectedForm.status === 3 ? 'Declined' :
+                         'Unknown'}
+                      </span>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-400">Created At</label>
+                      <p className="mt-1 text-white font-medium">{new Date(selectedForm.created_at).toLocaleString()}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Signature Section */}
+                <div className="bg-zinc-800/50 rounded-lg p-6 border border-zinc-700">
+                  <h3 className="text-lg font-semibold text-yellow-400 mb-4">Signature</h3>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-400">Date Signed</label>
+                      <p className="mt-1 text-white font-medium">{selectedForm.signature_date}</p>
+                    </div>
+                    {selectedForm.signature ? (
+                      <div className="mt-4 bg-white p-4 rounded-lg">
+                        <img 
+                          src={selectedForm.signature} 
+                          alt="Signature" 
+                          className="max-w-full h-auto mx-auto"
+                        />
+                      </div>
+                    ) : (
+                      <p className="text-gray-400">No signature available</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <p className="text-gray-400 text-center py-8">No form details available.</p>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
