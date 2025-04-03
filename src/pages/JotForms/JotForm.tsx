@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { FileText, Calendar, Loader2 } from 'lucide-react';
+import { FileText, Calendar, Loader2, FastForward } from 'lucide-react';
 import SignaturePad from 'react-signature-canvas';
 import { useSearchParams } from 'react-router-dom';
 import { toast, Toaster } from 'react-hot-toast';
@@ -47,27 +47,63 @@ export default function JotForm() {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const data = searchParams.get('data');
   const [errors, setErrors] = useState<{ [key: string]: string[] }>({});
+  const [isReadOnly, setIsReadOnly] = useState<{ readOnly?: boolean, disabled?: boolean }>({});
 
   useEffect(() => {
     const checkUniqueString = async () => {
       if (!data) {
-        setIsValidLink(false);
+        setIsValidLink(true);
         setIsCheckingLink(false);
+        setIsReadOnly({}); // No readonly/disabled when no URL data
+        setFormData({
+          dba: '',
+          description: '',
+          address2: '',
+          city: '',
+          state: '',
+          pincode: '',
+          is_same_shipping_address: '0',
+          signature_date: '',
+          signature: ''
+        });
         return;
       }
 
       try {
         const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/jotform-check-unique-string/${data}`);
+        const responseData = await response.json();
         
         if (response.ok) {
           setIsValidLink(true);
+
+          // Store fetched data if available
+          if (responseData.data && Object.keys(responseData.data).length > 0) {
+            console.log('Form data received:', responseData.data);
+            setFormData(prev => ({ ...prev, ...responseData.data }));
+            setIsReadOnly({ readOnly: true, disabled: true }); // Set both readonly and disabled
+          } else {
+            setFormData({
+              dba: '',
+              description: '',
+              address2: '',
+              city: '',
+              state: '',
+              pincode: '',
+              is_same_shipping_address: '0',
+              signature_date: '',
+              signature: ''
+            });
+            setIsReadOnly({}); // No readonly/disabled when no data
+          }
         } else {
           setIsValidLink(false);
+          setIsReadOnly({}); // No readonly/disabled on error
           toast.error('Invalid or expired upload link');
         }
       } catch (error) {
         console.error('Error checking link:', error);
         setIsValidLink(false);
+        setIsReadOnly({}); // No readonly/disabled on error
         toast.error('Failed to validate upload link');
       } finally {
         setIsCheckingLink(false);
@@ -77,6 +113,12 @@ export default function JotForm() {
     checkUniqueString();
   }, [data]);
 
+  // Add a useEffect to log state changes
+  useEffect(() => {
+    console.log('Current readonly state:', isReadOnly);
+    console.log('Current form data:', formData);
+  }, [isReadOnly, formData]);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value, type, checked } = e.target as HTMLInputElement;
     if (type === 'checkbox') {
@@ -84,6 +126,7 @@ export default function JotForm() {
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
     }
+
   };
 
   const clearSignature = () => {
@@ -234,12 +277,22 @@ export default function JotForm() {
             <label htmlFor="dba" className="block text-sm font-medium text-gray-300">
               DBA (Doing Business As)
             </label>
+{/* 
+            {Object.keys(isReadOnly).length > 0 && (
+            <input
+              type="hidden"
+              name="is_duplicate"
+              value="1"
+            />
+          )} */}
+
             <input
               type="text"
               id="dba"
               name="dba"
               required
               value={formData.dba}
+              {...isReadOnly}
               onChange={handleInputChange}
               className="mt-1 block w-full rounded bg-gray-700 text-white border border-gray-600 focus:border-yellow-400 focus:ring-yellow-400"
             />
@@ -253,8 +306,9 @@ export default function JotForm() {
             <textarea
               id="description"
               name="description"
-              rows={4}
+              rows={2}
               value={formData.description}
+              {...isReadOnly}
               onChange={handleInputChange}
               className="mt-1 block w-full rounded bg-gray-700 text-white border border-gray-600 focus:border-yellow-400 focus:ring-yellow-400"
             />
@@ -271,6 +325,7 @@ export default function JotForm() {
               name="address2"
               required
               value={formData.address2}
+              {...isReadOnly}
               onChange={handleInputChange}
               className="mt-1 block w-full rounded bg-gray-700 text-white border border-gray-600 focus:border-yellow-400 focus:ring-yellow-400"
             />
@@ -288,6 +343,7 @@ export default function JotForm() {
                 name="city"
                 required
                 value={formData.city}
+                {...isReadOnly}
                 onChange={handleInputChange}
                 className="mt-1 block w-full rounded bg-gray-700 text-white border border-gray-600 focus:border-yellow-400 focus:ring-yellow-400"
               />
@@ -304,6 +360,7 @@ export default function JotForm() {
                 name="state"
                 required
                 value={formData.state}
+                {...isReadOnly}
                 onChange={handleInputChange}
                 className="mt-1 block w-full rounded bg-gray-700 text-white border border-gray-600 focus:border-yellow-400 focus:ring-yellow-400"
               />
@@ -320,6 +377,7 @@ export default function JotForm() {
                 name="pincode"
                 required
                 value={formData.pincode}
+                {...isReadOnly}
                 onChange={handleInputChange}
                 className="mt-1 block w-full rounded bg-gray-700 text-white border border-gray-600 focus:border-yellow-400 focus:ring-yellow-400"
               />
@@ -333,6 +391,7 @@ export default function JotForm() {
               id="is_same_shipping_address"
               name="is_same_shipping_address"
               checked={formData.is_same_shipping_address === '1'}
+              {...isReadOnly}
               onChange={handleInputChange}
               className="h-4 w-4 rounded border-gray-300 text-yellow-400 focus:ring-yellow-400"
             />
