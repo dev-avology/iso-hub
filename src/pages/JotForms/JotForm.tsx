@@ -154,6 +154,8 @@ export default function JotForm() {
         unique_string: data
       };
 
+      console.log(finalFormData);
+      
       if (!data) {
         toast.error('Invalid form link');
         return;
@@ -161,55 +163,71 @@ export default function JotForm() {
   
       setIsSubmitting(true);
       
-      const token = localStorage.getItem('auth_token');
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/jot-forms`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(finalFormData)
-      });
-      
-      const responseData = await response.json();
+      try {
+        const token = localStorage.getItem('auth_token');
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/jot-forms`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(finalFormData)
+        });
+        
+        const responseData = await response.json();
 
-      if (!response.ok) {
-        if (response.status === 422) {
-          // Set Laravel validation errors in state
-          setErrors(responseData.errors || {});
-          
-          // Loop through errors and show in toaster
-          Object.keys(responseData.errors).forEach((key) => {
-            responseData.errors[key].forEach((errorMsg: string) => {
-              toast.error(errorMsg); // Show each error in a loop
+        if (!response.ok) {
+          if (response.status === 422) {
+            // Set Laravel validation errors in state
+            setErrors(responseData.errors || {});
+            
+            // Loop through errors and show in toaster
+            Object.keys(responseData.errors).forEach((key) => {
+              responseData.errors[key].forEach((errorMsg: string) => {
+                toast.error(errorMsg); // Show each error in a loop
+              });
             });
-          });
 
-        } else {
-          throw new Error(responseData.message || 'Form submission failed');
+          } else {
+            throw new Error(responseData.message || 'Form submission failed');
+          }
+          return;
         }
-        return;
-      }
-    
-      console.log('Form submission response:', responseData);
       
-      toast.success(responseData.message || 'Form submitted successfully!');
-      
-      // Clear form after successful submission
-      setFormData({
-        dba: '',
-        description: '',
-        address2: '',
-        city: '',
-        state: '',
-        pincode: '',
-        is_same_shipping_address: '0',
-        signature_date: '',
-        signature: ''
-      });
-      
-      if (signaturePad) {
-        signaturePad.clear();
+        console.log('Form submission response:', responseData);
+        
+        toast.success(responseData.message || 'Form submitted successfully!');
+        
+        // Clear form after successful submission
+        setFormData({
+          dba: '',
+          description: '',
+          address2: '',
+          city: '',
+          state: '',
+          pincode: '',
+          is_same_shipping_address: '0',
+          signature_date: '',
+          signature: ''
+        });
+        
+        if (signaturePad) {
+          signaturePad.clear();
+        }
+      } catch (error) {
+        console.error('Error submitting form:', error);
+        if (error instanceof Error) {
+          if (error.message.includes('Failed to fetch')) {
+            toast.error('Network error. Please check your internet connection and try again.');
+          } else {
+            toast.error(error.message);
+          }
+        } else {
+          toast.error('Failed to submit form. Please try again.');
+        }
+      } finally {
+        setIsSubmitting(false);
+        setErrors({});
       }
     } catch (error) {
       console.error('Error submitting form:', error);
@@ -218,9 +236,6 @@ export default function JotForm() {
       } else {
         toast.error('Failed to submit form. Please try again.');
       }
-    } finally {
-      setIsSubmitting(false);
-      setErrors({});
     }
   };
 
@@ -277,14 +292,14 @@ export default function JotForm() {
             <label htmlFor="dba" className="block text-sm font-medium text-gray-300">
               DBA (Doing Business As)
             </label>
-{/* 
+
             {Object.keys(isReadOnly).length > 0 && (
             <input
               type="hidden"
               name="is_duplicate"
               value="1"
             />
-          )} */}
+          )}
 
             <input
               type="text"

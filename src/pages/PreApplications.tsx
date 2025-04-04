@@ -115,6 +115,13 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
             <h3 className="text-lg font-semibold text-yellow-400 mb-4">Status Information</h3>
             <div className="grid grid-cols-2 gap-6">
               <div>
+                <label className="block text-sm font-medium text-gray-400">Form Type</label>
+                <span className={`mt-2 px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full 
+                  ${form.is_duplicate === '1' ? 'bg-purple-100 text-purple-800' : 'bg-yellow-100 text-yellow-800'}`}>
+                  {form.is_duplicate === '1' ? 'Replicated' : 'New Form'}
+                </span>
+              </div>
+              <div>
                 <label className="block text-sm font-medium text-gray-400">Status</label>
                 <span className={`mt-2 px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full 
                   ${form.status === 0 ? 'bg-yellow-100 text-yellow-800' : 
