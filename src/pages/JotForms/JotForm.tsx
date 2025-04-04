@@ -215,6 +215,9 @@ export default function JotForm() {
         if (signaturePad) {
           signaturePad.clear();
         }
+        setTimeout(() => {
+          location.reload();
+        }, 2000);
       } catch (error) {
         console.error('Error submitting form:', error);
         if (error instanceof Error) {
