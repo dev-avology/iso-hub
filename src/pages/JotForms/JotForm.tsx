@@ -48,6 +48,7 @@ export default function JotForm() {
   const data = searchParams.get('data');
   const [errors, setErrors] = useState<{ [key: string]: string[] }>({});
   const [isReadOnly, setIsReadOnly] = useState<{ readOnly?: boolean, disabled?: boolean }>({});
+  console.log(isReadOnly,'read only');
 
   useEffect(() => {
     const checkUniqueString = async () => {
