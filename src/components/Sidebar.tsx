@@ -51,6 +51,9 @@ export default function Sidebar({
   // Get role_id from auth_user in localStorage
   const authUser = JSON.parse(localStorage.getItem('auth_user') || '{}');
   const isAdmin = authUser?.role_id === 2;
+  const isUser = authUser?.role_id === 5;
+  console.log(isUser,'user authhhh');
+
 
   const handleLogout = async () => {
     try {
