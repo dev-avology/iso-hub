@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FormInput, Eye, Loader2, X, Copy, CheckCircle, ExternalLink } from 'lucide-react';
+import { FormInput, Eye, Loader2, X, Copy, CheckCircle, ExternalLink, Send, Copy as Duplicate } from 'lucide-react';
 import { toast, Toaster } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
@@ -22,6 +22,7 @@ interface FormData {
   created_at: string;
   updated_at: string;
   user_id: number;
+  is_duplicate: string;
 }
 
 interface ApiResponse {
@@ -38,6 +39,372 @@ interface FormDetailsResponse {
   errors?: { [key: string]: string[] };
 }
 
+interface FormDetailsModalProps {
+  form: FormData | null;
+  onClose: () => void;
+}
+
+interface DuplicateFormModalProps {
+  form: FormData | null;
+  onClose: () => void;
+}
+
+function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
+  if (!form) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-zinc-900 rounded-lg p-8 max-w-3xl w-full mx-4 relative max-h-[90vh] overflow-y-auto border border-yellow-400/20">
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-gray-400 hover:text-yellow-400 transition-colors"
+        >
+          <X className="h-6 w-6" />
+        </button>
+        
+        <div className="text-center mb-8">
+          <h2 className="text-2xl font-bold text-yellow-400">Form Details</h2>
+          <div className="mt-2 h-1 w-24 bg-yellow-400 mx-auto rounded-full"></div>
+        </div>
+
+        <div className="space-y-8">
+          {/* Business Information */}
+          <div className="bg-zinc-800/50 rounded-lg p-6 border border-zinc-700">
+            <h3 className="text-lg font-semibold text-yellow-400 mb-4">Business Information</h3>
+            <div className="grid grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-400">DBA(Doing Business As)</label>
+                <p className="mt-1 text-white font-medium">{form.dba}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Address Information */}
+          <div className="bg-zinc-800/50 rounded-lg p-6 border border-zinc-700">
+            <h3 className="text-lg font-semibold text-yellow-400 mb-4">Address Information</h3>
+            <div className="grid grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-400">Street Address</label>
+                <p className="mt-1 text-white font-medium">{form.description}</p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-400">Street Address Line 2</label>
+                <p className="mt-1 text-white font-medium">{form.address2}</p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-400">City</label>
+                <p className="mt-1 text-white font-medium">{form.city}</p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-400">State</label>
+                <p className="mt-1 text-white font-medium">{form.state}</p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-400">Pincode</label>
+                <p className="mt-1 text-white font-medium">{form.pincode}</p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-400">Same Shipping Address</label>
+                <p className="mt-1 text-white font-medium">{form.is_same_shipping_address === '1' ? 'Yes' : 'No'}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Status Information */}
+          <div className="bg-zinc-800/50 rounded-lg p-6 border border-zinc-700">
+            <h3 className="text-lg font-semibold text-yellow-400 mb-4">Status Information</h3>
+            <div className="grid grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-400">Form Type</label>
+                <span className={`mt-2 px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full 
+                  ${form.is_duplicate === '1' ? 'bg-purple-100 text-purple-800' : 'bg-yellow-100 text-yellow-800'}`}>
+                  {form.is_duplicate === '1' ? 'Replicated' : 'New Form'}
+                </span>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-400">Status</label>
+                <span className={`mt-2 px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full 
+                  ${form.status === 0 ? 'bg-yellow-100 text-yellow-800' : 
+                    form.status === 1 ? 'bg-blue-100 text-blue-800' :
+                    form.status === 2 ? 'bg-green-100 text-green-800' : 
+                    form.status === 3 ? 'bg-red-100 text-red-800' :
+                    'bg-gray-100 text-gray-800'}`}>
+                  {form.status === 0 ? 'New' : 
+                   form.status === 1 ? 'In Review' :
+                   form.status === 2 ? 'Approved' : 
+                   form.status === 3 ? 'Declined' :
+                   'Unknown'}
+                </span>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-400">Created At</label>
+                <p className="mt-1 text-white font-medium">{new Date(form.created_at).toLocaleString()}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Signature Section */}
+          <div className="bg-zinc-800/50 rounded-lg p-6 border border-zinc-700">
+            <h3 className="text-yellow-400 mb-4">Signature</h3>
+            <div className="grid grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-400">Date</label>
+                <p className="mt-1 text-white font-medium">{form.signature_date}</p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-400">Signature</label>
+                {form.signature ? (
+                  <div className="mt-1 bg-white rounded-lg p-4">
+                    <img 
+                      src={form.signature} 
+                      alt="Signature" 
+                      className="max-w-full h-auto mx-auto"
+                    />
+                  </div>
+                ) : (
+                  <div className="mt-1 bg-zinc-700 rounded-lg p-4 text-gray-400 text-center">
+                    No signature available
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DuplicateFormModal({ form, onClose }: DuplicateFormModalProps) {
+  const [formData, setFormData] = useState<FormData>(form || {} as FormData);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [prospectEmail, setProspectEmail] = useState('');
+  const [date, setDate] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!prospectEmail) {
+      toast.error('Please enter prospect email');
+      return;
+    }
+    setIsSubmitting(true);
+    try {
+      const formDataToSubmit = {
+        ...formData,
+        email: prospectEmail,
+        signature_date: date,
+        signature: '',
+        is_duplicate: '1'
+      };
+      
+      const token = localStorage.getItem('auth_token');
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/duplicate-form-send-mail`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formDataToSubmit)
+      });
+
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(responseData.message || 'Failed to duplicate form');
+      }
+      console.log(responseData);
+
+      toast.success('Check your email to replicate the form!');
+      onClose();
+      // window.location.reload(); // Refresh the page to show updated list
+    } catch (error) {
+      console.error('Error duplicating form:', error);
+      toast.error(error instanceof Error ? error.message : 'Failed to duplicate form');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-zinc-900 rounded-lg p-8 max-w-3xl w-full mx-4 relative max-h-[90vh] overflow-y-auto border border-yellow-400/20">
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-gray-400 hover:text-yellow-400 transition-colors"
+        >
+          <X className="h-6 w-6" />
+        </button>
+        
+        <div className="text-center mb-8">
+          <h2 className="text-2xl font-bold text-yellow-400">Replicate Form</h2>
+          <div className="mt-2 h-1 w-24 bg-yellow-400 mx-auto rounded-full"></div>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-8">
+          {/* Business Information */}
+          <div className="bg-zinc-800/50 rounded-lg p-6 border border-zinc-700">
+            <h3 className="text-lg font-semibold text-yellow-400 mb-4">Business Information</h3>
+            <div className="grid grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-400">DBA(Doing Business As)</label>
+                <input
+                  type="text"
+                  name="dba"
+                  value={formData.dba || ''}
+                  readOnly
+                  onChange={handleChange}
+                  className="mt-1 block w-full bg-zinc-700 border border-zinc-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Address Information */}
+          <div className="bg-zinc-800/50 rounded-lg p-6 border border-zinc-700">
+            <h3 className="text-lg font-semibold text-yellow-400 mb-4">Address Information</h3>
+            <div className="grid grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-400">Street Address</label>
+                <input
+                  type="text"
+                  name="description"
+                  readOnly
+                  value={formData.description || ''}
+                  onChange={handleChange}
+                  className="mt-1 block w-full bg-zinc-700 border border-zinc-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-400">Street Address Line 2</label>
+                <input
+                  type="text"
+                  name="address2"
+                  value={formData.address2 || ''}
+                  readOnly
+                  onChange={handleChange}
+                  className="mt-1 block w-full bg-zinc-700 border border-zinc-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-400">City</label>
+                <input
+                  type="text"
+                  name="city"
+                  readOnly
+                  value={formData.city || ''}
+                  onChange={handleChange}
+                  className="mt-1 block w-full bg-zinc-700 border border-zinc-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-400">State</label>
+                <input
+                  type="text"
+                  name="state"
+                  value={formData.state || ''}
+                  readOnly
+                  onChange={handleChange}
+                  className="mt-1 block w-full bg-zinc-700 border border-zinc-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-400">Pincode</label>
+                <input
+                  type="number"
+                  name="pincode"
+                  readOnly
+                  value={formData.pincode || ''}
+                  onChange={handleChange}
+                  className="mt-1 block w-full bg-zinc-700 border border-zinc-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-400">Same Shipping Address</label>
+                <select
+                  name="is_same_shipping_address"
+                  value={formData.is_same_shipping_address || '0'}
+                  onChange={(e) => handleChange({ target: { name: 'is_same_shipping_address', value: e.target.value } } as any)}
+                  className="mt-1 block w-full bg-zinc-700 border border-zinc-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                >
+                  <option value="1">Yes</option>
+                  <option value="0">No</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          {/* Signature Section */}
+          <div className="bg-zinc-800/50 rounded-lg p-6 border border-zinc-700">
+            <h3 className="text-yellow-400 mb-4">Signature</h3>
+            <div className="grid grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-400">Date</label>
+                <input
+                  type="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  className="mt-1 block w-full bg-zinc-700 border border-zinc-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-400">Signature</label>
+                <div className="mt-1 bg-white rounded-lg h-[150px] w-full border border-zinc-300"></div>
+              </div>
+            </div>
+          </div>
+
+          {/* Prospect Email */}
+          <div className="bg-zinc-800/50 rounded-lg p-6 border border-zinc-700">
+            <h3 className="text-lg font-semibold text-yellow-400 mb-4">Prospect Information</h3>
+            <div>
+              <label className="block text-sm font-medium text-gray-400">Prospect Email*</label>
+              <input
+                type="email"
+                value={prospectEmail}
+                onChange={(e) => setProspectEmail(e.target.value)}
+                placeholder="Enter prospect's email address"
+                required
+                className="mt-1 block w-full bg-zinc-700 border border-zinc-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
+              />
+              <p className="mt-1 text-sm text-gray-400">The replicated form will be sent to this email address</p>
+            </div>
+          </div>
+
+          <div className="flex justify-end space-x-4">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 border border-gray-600 text-gray-300 rounded-md hover:bg-gray-700"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="inline-flex items-center px-4 py-2 bg-yellow-400 text-black rounded-md hover:bg-yellow-500 disabled:opacity-50"
+            >
+              {isSubmitting ? (
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+              ) : (
+                <Duplicate className="h-4 w-4 mr-2" />
+              )}
+              Replicate Form
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
 export default function PreApplications() {
   const [forms, setForms] = useState<FormData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -47,6 +414,8 @@ export default function PreApplications() {
   const [copied, setCopied] = useState(false);
   const navigate = useNavigate();
   const [errors, setErrors] = useState<{ [key: string]: string[] }>({});
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [showDuplicateModal, setShowDuplicateModal] = useState(false);
 
   const preAppLink = `${window.location.origin}/jot-forms?data=eyJpdiI6IlVsRnJidStaYVJxZnNhektpZFBLc1E9PSIsInZhbHVlIjoidWNqVTFXNzZEWHN5MjBRWG05SldLMDFZQnE4TVZ2SWxFZ2NMcTBXWDR0VWtjNnZqeU1PbnkwUnNURE5ZQktpVDlmUzFtOW9TSXNZeHQzUE9waUYxd05uQ0JQUDIyNWZqb3dBY1lsdEwwQW89IiwibWFjIjoiZGVkODEwN2Q4OWM4MWY4MjUwZGJiZDZlMjc3YmUzYWFhZGU2MWUzOWQ2ZjRhYzZiMjQ2NzRmY2E2YTM0NWFjMCIsInRhZyI6IiJ9`; // The base URL for your form
 
@@ -242,21 +611,18 @@ export default function PreApplications() {
               <thead>
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">DBA</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Street Address</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Street Address Line 2</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">City</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">State/Province</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Pincode</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Status</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Replicated</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-700">
+              <tbody className="bg-zinc-900 divide-y divide-gray-700">
                 {forms.map((form) => (
                   <tr key={form.id} className="hover:bg-zinc-800">
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{form.dba}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{form.description}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{form.address2}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{form.city}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{form.state}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{form.pincode}</td>
@@ -274,14 +640,35 @@ export default function PreApplications() {
                          'Unknown'}
                       </span>
                     </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                        ${form.is_duplicate === '1' ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-800'}`}>
+                        {form.is_duplicate === '1' ? 'Yes' : 'No'}
+                      </span>
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                      <button
-                        onClick={() => fetchFormDetails(form.id)}
-                        className="text-yellow-400 hover:text-yellow-500 flex items-center gap-1"
-                      >
-                        <Eye className="h-4 w-4" />
-                        View
-                      </button>
+                      <div className="flex items-center space-x-4">
+                        <button
+                          onClick={() => {
+                            setSelectedForm(form);
+                            setShowDetailsModal(true);
+                          }}
+                          className="text-yellow-400 hover:text-yellow-500 flex items-center gap-1"
+                        >
+                          <Eye className="h-4 w-4" />
+                          View
+                        </button>
+                        <button
+                          onClick={() => {
+                            setSelectedForm(form);
+                            setShowDuplicateModal(true);
+                          }}
+                          className="text-yellow-400 hover:text-yellow-500 flex items-center gap-1"
+                        >
+                          <Duplicate className="h-4 w-4" />
+                          Replicate
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -292,124 +679,25 @@ export default function PreApplications() {
       </div>
 
       {/* Form Details Modal */}
-      {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-zinc-900 rounded-lg p-8 max-w-3xl w-full mx-4 relative max-h-[90vh] overflow-y-auto border border-yellow-400/20">
-            <button
-              onClick={() => setShowModal(false)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-yellow-400 transition-colors"
-            >
-              <X className="h-6 w-6" />
-            </button>
-            
-            <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold text-yellow-400">Form Details</h2>
-              <div className="mt-2 h-1 w-24 bg-yellow-400 mx-auto rounded-full"></div>
-            </div>
-            
-            {isLoadingDetails ? (
-              <div className="flex justify-center items-center py-8">
-                <Loader2 className="h-8 w-8 animate-spin text-yellow-400" />
-              </div>
-            ) : selectedForm ? (
-              <div className="space-y-8">
-                {/* Business Information */}
-                <div className="bg-zinc-800/50 rounded-lg p-6 border border-zinc-700">
-                  <h3 className="text-lg font-semibold text-yellow-400 mb-4">Business Information</h3>
-                  <div className="grid grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-400">DBA(Doing Business As)</label>
-                      <p className="mt-1 text-white font-medium">{selectedForm.dba}</p>
-                    </div>
-                  </div>
-                </div>
+      {showDetailsModal && (
+        <FormDetailsModal
+          form={selectedForm}
+          onClose={() => {
+            setShowDetailsModal(false);
+            setSelectedForm(null);
+          }}
+        />
+      )}
 
-                {/* Address Information */}
-                <div className="bg-zinc-800/50 rounded-lg p-6 border border-zinc-700">
-                  <h3 className="text-lg font-semibold text-yellow-400 mb-4">Address Information</h3>
-                  <div className="grid grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-400">Street Address
-                      </label>
-                      <p className="mt-1 text-white font-medium">{selectedForm.description}</p>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-400">Street Address Line 2
-                      </label>
-                      <p className="mt-1 text-white font-medium">{selectedForm.address2}</p>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-400">City</label>
-                      <p className="mt-1 text-white font-medium">{selectedForm.city}</p>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-400">State</label>
-                      <p className="mt-1 text-white font-medium">{selectedForm.state}</p>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-400">Pincode</label>
-                      <p className="mt-1 text-white font-medium">{selectedForm.pincode}</p>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-400">Same Shipping Address</label>
-                      <p className="mt-1 text-white font-medium">{selectedForm.is_same_shipping_address === '1' ? 'Yes' : 'No'}</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Status Information */}
-                <div className="bg-zinc-800/50 rounded-lg p-6 border border-zinc-700">
-                  <h3 className="text-lg font-semibold text-yellow-400 mb-4">Status Information</h3>
-                  <div className="grid grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-400">Status</label>
-                      <span className={`mt-2 px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full 
-                        ${selectedForm.status === 0 ? 'bg-yellow-100 text-yellow-800' : 
-                          selectedForm.status === 1 ? 'bg-blue-100 text-blue-800' :
-                          selectedForm.status === 2 ? 'bg-green-100 text-green-800' : 
-                          selectedForm.status === 3 ? 'bg-red-100 text-red-800' :
-                          'bg-gray-100 text-gray-800'}`}>
-                        {selectedForm.status === 0 ? 'New' : 
-                         selectedForm.status === 1 ? 'In Review' :
-                         selectedForm.status === 2 ? 'Approved' : 
-                         selectedForm.status === 3 ? 'Declined' :
-                         'Unknown'}
-                      </span>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-400">Created At</label>
-                      <p className="mt-1 text-white font-medium">{new Date(selectedForm.created_at).toLocaleString()}</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Signature Section */}
-                <div className="bg-zinc-800/50 rounded-lg p-6 border border-zinc-700">
-                  <h3 className="text-lg font-semibold text-yellow-400 mb-4">Signature</h3>
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-400">Date Signed</label>
-                      <p className="mt-1 text-white font-medium">{selectedForm.signature_date}</p>
-                    </div>
-                    {selectedForm.signature ? (
-                      <div className="mt-4 bg-white p-4 rounded-lg">
-                        <img 
-                          src={selectedForm.signature} 
-                          alt="Signature" 
-                          className="max-w-full h-auto mx-auto"
-                        />
-                      </div>
-                    ) : (
-                      <p className="text-gray-400">No signature available</p>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <p className="text-gray-400 text-center py-8">No form details available.</p>
-            )}
-          </div>
-        </div>
+      {/* Duplicate Form Modal */}
+      {showDuplicateModal && (
+        <DuplicateFormModal
+          form={selectedForm}
+          onClose={() => {
+            setShowDuplicateModal(false);
+            setSelectedForm(null);
+          }}
+        />
       )}
     </div>
   );
