@@ -334,23 +334,6 @@ const EditRepModal: React.FC<EditRepModalProps> = ({ rep, onClose, onUpdate, use
         <h2 className="text-2xl font-bold text-white mb-6">Edit Rep</h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-gray-400 mb-2">User</label>
-            <select
-              name="user_id"
-              value={formData.user_id}
-              onChange={handleChange}
-              required
-              className="w-full bg-zinc-800 border border-zinc-700 rounded p-2 text-white focus:outline-none focus:border-yellow-400"
-            >
-              <option value="">Select User</option>
-              {users.map(user => (
-                <option key={user.id} value={user.id}>
-                  {getUserDisplayName(user)}
-                </option>
-              ))}
-            </select>
-          </div>
 
           <div>
             <label className="block text-gray-400 mb-2">Name</label>
@@ -400,6 +383,24 @@ const EditRepModal: React.FC<EditRepModalProps> = ({ rep, onClose, onUpdate, use
             />
           </div>
 
+          <div>
+            <label className="block text-gray-400 mb-2">User</label>
+            <select
+              name="user_id"
+              value={formData.user_id}
+              onChange={handleChange}
+              required
+              className="w-full bg-zinc-800 border border-zinc-700 rounded p-2 text-white focus:outline-none focus:border-yellow-400"
+            >
+              <option value="">Select User</option>
+              {users.map(user => (
+                <option key={user.id} value={user.id}>
+                  {getUserDisplayName(user)}
+                </option>
+              ))}
+            </select>
+          </div>
+
           <button
             type="submit"
             disabled={isSubmitting}
@@ -424,6 +425,7 @@ export default function Reps() {
   const [reps, setReps] = useState<Rep[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedRep, setSelectedRep] = useState<Rep | null>(null);
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -491,37 +493,42 @@ export default function Reps() {
   }, []);
 
   const handleDeleteRep = async (id: number) => {
-    if (window.confirm('Are you sure you want to delete this rep?')) {
-      try {
-        setIsDeleting(true);
-        const token = localStorage.getItem('auth_token');
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/reps/destroy`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ id })
-        });
+    try {
+      setIsDeleting(true);
+      const token = localStorage.getItem('auth_token');
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/reps/destroy`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ id })
+      });
 
-        if (!response.ok) {
-          throw new Error('Failed to delete rep');
-        }
-
-        const data = await response.json();
-        if (data.status === 'success') {
-          toast.success('Rep deleted successfully');
-          fetchReps();
-        } else {
-          throw new Error(data.message || 'Failed to delete rep');
-        }
-      } catch (error) {
-        console.error('Error deleting rep:', error);
-        toast.error('Failed to delete rep');
-      } finally {
-        setIsDeleting(false);
+      if (!response.ok) {
+        throw new Error('Failed to delete rep');
       }
+
+      const data = await response.json();
+      if (data.status === 'success') {
+        toast.success('Rep deleted successfully');
+        fetchReps();
+      } else {
+        throw new Error(data.message || 'Failed to delete rep');
+      }
+    } catch (error) {
+      console.error('Error deleting rep:', error);
+      toast.error('Failed to delete rep');
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteModal(false);
+      setSelectedRep(null);
     }
+  };
+
+  const handleDeleteClick = (rep: Rep) => {
+    setSelectedRep(rep);
+    setShowDeleteModal(true);
   };
 
   const handleEditClick = (rep: Rep) => {
@@ -552,6 +559,10 @@ export default function Reps() {
           <div className="flex justify-center py-8">
             <Loader2 className="h-8 w-8 animate-spin text-yellow-400" />
           </div>
+        ) : reps.length === 0 ? (
+          <div className="flex justify-center py-8 text-gray-400">
+            No reps found
+          </div>
         ) : (
           <div className="divide-y divide-zinc-800">
             {reps.map((rep) => (
@@ -572,11 +583,11 @@ export default function Reps() {
                     <Edit className="h-5 w-5" />
                   </button>
                   <button 
-                    onClick={() => handleDeleteRep(rep.id)}
+                    onClick={() => handleDeleteClick(rep)}
                     className="text-red-400 hover:text-red-500"
                     disabled={isDeleting}
                   >
-                    {isDeleting ? (
+                    {isDeleting && selectedRep?.id === rep.id ? (
                       <Loader2 className="h-5 w-5 animate-spin" />
                     ) : (
                       <Trash className="h-5 w-5" />
@@ -608,6 +619,62 @@ export default function Reps() {
           users={users}
         />
       )}
-    </div>
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && selectedRep && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-zinc-900 p-8 rounded-lg w-full max-w-md relative">
+            <button 
+              onClick={() => {
+                setShowDeleteModal(false);
+                setSelectedRep(null);
+              }}
+              className="absolute top-4 right-4 text-gray-400 hover:text-white"
+            >
+              <X className="w-6 h-6" />
+            </button>
+            
+            <div className="text-center">
+              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
+                <Trash className="h-6 w-6 text-red-600" />
+              </div>
+              
+              <h3 className="text-2xl font-bold text-white mb-2">Delete Rep</h3>
+              
+              <p className="text-gray-300 mb-6">
+                Are you sure you want to delete <span className="font-semibold">{selectedRep.name}</span>? 
+                This action cannot be undone.
+              </p>
+              
+              <div className="flex gap-4 justify-center">
+                <button
+                  onClick={() => {
+                    setShowDeleteModal(false);
+                    setSelectedRep(null);
+                  }}
+                  className="px-4 py-2 rounded bg-gray-700 text-white hover:bg-gray-600 transition duration-200"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => handleDeleteRep(selectedRep.id)}
+                  className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700 transition duration-200"
+                  disabled={isDeleting}
+                >
+                  {isDeleting ? (
+                    <div className="flex items-center">
+                      <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                      Deleting...
+                    </div>
+                  ) : (
+                    'Delete'
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      </div>
   );
 }

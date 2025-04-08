@@ -26,6 +26,7 @@ import Notifications from './pages/notifications/notifications';
 import Marketing from './pages/Marketing/marketing';
 import Forms from './pages/Forms/forms';
 import JotForm from './pages/JotForms/JotForm';
+import UserReps from './pages/UserReps';
 
 function Dashboard() {
   return (
@@ -100,6 +101,7 @@ function App() {
           <Route path="/applications" element={<ProtectedLayout><PreApplications /></ProtectedLayout>} />
           <Route path="/secure" element={<ProtectedLayout><SecurePortal /></ProtectedLayout>} />
           <Route path="/marketing" element={<ProtectedLayout><Marketing /></ProtectedLayout>} />
+          <Route path="/user-reps" element={<ProtectedLayout><UserReps /></ProtectedLayout>} />
           
           {/* Admin protected routes */}
           <Route path="/admin" element={<ProtectedAdminLayout><Admin /></ProtectedAdminLayout>} />

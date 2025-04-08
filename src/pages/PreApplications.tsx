@@ -606,7 +606,7 @@ export default function PreApplications() {
         ) : forms.length === 0 ? (
           <p className="text-gray-400 text-center py-8">No pre-applications found.</p>
         ) : (
-          <div className="overflow-x-auto">
+        <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-700">
               <thead>
                 <tr>
@@ -617,8 +617,8 @@ export default function PreApplications() {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Status</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Replicated</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Actions</th>
-                </tr>
-              </thead>
+              </tr>
+            </thead>
               <tbody className="bg-zinc-900 divide-y divide-gray-700">
                 {forms.map((form) => (
                   <tr key={form.id} className="hover:bg-zinc-800">
@@ -626,7 +626,7 @@ export default function PreApplications() {
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{form.city}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{form.state}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{form.pincode}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
                         ${form.status === 0 ? 'bg-yellow-100 text-yellow-800' : 
                           form.status === 1 ? 'bg-blue-100 text-blue-800' :
@@ -639,13 +639,13 @@ export default function PreApplications() {
                          form.status === 3 ? 'Declined' :
                          'Unknown'}
                       </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
                         ${form.is_duplicate === '1' ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-800'}`}>
                         {form.is_duplicate === '1' ? 'Yes' : 'No'}
-                      </span>
-                    </td>
+                    </span>
+                  </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                       <div className="flex items-center space-x-4">
                         <button
@@ -667,14 +667,14 @@ export default function PreApplications() {
                         >
                           <Duplicate className="h-4 w-4" />
                           Replicate
-                        </button>
+                    </button>
                       </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
         )}
       </div>
 

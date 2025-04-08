@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Edit, Trash, X } from 'lucide-react';
+import { toast, Toaster } from 'react-hot-toast';
 
 interface User {
   id: number;
@@ -54,6 +55,9 @@ export default function Admin() {
   const [managersChecked, setManagersChecked] = useState(false);
   const [teamLeadersChecked, setTeamLeadersChecked] = useState(false);
   const [usersChecked, setUsersChecked] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState<{ [key: string]: string[] }>({});
+
 
   const fetchUsers = async (id?: string) => {
     try {
@@ -94,36 +98,95 @@ export default function Admin() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
+    setErrors({});
+    
     try {
-      const token = localStorage.getItem('auth_token');
+      // Try different ways to get the token
+      let token = localStorage.getItem('auth_token');
+      
+      // If not found in auth_token, try other common token storage keys
+      if (!token) {
+        token = localStorage.getItem('token');
+      }
+      if (!token) {
+        token = localStorage.getItem('access_token');
+      }
+      
+      console.log('Token found:', token);
+      
+      // Check if token exists
+      if (!token) {
+        toast.error('You are not logged in. Please log in again.');
+        setIsSubmitting(false);
+        return;
+      }
+      
+      // Make sure token is properly formatted - remove any existing Bearer prefix first
+      const cleanToken = token.replace('Bearer ', '');
+      const formattedToken = `Bearer ${cleanToken}`;
+      
+      console.log('Formatted token:', formattedToken);
+      
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/user/create`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Authorization': formattedToken,
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(formData)
       });
 
+      const data = await response.json();
+      console.log('API response:', data);
+      
       if (!response.ok) {
-        throw new Error('Failed to create user');
+        if (response.status === 401) {
+          toast.error('Your session has expired. Please log in again.');
+          // Optionally redirect to login page
+          // window.location.href = '/login';
+          setIsSubmitting(false);
+          return;
+        }
+        
+        if (response.status === 422) {
+          setErrors(data.errors || {});
+          Object.keys(data.errors || {}).forEach((key) => {
+            data.errors[key].forEach((errorMsg: string) => {
+              toast.error(errorMsg);
+            });
+          });
+        } else {
+          throw new Error(data.message || 'Form submission failed');
+        }
+        setIsSubmitting(false);
+        return;
       }
 
-      // Reset form and close modal
-      setFormData({
-        first_name: '',
-        last_name: '',
-        email: '',
-        phone: '',
-        password: '',
-        role_id: '5'
-      });
-      setIsModalOpen(false);
-      
-      // Refresh the users list
-      fetchUsers();
+      if (data.status === 'success') {
+        
+        toast.success('User created successfully');
+
+        setFormData({
+          first_name: '',
+          last_name: '',
+          email: '',
+          phone: '',
+          password: '',
+          role_id: '5'
+        });
+        setIsModalOpen(false);
+        
+        // Refresh the users list
+        await fetchUsers();
+      } else {
+        throw new Error(data.message || 'Form submission failed');
+      }
     } catch (error) {
       console.error('Error creating user:', error);
+      toast.error(error instanceof Error ? error.message : 'Failed to create user');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
