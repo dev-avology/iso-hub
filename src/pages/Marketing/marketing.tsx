@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Edit, Download, Trash2, Megaphone } from "lucide-react";
+import { Edit, Download, Trash2, Megaphone, X, Loader2 } from "lucide-react";
 
 
 export default function Marketing() {
@@ -15,6 +15,10 @@ export default function Marketing() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [editItemData, setEditItemData] = useState({ id: null, title: "", description: "" });
   const [user, setUser] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedRep, setSelectedRep] = useState(null);
+  const [deleteType, setDeleteType] = useState(""); // "item" or "category"
+  const [isDeleting, setIsDeleting] = useState(false);
 
 
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -26,14 +30,14 @@ export default function Marketing() {
       const value = localStorage.getItem("auth_user");
       const parsedUser = value ? JSON.parse(value) : null;
       setUser(parsedUser);
-  
+
       let body = undefined;
-  
+
       // Add user_id to body only if role is NOT 1 or 2
       if (parsedUser && parsedUser.role_id !== 1 && parsedUser.role_id !== 2) {
         body = JSON.stringify({ user_id: parsedUser.id });
       }
-  
+
       const response = await fetch(`${API_BASE_URL}/marketing/lists`, {
         method: "POST",
         headers: {
@@ -43,9 +47,9 @@ export default function Marketing() {
         },
         body: body,
       });
-  
+
       const result = await response.json();
-  
+
       if (response.ok && result.status === "success" && Array.isArray(result.data)) {
         setCategories(result.data);
       } else {
@@ -58,10 +62,10 @@ export default function Marketing() {
       setLoading(false);
     }
   };
-  
+
 
   useEffect(() => {
-     fetchCategories();
+    fetchCategories();
   }, []);
 
   const handleAddCategory = async () => {
@@ -74,7 +78,7 @@ export default function Marketing() {
           "Content-Type": "application/json",
           Accept: "application/json",
         },
-        body: JSON.stringify({ name: newCategoryName.trim(), user_id: user?.id}),
+        body: JSON.stringify({ name: newCategoryName.trim(), user_id: user?.id }),
       });
 
       const data = await response.json();
@@ -188,33 +192,45 @@ export default function Marketing() {
     }
   };
 
-  const confirmAndDeleteItem = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this item?")) return;
-    try {
-      const response = await fetch(`${API_BASE_URL}/marketing/remove-item/${id}`, {
-        method: "GET",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const result = await response.json();
-      if (response.ok && result.status === "success") fetchCategories();
-    } catch (error) {
-      alert("Failed to delete item.");
-    }
+  const confirmAndDeleteItem = (item,title) => {
+    setSelectedRep({ id: item, name: title });
+    setDeleteType("item");
+    setShowDeleteModal(true);
+  };
+  
+  const confirmAndDeleteCat = (catId, catName) => {
+    setSelectedRep({ id: catId, name: catName });
+    setDeleteType("category");
+    setShowDeleteModal(true);
   };
 
-  const confirmAndDeleteCat = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this category?")) return;
-    try {
-      const response = await fetch(`${API_BASE_URL}/marketing/remove-category/${id}`, {
-        method: "GET",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const result = await response.json();
-      if (response.ok && result.status === "success") fetchCategories();
-    } catch (error) {
-      alert("Failed to delete item.");
-    }
-  };
+  // const confirmAndDeleteItem = async (id) => {
+  //   if (!window.confirm("Are you sure you want to delete this item?")) return;
+  //   try {
+  //     const response = await fetch(`${API_BASE_URL}/marketing/remove-item/${id}`, {
+  //       method: "GET",
+  //       headers: { Authorization: `Bearer ${token}` },
+  //     });
+  //     const result = await response.json();
+  //     if (response.ok && result.status === "success") fetchCategories();
+  //   } catch (error) {
+  //     alert("Failed to delete item.");
+  //   }
+  // };
+
+  // const confirmAndDeleteCat = async (id) => {
+  //   if (!window.confirm("Are you sure you want to delete this category?")) return;
+  //   try {
+  //     const response = await fetch(`${API_BASE_URL}/marketing/remove-category/${id}`, {
+  //       method: "GET",
+  //       headers: { Authorization: `Bearer ${token}` },
+  //     });
+  //     const result = await response.json();
+  //     if (response.ok && result.status === "success") fetchCategories();
+  //   } catch (error) {
+  //     alert("Failed to delete item.");
+  //   }
+  // };
 
 
   return (
@@ -255,7 +271,7 @@ export default function Marketing() {
               <div className="flex items-center gap-2">
                 <h3 className="text-white text-base font-semibold">{category.name}</h3>
                 <button
-                  onClick={() => confirmAndDeleteCat(category.id)}
+                  onClick={() => confirmAndDeleteCat(category.id, category.name)}
                   className="text-red-500 hover:text-red-700"
                 >
                   <Trash2 className="w-4 h-4" />
@@ -277,14 +293,14 @@ export default function Marketing() {
                 <div className="markiting-list group px-4 py-3 rounded border border-gray-700 mt-3 bg-gray-700 cursor-pointer relative text-white">
                   <h4 className="font-medium text-sm">{item.title}</h4>
                   <p className="text-xs text-gray-300 mt-0.5">
-                     {item.description}
+                    {item.description}
                   </p>
                   <div className="edit-delete-btn absolute right-4 top-3 hidden group-hover:block">
                     <div className="edit_data flex gap-2 items-center">
                       <button onClick={() => handleEditItemClick(item.id)} className="hover:text-yellow-500">
                         <Edit className="w-4 h-4" />
                       </button>
-                      <button onClick={() => confirmAndDeleteItem(item.id)} className="hover:text-red-500">
+                      <button onClick={() => confirmAndDeleteItem(item.id,item.title)} className="hover:text-red-500">
                         <Trash2 className="w-4 h-4" />
                       </button>
                       {/* <a href="#" className="hover:text-yellow-500">
@@ -428,6 +444,94 @@ export default function Marketing() {
           </div>
         </div>
       )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && selectedRep && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-zinc-900 p-8 rounded-lg w-full max-w-md relative">
+            <button
+              onClick={() => {
+                setShowDeleteModal(false);
+                setSelectedRep(null);
+              }}
+              className="absolute top-4 right-4 text-gray-400 hover:text-white"
+            >
+              <X className="w-6 h-6" />
+            </button>
+
+            <div className="text-center">
+              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
+                <Trash2 className="h-6 w-6 text-red-600" />
+              </div>
+
+              <h3 className="text-2xl font-bold text-white mb-2">
+                Delete {deleteType === "category" ? "Category" : "Item"}
+              </h3>
+
+              <p className="text-gray-300 mb-6">
+                Are you sure you want to delete <span className="font-semibold">{selectedRep.name}</span>?
+                This action cannot be undone.
+              </p>
+
+              <div className="flex gap-4 justify-center">
+                <button
+                  onClick={() => {
+                    setShowDeleteModal(false);
+                    setSelectedRep(null);
+                  }}
+                  className="px-4 py-2 rounded bg-gray-700 text-white hover:bg-gray-600 transition duration-200"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={async () => {
+                    setIsDeleting(true);
+                    try {
+                      const endpoint =
+                        deleteType === "category"
+                          ? `/marketing/remove-category/${selectedRep.id}`
+                          : `/marketing/remove-item/${selectedRep.id}`;
+
+                      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+                        method: "GET",
+                        headers: {
+                          Authorization: `Bearer ${token}`,
+                        },
+                      });
+
+                      const result = await response.json();
+
+                      if (response.ok && result.status === "success") {
+                        fetchCategories();
+                      } else {
+                        alert("Failed to delete.");
+                      }
+                    } catch (err) {
+                      alert("Delete failed.");
+                    } finally {
+                      setShowDeleteModal(false);
+                      setSelectedRep(null);
+                      setIsDeleting(false);
+                    }
+                  }}
+                  className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700 transition duration-200"
+                  disabled={isDeleting}
+                >
+                  {isDeleting ? (
+                    <div className="flex items-center">
+                      <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                      Deleting...
+                    </div>
+                  ) : (
+                    "Delete"
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
 
 
     </>
