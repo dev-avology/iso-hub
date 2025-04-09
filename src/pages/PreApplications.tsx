@@ -416,6 +416,7 @@ export default function PreApplications() {
   const [errors, setErrors] = useState<{ [key: string]: string[] }>({});
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showDuplicateModal, setShowDuplicateModal] = useState(false);
+  const [user , setUser] = useState(null);
 
   const preAppLink = `${window.location.origin}/jot-forms?data=eyJpdiI6IlVsRnJidStaYVJxZnNhektpZFBLc1E9PSIsInZhbHVlIjoidWNqVTFXNzZEWHN5MjBRWG05SldLMDFZQnE4TVZ2SWxFZ2NMcTBXWDR0VWtjNnZqeU1PbnkwUnNURE5ZQktpVDlmUzFtOW9TSXNZeHQzUE9waUYxd05uQ0JQUDIyNWZqb3dBY1lsdEwwQW89IiwibWFjIjoiZGVkODEwN2Q4OWM4MWY4MjUwZGJiZDZlMjc3YmUzYWFhZGU2MWUzOWQ2ZjRhYzZiMjQ2NzRmY2E2YTM0NWFjMCIsInRhZyI6IiJ9`; // The base URL for your form
 
@@ -433,18 +434,30 @@ export default function PreApplications() {
 
   useEffect(() => {
     const token = localStorage.getItem('auth_token');
-    if (!token) {
-      toast.error('Please login to view pre-applications');
-      navigate('/login');
-      return;
-    }
+    // if (!token) {
+    //   toast.error('Please login to view pre-applications');
+    //   navigate('/login');
+    //   return;
+    // }
+    console.log(token,'token');
     fetchForms();
-  }, [navigate]);
+  }, []);
 
   const fetchForms = async (id?: string) => {
     try {
       setIsLoading(true);
       const token = localStorage.getItem('auth_token');
+      const value = localStorage.getItem("auth_user");
+      const parsedUser = value ? JSON.parse(value) : null;
+      setUser(parsedUser);
+  
+      let body = undefined;
+  
+      // Add user_id to body only if role is NOT 1 or 2
+      if (parsedUser && parsedUser.role_id !== 1 && parsedUser.role_id !== 2) {
+        body = JSON.stringify({ user_id: parsedUser.id });
+      }
+      // console.log(body,'body');
       
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/jotform/lists`, {
         method: 'POST',
@@ -452,7 +465,7 @@ export default function PreApplications() {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
-        body: id ? JSON.stringify({ id: id }) : undefined,
+        body: body
       });
 
       const responseData: ApiResponse = await response.json();

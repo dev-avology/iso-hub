@@ -14,7 +14,7 @@ export default function Marketing() {
 
   const [showEditModal, setShowEditModal] = useState(false);
   const [editItemData, setEditItemData] = useState({ id: null, title: "", description: "" });
-
+  const [user, setUser] = useState(null);
 
 
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -23,17 +23,29 @@ export default function Marketing() {
   const fetchCategories = async () => {
     setLoading(true);
     try {
+      const value = localStorage.getItem("auth_user");
+      const parsedUser = value ? JSON.parse(value) : null;
+      setUser(parsedUser);
+  
+      let body = undefined;
+  
+      // Add user_id to body only if role is NOT 1 or 2
+      if (parsedUser && parsedUser.role_id !== 1 && parsedUser.role_id !== 2) {
+        body = JSON.stringify({ user_id: parsedUser.id });
+      }
+  
       const response = await fetch(`${API_BASE_URL}/marketing/lists`, {
-        method: "GET",
+        method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
           Accept: "application/json",
         },
+        body: body,
       });
-
+  
       const result = await response.json();
-
+  
       if (response.ok && result.status === "success" && Array.isArray(result.data)) {
         setCategories(result.data);
       } else {
@@ -46,14 +58,14 @@ export default function Marketing() {
       setLoading(false);
     }
   };
+  
 
   useEffect(() => {
-    fetchCategories();
+     fetchCategories();
   }, []);
 
   const handleAddCategory = async () => {
     if (!newCategoryName.trim()) return;
-
     try {
       const response = await fetch(`${API_BASE_URL}/marketing/create-category`, {
         method: "POST",
@@ -62,7 +74,7 @@ export default function Marketing() {
           "Content-Type": "application/json",
           Accept: "application/json",
         },
-        body: JSON.stringify({ name: newCategoryName.trim() }),
+        body: JSON.stringify({ name: newCategoryName.trim(), user_id: user?.id}),
       });
 
       const data = await response.json();
@@ -275,9 +287,9 @@ export default function Marketing() {
                       <button onClick={() => confirmAndDeleteItem(item.id)} className="hover:text-red-500">
                         <Trash2 className="w-4 h-4" />
                       </button>
-                      <a href="#" className="hover:text-yellow-500">
+                      {/* <a href="#" className="hover:text-yellow-500">
                         <Download className="w-4 h-4" />
-                      </a>
+                      </a> */}
                     </div>
                   </div>
                 </div>
