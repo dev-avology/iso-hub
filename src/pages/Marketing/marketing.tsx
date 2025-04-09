@@ -13,7 +13,10 @@ export default function Marketing() {
   const [items, setItems] = useState([{ title: "", description: "" }]);
 
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showEditCatModal, setShowCatEditModal] = useState(false);
+
   const [editItemData, setEditItemData] = useState({ id: null, title: "", description: "" });
+  const [editCategoryData, setEditCategoryData] = useState({ id: null, name: "" });
   const [user, setUser] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedRep, setSelectedRep] = useState(null);
@@ -125,6 +128,34 @@ export default function Marketing() {
     }
   };
 
+  const handleEditCatClick = async (itemId) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/marketing/get-category-details/${itemId}`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.status === "success") {
+        setEditCategoryData({
+          id: itemId,
+          name: data.data.name, // assuming response format { data: { title: "..." } }
+        });
+        setShowCatEditModal(true);
+      } else {
+        throw new Error(data.message || "Item not found.");
+      }
+    } catch (error) {
+      console.error("Error fetching item details:", error.message);
+      alert("Could not fetch item details.");
+    }
+  };
+
 
   const handleAddItemsToCategory = async () => {
     try {
@@ -192,46 +223,46 @@ export default function Marketing() {
     }
   };
 
-  const confirmAndDeleteItem = (item,title) => {
+  const handleUpdateCat = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/marketing/update-category`, {
+        method: "POST", // or POST depending on your API
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          id: editCategoryData.id,
+          name: editCategoryData.name
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.status === "success") {
+        setShowCatEditModal(false);
+        fetchCategories(); // refresh list
+      } else {
+        throw new Error(data.message || "Update failed.");
+      }
+    } catch (error) {
+      console.error("Error updating item:", error.message);
+      alert("Failed to update category.");
+    }
+  };
+
+  const confirmAndDeleteItem = (item, title) => {
     setSelectedRep({ id: item, name: title });
     setDeleteType("item");
     setShowDeleteModal(true);
   };
-  
+
   const confirmAndDeleteCat = (catId, catName) => {
     setSelectedRep({ id: catId, name: catName });
     setDeleteType("category");
     setShowDeleteModal(true);
   };
-
-  // const confirmAndDeleteItem = async (id) => {
-  //   if (!window.confirm("Are you sure you want to delete this item?")) return;
-  //   try {
-  //     const response = await fetch(`${API_BASE_URL}/marketing/remove-item/${id}`, {
-  //       method: "GET",
-  //       headers: { Authorization: `Bearer ${token}` },
-  //     });
-  //     const result = await response.json();
-  //     if (response.ok && result.status === "success") fetchCategories();
-  //   } catch (error) {
-  //     alert("Failed to delete item.");
-  //   }
-  // };
-
-  // const confirmAndDeleteCat = async (id) => {
-  //   if (!window.confirm("Are you sure you want to delete this category?")) return;
-  //   try {
-  //     const response = await fetch(`${API_BASE_URL}/marketing/remove-category/${id}`, {
-  //       method: "GET",
-  //       headers: { Authorization: `Bearer ${token}` },
-  //     });
-  //     const result = await response.json();
-  //     if (response.ok && result.status === "success") fetchCategories();
-  //   } catch (error) {
-  //     alert("Failed to delete item.");
-  //   }
-  // };
-
 
   return (
     <>
@@ -276,6 +307,15 @@ export default function Marketing() {
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
+
+                <button
+                  onClick={() => handleEditCatClick(category.id)}
+                  className="text-white hover:text-gray-300"
+                >
+                  <Edit className="w-4 h-4" />
+                </button>
+
+
               </div>
               <button
                 onClick={() => {
@@ -285,7 +325,7 @@ export default function Marketing() {
                 }}
                 className="w-fit bg-yellow-400 rounded py-1 px-3 text-xs font-semibold uppercase flex items-center justify-center hover:bg-yellow-600 gap-1 text-black"
               >
-                Add
+                Add item
               </button>
             </div>
             {category.items.map((item, index) => (
@@ -300,7 +340,7 @@ export default function Marketing() {
                       <button onClick={() => handleEditItemClick(item.id)} className="hover:text-yellow-500">
                         <Edit className="w-4 h-4" />
                       </button>
-                      <button onClick={() => confirmAndDeleteItem(item.id,item.title)} className="hover:text-red-500">
+                      <button onClick={() => confirmAndDeleteItem(item.id, item.title)} className="hover:text-red-500">
                         <Trash2 className="w-4 h-4" />
                       </button>
                       {/* <a href="#" className="hover:text-yellow-500">
@@ -436,6 +476,38 @@ export default function Marketing() {
               </button>
               <button
                 onClick={handleUpdateItem}
+                className="bg-yellow-500 px-4 py-2 rounded text-white hover:bg-yellow-600"
+              >
+                Update
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showEditCatModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+          <div className="bg-white rounded-xl p-6 w-full max-w-md shadow-xl">
+            <h2 className="text-xl font-bold mb-4">Edit Category</h2>
+            <input
+              type="text"
+              value={editCategoryData.name}
+              onChange={(e) =>
+                setEditCategoryData({ ...editCategoryData, name: e.target.value })
+              }
+              className="w-full p-2 border border-gray-300 rounded mb-4"
+              placeholder="Enter new title"
+            />
+
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setShowCatEditModal(false)}
+                className="bg-gray-300 px-4 py-2 rounded"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleUpdateCat}
                 className="bg-yellow-500 px-4 py-2 rounded text-white hover:bg-yellow-600"
               >
                 Update
