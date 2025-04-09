@@ -421,8 +421,9 @@ export default function PreApplications() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedDeleteRep, setSelectedDeleteRep] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [formToken, setFormToken] = useState<string>(''); 
 
-  const preAppLink = `${window.location.origin}/jot-forms?data=eyJpdiI6IlVsRnJidStaYVJxZnNhektpZFBLc1E9PSIsInZhbHVlIjoidWNqVTFXNzZEWHN5MjBRWG05SldLMDFZQnE4TVZ2SWxFZ2NMcTBXWDR0VWtjNnZqeU1PbnkwUnNURE5ZQktpVDlmUzFtOW9TSXNZeHQzUE9waUYxd05uQ0JQUDIyNWZqb3dBY1lsdEwwQW89IiwibWFjIjoiZGVkODEwN2Q4OWM4MWY4MjUwZGJiZDZlMjc3YmUzYWFhZGU2MWUzOWQ2ZjRhYzZiMjQ2NzRmY2E2YTM0NWFjMCIsInRhZyI6IiJ9`; // The base URL for your form
+  const preAppLink = `${window.location.origin}/jot-forms?data=${formToken}`; // The base URL for your form
 
   const copyLink = async () => {
     try {
@@ -438,6 +439,7 @@ export default function PreApplications() {
 
   useEffect(() => {
     fetchForms();
+    fetchFormToken();
   }, []);
 
   const fetchForms = async (id?: string) => {
@@ -490,6 +492,58 @@ export default function PreApplications() {
       }
 
       setForms(responseData.data || []);
+    } catch (error) {
+      console.error('Error fetching forms:', error);
+      toast.error(error instanceof Error ? error.message : 'Failed to load pre-applications');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchFormToken = async () => {
+    try {
+      setIsLoading(true);
+      const token = localStorage.getItem('auth_token');
+      const value = localStorage.getItem("auth_user");
+      const parsedUser = value ? JSON.parse(value) : null;
+      setUser(parsedUser);
+
+      let body = undefined;
+      body = JSON.stringify({ user_id: parsedUser.id });
+      
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/generate-form-token`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: body
+      });
+
+      const responseData: ApiResponse = await response.json();
+
+      if (!response.ok) {
+        if (response.status === 422) {
+          setErrors(responseData.errors || {});
+          Object.keys(responseData.errors || {}).forEach((key) => {
+            responseData.errors?.[key].forEach((errorMsg: string) => {
+              toast.error(errorMsg);
+            });
+          });
+        } else if (response.status === 401) {
+          localStorage.removeItem('auth_token');
+          toast.error('Session expired. Please login again');
+          navigate('/login');
+        } else {
+          throw new Error(responseData.message || 'Form submission failed');
+        }
+        return;
+      }
+
+      if (responseData.status === 'error') {
+        throw new Error(responseData.message || 'Failed to fetch forms');
+      }
+      setFormToken(responseData.data);
     } catch (error) {
       console.error('Error fetching forms:', error);
       toast.error(error instanceof Error ? error.message : 'Failed to load pre-applications');
