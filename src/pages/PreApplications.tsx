@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FormInput, Eye, Loader2, X, Copy, CheckCircle, ExternalLink, Send, Copy as Duplicate } from 'lucide-react';
+import { FormInput, Eye, Loader2, X, Copy, CheckCircle, ExternalLink, Send, Copy as Duplicate, Trash2 } from 'lucide-react';
 import { toast, Toaster } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
@@ -61,7 +61,7 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
         >
           <X className="h-6 w-6" />
         </button>
-        
+
         <div className="text-center mb-8">
           <h2 className="text-2xl font-bold text-yellow-400">Form Details</h2>
           <div className="mt-2 h-1 w-24 bg-yellow-400 mx-auto rounded-full"></div>
@@ -124,16 +124,16 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
               <div>
                 <label className="block text-sm font-medium text-gray-400">Status</label>
                 <span className={`mt-2 px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full 
-                  ${form.status === 0 ? 'bg-yellow-100 text-yellow-800' : 
+                  ${form.status === 0 ? 'bg-yellow-100 text-yellow-800' :
                     form.status === 1 ? 'bg-blue-100 text-blue-800' :
-                    form.status === 2 ? 'bg-green-100 text-green-800' : 
-                    form.status === 3 ? 'bg-red-100 text-red-800' :
-                    'bg-gray-100 text-gray-800'}`}>
-                  {form.status === 0 ? 'New' : 
-                   form.status === 1 ? 'In Review' :
-                   form.status === 2 ? 'Approved' : 
-                   form.status === 3 ? 'Declined' :
-                   'Unknown'}
+                      form.status === 2 ? 'bg-green-100 text-green-800' :
+                        form.status === 3 ? 'bg-red-100 text-red-800' :
+                          'bg-gray-100 text-gray-800'}`}>
+                  {form.status === 0 ? 'New' :
+                    form.status === 1 ? 'In Review' :
+                      form.status === 2 ? 'Approved' :
+                        form.status === 3 ? 'Declined' :
+                          'Unknown'}
                 </span>
               </div>
               <div>
@@ -155,9 +155,9 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
                 <label className="block text-sm font-medium text-gray-400">Signature</label>
                 {form.signature ? (
                   <div className="mt-1 bg-white rounded-lg p-4">
-                    <img 
-                      src={form.signature} 
-                      alt="Signature" 
+                    <img
+                      src={form.signature}
+                      alt="Signature"
                       className="max-w-full h-auto mx-auto"
                     />
                   </div>
@@ -196,7 +196,7 @@ function DuplicateFormModal({ form, onClose }: DuplicateFormModalProps) {
         signature: '',
         is_duplicate: '1'
       };
-      
+
       const token = localStorage.getItem('auth_token');
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/duplicate-form-send-mail`, {
         method: 'POST',
@@ -242,7 +242,7 @@ function DuplicateFormModal({ form, onClose }: DuplicateFormModalProps) {
         >
           <X className="h-6 w-6" />
         </button>
-        
+
         <div className="text-center mb-8">
           <h2 className="text-2xl font-bold text-yellow-400">Replicate Form</h2>
           <div className="mt-2 h-1 w-24 bg-yellow-400 mx-auto rounded-full"></div>
@@ -416,7 +416,11 @@ export default function PreApplications() {
   const [errors, setErrors] = useState<{ [key: string]: string[] }>({});
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showDuplicateModal, setShowDuplicateModal] = useState(false);
-  const [user , setUser] = useState(null);
+  const [user, setUser] = useState(null);
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedDeleteRep, setSelectedDeleteRep] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const preAppLink = `${window.location.origin}/jot-forms?data=eyJpdiI6IlVsRnJidStaYVJxZnNhektpZFBLc1E9PSIsInZhbHVlIjoidWNqVTFXNzZEWHN5MjBRWG05SldLMDFZQnE4TVZ2SWxFZ2NMcTBXWDR0VWtjNnZqeU1PbnkwUnNURE5ZQktpVDlmUzFtOW9TSXNZeHQzUE9waUYxd05uQ0JQUDIyNWZqb3dBY1lsdEwwQW89IiwibWFjIjoiZGVkODEwN2Q4OWM4MWY4MjUwZGJiZDZlMjc3YmUzYWFhZGU2MWUzOWQ2ZjRhYzZiMjQ2NzRmY2E2YTM0NWFjMCIsInRhZyI6IiJ9`; // The base URL for your form
 
@@ -443,15 +447,15 @@ export default function PreApplications() {
       const value = localStorage.getItem("auth_user");
       const parsedUser = value ? JSON.parse(value) : null;
       setUser(parsedUser);
-  
+
       let body = undefined;
-  
+
       // Add user_id to body only if role is NOT 1 or 2
       if (parsedUser && parsedUser.role_id !== 1 && parsedUser.role_id !== 2) {
         body = JSON.stringify({ user_id: parsedUser.id });
       }
       // console.log(body,'body');
-      
+
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/jotform/lists`, {
         method: 'POST',
         headers: {
@@ -484,7 +488,7 @@ export default function PreApplications() {
       if (responseData.status === 'error') {
         throw new Error(responseData.message || 'Failed to fetch forms');
       }
-      
+
       setForms(responseData.data || []);
     } catch (error) {
       console.error('Error fetching forms:', error);
@@ -498,7 +502,7 @@ export default function PreApplications() {
     try {
       setIsLoadingDetails(true);
       const token = localStorage.getItem('auth_token');
-      
+
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/jotform/${id}`, {
         method: 'GET',
         headers: {
@@ -530,7 +534,7 @@ export default function PreApplications() {
       if (responseData.status === 'error') {
         throw new Error(responseData.message || 'Failed to fetch form details');
       }
-      
+
       setSelectedForm(responseData.data[0]);
       setShowModal(true);
     } catch (error) {
@@ -541,10 +545,18 @@ export default function PreApplications() {
     }
   };
 
+  // const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+  // const token = localStorage.getItem("auth_token");
+
+  const confirmAndDeleteItem = (item,title) => {
+    setSelectedDeleteRep({ id: item, name: title });
+    setShowDeleteModal(true);
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <Toaster position="top-right" />
-      
+
       {/* Header */}
       <div className="mb-8 bg-yellow-400 rounded-lg p-6 shadow-lg">
         <div className="flex items-center space-x-3">
@@ -604,7 +616,7 @@ export default function PreApplications() {
       {/* Pre-Application List */}
       <div className="bg-zinc-900 rounded-lg shadow-sm p-6 mb-8">
         <h2 className="text-lg font-semibold text-white mb-4">Pre-Application List</h2>
-        
+
         {isLoading ? (
           <div className="flex justify-center items-center py-8">
             <Loader2 className="h-8 w-8 animate-spin text-yellow-400" />
@@ -612,46 +624,46 @@ export default function PreApplications() {
         ) : forms.length === 0 ? (
           <p className="text-gray-400 text-center py-8">No pre-applications found.</p>
         ) : (
-        <div className="overflow-x-auto">
+          <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-700">
               <thead>
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">DBA</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">City</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">State/Province</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Pincode</th>
+                  {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Pincode</th> */}
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Status</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Replicated</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Actions</th>
-              </tr>
-            </thead>
+                </tr>
+              </thead>
               <tbody className="bg-zinc-900 divide-y divide-gray-700">
                 {forms.map((form) => (
                   <tr key={form.id} className="hover:bg-zinc-800">
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{form.dba}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{form.city}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{form.state}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{form.pincode}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                    {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{form.pincode}</td> */}
+                    <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                        ${form.status === 0 ? 'bg-yellow-100 text-yellow-800' : 
+                        ${form.status === 0 ? 'bg-yellow-100 text-yellow-800' :
                           form.status === 1 ? 'bg-blue-100 text-blue-800' :
-                          form.status === 2 ? 'bg-green-100 text-green-800' : 
-                          form.status === 3 ? 'bg-red-100 text-red-800' :
-                          'bg-gray-100 text-gray-800'}`}>
-                        {form.status === 0 ? 'New' : 
-                         form.status === 1 ? 'In Review' :
-                         form.status === 2 ? 'Approved' : 
-                         form.status === 3 ? 'Declined' :
-                         'Unknown'}
+                            form.status === 2 ? 'bg-green-100 text-green-800' :
+                              form.status === 3 ? 'bg-red-100 text-red-800' :
+                                'bg-gray-100 text-gray-800'}`}>
+                        {form.status === 0 ? 'New' :
+                          form.status === 1 ? 'In Review' :
+                            form.status === 2 ? 'Approved' :
+                              form.status === 3 ? 'Declined' :
+                                'Unknown'}
                       </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
                         ${form.is_duplicate === '1' ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-800'}`}>
                         {form.is_duplicate === '1' ? 'Yes' : 'No'}
-                    </span>
-                  </td>
+                      </span>
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                       <div className="flex items-center space-x-4">
                         <button
@@ -673,14 +685,23 @@ export default function PreApplications() {
                         >
                           <Duplicate className="h-4 w-4" />
                           Replicate
-                    </button>
+                        </button>
+
+                        <button
+                          onClick={() => confirmAndDeleteItem(form.id,form.dba)}
+                          className="text-yellow-400 hover:text-yellow-500 flex items-center gap-1"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                          Delete
+                        </button>
+
                       </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
 
@@ -705,6 +726,91 @@ export default function PreApplications() {
           }}
         />
       )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && selectedDeleteRep && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-zinc-900 p-8 rounded-lg w-full max-w-md relative">
+            <button
+              onClick={() => {
+                setShowDeleteModal(false);
+                setSelectedDeleteRep(null);
+              }}
+              className="absolute top-4 right-4 text-gray-400 hover:text-white"
+            >
+              <X className="w-6 h-6" />
+            </button>
+
+            <div className="text-center">
+              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
+                <Trash2 className="h-6 w-6 text-red-600" />
+              </div>
+
+              <h3 className="text-2xl font-bold text-white mb-2">
+                Delete JotForm
+              </h3>
+
+              <p className="text-gray-300 mb-6">
+                Are you sure you want to delete <span className="font-semibold">{selectedDeleteRep.name}</span>?
+                This action cannot be undone.
+              </p>
+
+              <div className="flex gap-4 justify-center">
+                <button
+                  onClick={() => {
+                    setShowDeleteModal(false);
+                    setSelectedDeleteRep(null);
+                  }}
+                  className="px-4 py-2 rounded bg-gray-700 text-white hover:bg-gray-600 transition duration-200"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={async () => {
+                    setIsDeleting(true);
+                    try {
+                      const accessToken = localStorage.getItem('auth_token');
+                      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/destroy-jotform/${selectedDeleteRep.id}`, {
+                        method: "GET",
+                        headers: {
+                          Authorization: `Bearer ${accessToken}`,
+                        },
+                      });
+
+                      const result = await response.json();
+
+                      if (response.ok && result.status === "success") {
+                        fetchForms();
+                      } else {
+                        alert("Failed to delete.");
+                      }
+                    } catch (err) {
+                      alert("Delete failed.");
+                    } finally {
+                      setShowDeleteModal(false);
+                      setSelectedDeleteRep(null);
+                      setIsDeleting(false);
+                    }
+                  }}
+                  className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700 transition duration-200"
+                  disabled={isDeleting}
+                >
+                  {isDeleting ? (
+                    <div className="flex items-center">
+                      <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                      Deleting...
+                    </div>
+                  ) : (
+                    "Delete"
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+
     </div>
   );
 }
