@@ -1,7 +1,8 @@
-import { Shield, FileText, Settings, Cpu, User, LogOut, File, Bell, FormInput } from 'lucide-react';
+import { Shield, FileText, Settings, Cpu, User, LogOut, File, Bell, FormInput, X, LayoutDashboard, Users, UserPlus } from 'lucide-react';
 import { useAuth } from '../providers/AuthProvider';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { LucideIcon } from 'lucide-react';
+import UserRep from './UserRep';
 
 interface Category {
   name: string;
@@ -21,6 +22,10 @@ const nonAdminCategories: Category[] = [
   { name: 'Settings', icon: Settings },
   // { name: 'Users', icon: User, href: '/users' },
   // { name: 'Residuals', icon: FileText, href: 'https://dev.tracerpos.com/'  },
+];
+
+const userRep = [
+  {name: 'Reps',icon: Cpu}
 ];
 
 const adminCategories = [
@@ -51,6 +56,7 @@ export default function Sidebar({
   // Get role_id from auth_user in localStorage
   const authUser = JSON.parse(localStorage.getItem('auth_user') || '{}');
   const isAdmin = authUser?.role_id === 2;
+  const isUser = authUser?.role_id === 5;
 
   const handleLogout = async () => {
     try {
@@ -150,6 +156,9 @@ export default function Sidebar({
             ))}
           </nav>
         </div>
+
+        {isUser && <UserRep />}
+
         <button 
           onClick={handleLogout}
           className='absolute bottom-5 left-[50%] translate-x-[-50%] w-[90%] bg-yellow-400 rounded py-3 font-semibold uppercase flex items-center justify-center hover:bg-yellow-600 gap-2 text-black'

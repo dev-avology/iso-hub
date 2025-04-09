@@ -48,7 +48,7 @@ export default function JotForm() {
   const data = searchParams.get('data');
   const [errors, setErrors] = useState<{ [key: string]: string[] }>({});
   const [isReadOnly, setIsReadOnly] = useState<{ readOnly?: boolean, disabled?: boolean }>({});
-  console.log(isReadOnly,'read only');
+  // console.log(isReadOnly,'read only');
 
   useEffect(() => {
     const checkUniqueString = async () => {
@@ -79,7 +79,7 @@ export default function JotForm() {
 
           // Store fetched data if available
           if (responseData.data && Object.keys(responseData.data).length > 0) {
-            console.log('Form data received:', responseData.data);
+            // console.log('Form data received:', responseData.data);
             setFormData(prev => ({ ...prev, ...responseData.data }));
             setIsReadOnly({ readOnly: true, disabled: true }); // Set both readonly and disabled
           } else {
@@ -116,8 +116,8 @@ export default function JotForm() {
 
   // Add a useEffect to log state changes
   useEffect(() => {
-    console.log('Current readonly state:', isReadOnly);
-    console.log('Current form data:', formData);
+    // console.log('Current readonly state:', isReadOnly);
+    // console.log('Current form data:', formData);
   }, [isReadOnly, formData]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -155,7 +155,7 @@ export default function JotForm() {
         unique_string: data
       };
 
-      console.log(finalFormData);
+      // console.log(finalFormData);
       
       if (!data) {
         toast.error('Invalid form link');
@@ -195,7 +195,7 @@ export default function JotForm() {
           return;
         }
       
-        console.log('Form submission response:', responseData);
+        // console.log('Form submission response:', responseData);
         
         toast.success(responseData.message || 'Form submitted successfully!');
         
