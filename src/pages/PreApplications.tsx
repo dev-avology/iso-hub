@@ -212,7 +212,7 @@ function DuplicateFormModal({ form, onClose }: DuplicateFormModalProps) {
       if (!response.ok) {
         throw new Error(responseData.message || 'Failed to duplicate form');
       }
-      console.log(responseData);
+      // console.log(responseData);
 
       toast.success('Check your email to replicate the form!');
       onClose();
@@ -433,13 +433,6 @@ export default function PreApplications() {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem('auth_token');
-    // if (!token) {
-    //   toast.error('Please login to view pre-applications');
-    //   navigate('/login');
-    //   return;
-    // }
-    console.log(token,'token');
     fetchForms();
   }, []);
 

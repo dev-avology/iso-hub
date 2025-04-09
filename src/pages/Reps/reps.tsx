@@ -87,7 +87,7 @@ const RepModal: React.FC<RepModalProps> = ({ onClose, onSave, fetchReps }) => {
         }
       });
       const data = await response.json();
-      console.log(data,'rep data');
+      // console.log(data,'rep data');
       if (data.status === 'success') {
         setUsers(data.data);
       }
