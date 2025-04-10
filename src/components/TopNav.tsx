@@ -26,7 +26,7 @@ export default function TopNav({
 
   const isActive = (href: string) => {
     if (href.startsWith('http')) return false;
-    if (href === '/secure' && location.pathname === '/marketing') return true;
+    // if (href === '/secure' && location.pathname === '/marketing') return true;
     return location.pathname === href;
   };
 

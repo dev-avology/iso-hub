@@ -4,52 +4,45 @@ import { Bot } from 'lucide-react';
 export default function JACC() {
   const [isMinimized, setIsMinimized] = useState(false);
   const [iframeUrl, setIframeUrl] = useState('');
-  const [user, setUser] = useState(null);
-  const [userHash, setUserHash] = useState('');
 
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const token = localStorage.getItem("auth_token");
 
-  const fetchHash = async (userId) => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/chat-hash`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify({ user_id: userId }),
-      });
+  useEffect(() => {
+    const fetchUserAndHash = async () => {
+      const userString = localStorage.getItem("auth_user");
+      const user = userString ? JSON.parse(userString) : null;
 
-      const result = await response.json();
+      if (user && user.id) {
+        try {
+          const response = await fetch(`${API_BASE_URL}/chat-hash`, {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+            body: JSON.stringify({ user_id: user.id }),
+          });
 
-      if (response.ok && result.status === "success" && typeof result.data === 'string') {
-        setUserHash(result.data);
-      } else {
-        throw new Error(result.message || "Unexpected response format");
+          const result = await response.json();
+
+          if (response.ok && result.status === "success" && result.data) {
+            const hash = result.data;
+            setIframeUrl(`https://www.chatbase.co/chatbot-iframe/jA1Q6wb90V0__fc7bFS6t?userId=${user.id}&userHash=${hash}`);
+          } else {
+            console.error("Failed to fetch chat hash:", result.message);
+          }
+        } catch (error) {
+          console.error("Error fetching user hash:", error.message);
+        }
       }
-    } catch (error) {
-      console.error("Error fetching user hash:", error.message);
-    }
-  };
+    };
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem("auth_user");
-    const parsedUser = storedUser ? JSON.parse(storedUser) : null;
+    fetchUserAndHash();
+  }, [token]); // Run this when token changes (i.e. after login)
 
-    if (parsedUser) {
-      setUser(parsedUser);
-      fetchHash(parsedUser.id);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (user && user.id && userHash) {
-      setIframeUrl(`https://www.chatbase.co/chatbot-iframe/jA1Q6wb90V0__fc7bFS6t?userId=${user.id}&userHash=${userHash}`);
-    }
-  }, [user, userHash]);
-
+  // UI rendering
   if (isMinimized) {
     return (
       <button
@@ -84,6 +77,7 @@ export default function JACC() {
       <div className="flex-1">
         {iframeUrl && (
           <iframe
+            key={iframeUrl} 
             src={iframeUrl}
             className="w-full h-full"
             style={{ border: 'none' }}
