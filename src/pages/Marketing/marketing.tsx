@@ -9,7 +9,6 @@ export default function Marketing() {
   const [newCategoryName, setNewCategoryName] = useState("");
   const [showItemModal, setShowItemModal] = useState(false);
   const [selectedCategoryId, setSelectedCategoryId] = useState(null);
-  // const [items, setItems] = useState([{ title: "" }]);
   const [items, setItems] = useState([{ title: "", description: "" }]);
 
   const [showEditModal, setShowEditModal] = useState(false);
@@ -20,7 +19,7 @@ export default function Marketing() {
   const [user, setUser] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedRep, setSelectedRep] = useState(null);
-  const [deleteType, setDeleteType] = useState(""); // "item" or "category"
+  const [deleteType, setDeleteType] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
 
 
