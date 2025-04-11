@@ -23,6 +23,62 @@ interface FormData {
   updated_at: string;
   user_id: number;
   is_duplicate: string;
+
+  // Business Profile
+  business_dba: string;
+  business_corporate_legal_name: string;
+  business_location_address: string;
+  business_corporate_address: string;
+  business_city: string;
+  business_state: string;
+  business_zip: string;
+  business_phone_number: string;
+  business_contact_name: string;
+  business_contact_number: string;
+  business_start_date: string;
+  business_tax_id: string;
+  business_profile_business_type: string[];
+
+  // Ownership
+  ownership_owner_name: string;
+  ownership_title: string;
+  ownership_percent: string;
+  ownership_phone_number: string;
+  ownership_city: string;
+  ownership_state: string;
+  ownership_zip: string;
+  ownership_email: string;
+  ownership_dob: string;
+  ownership_social_security_number: string;
+  ownership_residential_street_address: string;
+  ownership_driver_licence_number: string;
+
+  // Banking Information
+  bank_name: string;
+  aba_routing: string;
+  doa: string;
+
+  // Business Type
+  business_type: string[];
+  processing_services: string[];
+
+  // Processing Hardware
+  terminal: string[];
+  terminal_special_features: string;
+  terminal_type_or_model: string;
+
+  mobile_app: string[];
+  mobile_app_special_features: string;
+  mobile_app_cardreader_type_model: string;
+
+  pos_point_of_sale: string[];
+  pos_special_features: string;
+  system_type_model: string;
+  number_of_stations: string;
+  pos_other_items: string;
+
+  virtual_terminal: string[];
+  business_type_other: string;
 }
 
 interface ApiResponse {
@@ -52,6 +108,12 @@ interface DuplicateFormModalProps {
 function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
   if (!form) return null;
 
+  const isChecked = (array: string | string[] | undefined, value: string) => {
+    if (!array) return false;
+    const parsedArray = typeof array === 'string' ? JSON.parse(array) : array;
+    return parsedArray.includes(value);
+  };
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-zinc-900 rounded-lg p-8 max-w-3xl w-full mx-4 relative max-h-[90vh] overflow-y-auto border border-yellow-400/20">
@@ -74,71 +136,348 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
             <div className="grid grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-400">DBA(Doing Business As)</label>
-                <p className="mt-1 text-white font-medium">{form.dba}</p>
+                <p className="mt-1 text-white font-medium">{form.business_dba}</p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-400">Corporate Legal Name</label>
+                <p className="mt-1 text-white font-medium">{form.business_corporate_legal_name}</p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-400">Location Address</label>
+                <p className="mt-1 text-white font-medium">{form.business_location_address}</p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-400">Corporate Address</label>
+                <p className="mt-1 text-white font-medium">{form.business_corporate_address}</p>
+              </div>
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-400">City</label>
+                  <p className="mt-1 text-white font-medium">{form.business_city}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-400">State</label>
+                  <p className="mt-1 text-white font-medium">{form.business_state}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-400">ZIP</label>
+                  <p className="mt-1 text-white font-medium">{form.business_zip}</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-400">Business Phone</label>
+                  <p className="mt-1 text-white font-medium">{form.business_phone_number}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-400">Contact Name</label>
+                  <p className="mt-1 text-white font-medium">{form.business_contact_name}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-400">Contact Number</label>
+                  <p className="mt-1 text-white font-medium">{form.business_contact_number}</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-400">Start Date</label>
+                  <p className="mt-1 text-white font-medium">{form.business_start_date}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-400">Federal Tax ID</label>
+                  <p className="mt-1 text-white font-medium">{form.business_tax_id}</p>
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-400">Business Type</label>
+                <div className="flex flex-wrap gap-4 mt-2">
+                  {[
+                    { value: 'corporation', label: 'Corporation' },
+                    { value: 'partnership', label: 'Partnership' },
+                    { value: 'llc', label: 'LLC' },
+                    { value: 'sole_proprietor', label: 'Sole Proprietor' },
+                    { value: 'non_profit', label: 'Non For Profit' },
+                  ].map(({ value, label }) => (
+                    <span
+                      key={value}
+                      className={`px-3 py-1 rounded-full text-sm ${
+                        isChecked(form.business_profile_business_type, value)
+                          ? 'bg-yellow-400 text-black'
+                          : 'bg-zinc-700 text-gray-400'
+                      }`}
+                    >
+                      {label}
+                    </span>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Address Information */}
+          {/* Ownership Information */}
           <div className="bg-zinc-800/50 rounded-lg p-6 border border-zinc-700">
-            <h3 className="text-lg font-semibold text-yellow-400 mb-4">Address Information</h3>
+            <h3 className="text-lg font-semibold text-yellow-400 mb-4">Ownership Information</h3>
             <div className="grid grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-400">Street Address</label>
-                <p className="mt-1 text-white font-medium">{form.description}</p>
+                <label className="block text-sm font-medium text-gray-400">Owner Name</label>
+                <p className="mt-1 text-white font-medium">{form.ownership_owner_name}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-400">Street Address Line 2</label>
-                <p className="mt-1 text-white font-medium">{form.address2}</p>
+                <label className="block text-sm font-medium text-gray-400">Title</label>
+                <p className="mt-1 text-white font-medium">{form.ownership_title}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-400">City</label>
-                <p className="mt-1 text-white font-medium">{form.city}</p>
+                <label className="block text-sm font-medium text-gray-400">Ownership %</label>
+                <p className="mt-1 text-white font-medium">{form.ownership_percent}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-400">State</label>
-                <p className="mt-1 text-white font-medium">{form.state}</p>
+                <label className="block text-sm font-medium text-gray-400">Phone Number</label>
+                <p className="mt-1 text-white font-medium">{form.ownership_phone_number}</p>
+              </div>
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-400">City</label>
+                  <p className="mt-1 text-white font-medium">{form.ownership_city}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-400">State</label>
+                  <p className="mt-1 text-white font-medium">{form.ownership_state}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-400">ZIP</label>
+                  <p className="mt-1 text-white font-medium">{form.ownership_zip}</p>
+                </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-400">Pincode</label>
-                <p className="mt-1 text-white font-medium">{form.pincode}</p>
+                <label className="block text-sm font-medium text-gray-400">Email</label>
+                <p className="mt-1 text-white font-medium">{form.ownership_email}</p>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-400">Date of Birth</label>
+                  <p className="mt-1 text-white font-medium">{form.ownership_dob}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-400">Social Security Number</label>
+                  <p className="mt-1 text-white font-medium">{form.ownership_social_security_number}</p>
+                </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-400">Same Shipping Address</label>
-                <p className="mt-1 text-white font-medium">{form.is_same_shipping_address === '1' ? 'Yes' : 'No'}</p>
+                <label className="block text-sm font-medium text-gray-400">Residential Address</label>
+                <p className="mt-1 text-white font-medium">{form.ownership_residential_street_address}</p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-400">Driver License Number</label>
+                <p className="mt-1 text-white font-medium">{form.ownership_driver_licence_number}</p>
               </div>
             </div>
           </div>
 
-          {/* Status Information */}
+          {/* Banking Information */}
           <div className="bg-zinc-800/50 rounded-lg p-6 border border-zinc-700">
-            <h3 className="text-lg font-semibold text-yellow-400 mb-4">Status Information</h3>
-            <div className="grid grid-cols-2 gap-6">
+            <h3 className="text-lg font-semibold text-yellow-400 mb-4">Banking Information</h3>
+            <div className="grid grid-cols-3 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-400">Form Type</label>
-                <span className={`mt-2 px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full 
-                  ${form.is_duplicate === '1' ? 'bg-purple-100 text-purple-800' : 'bg-yellow-100 text-yellow-800'}`}>
-                  {form.is_duplicate === '1' ? 'Replicated' : 'New Form'}
-                </span>
+                <label className="block text-sm font-medium text-gray-400">Bank Name</label>
+                <p className="mt-1 text-white font-medium">{form.bank_name}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-400">Status</label>
-                <span className={`mt-2 px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full 
-                  ${form.status === 0 ? 'bg-yellow-100 text-yellow-800' :
-                    form.status === 1 ? 'bg-blue-100 text-blue-800' :
-                      form.status === 2 ? 'bg-green-100 text-green-800' :
-                        form.status === 3 ? 'bg-red-100 text-red-800' :
-                          'bg-gray-100 text-gray-800'}`}>
-                  {form.status === 0 ? 'New' :
-                    form.status === 1 ? 'In Review' :
-                      form.status === 2 ? 'Approved' :
-                        form.status === 3 ? 'Declined' :
-                          'Unknown'}
-                </span>
+                <label className="block text-sm font-medium text-gray-400">ABA Routing</label>
+                <p className="mt-1 text-white font-medium">{form.aba_routing}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-400">Created At</label>
-                <p className="mt-1 text-white font-medium">{new Date(form.created_at).toLocaleString()}</p>
+                <label className="block text-sm font-medium text-gray-400">DOA</label>
+                <p className="mt-1 text-white font-medium">{form.doa}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Business Type */}
+          <div className="bg-zinc-800/50 rounded-lg p-6 border border-zinc-700">
+            <h3 className="text-lg font-semibold text-yellow-400 mb-4">Business Type</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-400">Business Type</label>
+                <div className="flex flex-wrap gap-4 mt-2">
+                  {[
+                    { value: 'retail', label: 'Retail' },
+                    { value: 'hospitality', label: 'Hospitality' },
+                    { value: 'services', label: 'Services' },
+                    { value: 'b2b', label: 'B2B' },
+                  ].map(({ value, label }) => (
+                    <span
+                      key={value}
+                      className={`px-3 py-1 rounded-full text-sm ${
+                        isChecked(form.business_type, value)
+                          ? 'bg-yellow-400 text-black'
+                          : 'bg-zinc-700 text-gray-400'
+                      }`}
+                    >
+                      {label}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-400">Others</label>
+                <p className="mt-1 text-white font-medium">{form.business_type_other}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Processing Services */}
+          <div className="bg-zinc-800/50 rounded-lg p-6 border border-zinc-700">
+            <h3 className="text-lg font-semibold text-yellow-400 mb-4">Processing Services</h3>
+            <div className="flex flex-wrap gap-4">
+              {[
+                { value: 'traditional_processing', label: 'Traditional Processing' },
+                { value: 'surcharging', label: 'Surcharging' },
+                { value: 'qr_code', label: 'QR Code' },
+                { value: 'check_services', label: 'Check Services' },
+                { value: 'qb_or_software_integration', label: 'QB/Software Integration' },
+                { value: 'cash_discounting', label: 'Cash Discounting' },
+                { value: 'online_ordering', label: 'Online Ordering(OLO)' },
+                { value: 'gift_cards', label: 'Gift Cards' },
+                { value: 'invoice_manager', label: 'Invoice Manager' },
+              ].map(({ value, label }) => (
+                <span
+                  key={value}
+                  className={`px-3 py-1 rounded-full text-sm ${
+                    isChecked(form.processing_services, value)
+                      ? 'bg-yellow-400 text-black'
+                      : 'bg-zinc-700 text-gray-400'
+                  }`}
+                >
+                  {label}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* Processing Hardware */}
+          <div className="bg-zinc-800/50 rounded-lg p-6 border border-zinc-700">
+            <h3 className="text-lg font-semibold text-yellow-400 mb-4">Processing Hardware</h3>
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-400">Terminal</label>
+                <div className="flex flex-wrap gap-4 mt-2">
+                  {[
+                    { value: 'dial', label: 'Dial' },
+                    { value: 'ip', label: 'IP' },
+                    { value: 'wifi', label: 'WIFI' },
+                    { value: '4g', label: '4G' },
+                  ].map(({ value, label }) => (
+                    <span
+                      key={value}
+                      className={`px-3 py-1 rounded-full text-sm ${
+                        isChecked(form.terminal, value)
+                          ? 'bg-yellow-400 text-black'
+                          : 'bg-zinc-700 text-gray-400'
+                      }`}
+                    >
+                      {label}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-400">Terminal Special Features</label>
+                  <p className="mt-1 text-white font-medium">{form.terminal_special_features}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-400">Terminal Type/Model</label>
+                  <p className="mt-1 text-white font-medium">{form.terminal_type_or_model}</p>
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-400">Mobile App</label>
+                <div className="flex flex-wrap gap-4 mt-2">
+                  {[
+                    { value: 'ios', label: 'IOS' },
+                    { value: 'android', label: 'Android' },
+                  ].map(({ value, label }) => (
+                    <span
+                      key={value}
+                      className={`px-3 py-1 rounded-full text-sm ${
+                        isChecked(form.mobile_app, value)
+                          ? 'bg-yellow-400 text-black'
+                          : 'bg-zinc-700 text-gray-400'
+                      }`}
+                    >
+                      {label}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-400">Mobile App Special Features</label>
+                <p className="mt-1 text-white font-medium">{form.mobile_app_special_features}</p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-400">Cardreader Type/Model</label>
+                <p className="mt-1 text-white font-medium">{form.mobile_app_cardreader_type_model}</p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-400">POS System</label>
+                <div className="flex flex-wrap gap-4 mt-2">
+                  {[
+                    { value: 'ios', label: 'IOS' },
+                    { value: 'android', label: 'Android' },
+                    { value: 'windows_or_pc', label: 'Windows/PC' },
+                  ].map(({ value, label }) => (
+                    <span
+                      key={value}
+                      className={`px-3 py-1 rounded-full text-sm ${
+                        isChecked(form.pos_point_of_sale, value)
+                          ? 'bg-yellow-400 text-black'
+                          : 'bg-zinc-700 text-gray-400'
+                      }`}
+                    >
+                      {label}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div className="grid grid-cols-4 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-400">POS Special Features</label>
+                  <p className="mt-1 text-white font-medium">{form.pos_special_features}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-400">System Type Model</label>
+                  <p className="mt-1 text-white font-medium">{form.system_type_model}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-400">Number of Stations</label>
+                  <p className="mt-1 text-white font-medium">{form.number_of_stations}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-400">POS Other Items</label>
+                  <p className="mt-1 text-white font-medium">{form.pos_other_items}</p>
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-400">Virtual Terminal</label>
+                <div className="flex flex-wrap gap-4 mt-2">
+                  {[
+                    { value: 'test_or_email_link_to_pay', label: 'Text/Email Link to Pay' },
+                    { value: 'hot_button', label: 'Hot Button on Web Pay Now/Donate Now' },
+                    { value: 'cnp_cash_discount', label: 'CNP Cash Discount/Surcharge' },
+                    { value: 'text_notification', label: 'Text Notification' },
+                  ].map(({ value, label }) => (
+                    <span
+                      key={value}
+                      className={`px-3 py-1 rounded-full text-sm ${
+                        isChecked(form.virtual_terminal, value)
+                          ? 'bg-yellow-400 text-black'
+                          : 'bg-zinc-700 text-gray-400'
+                      }`}
+                    >
+                      {label}
+                    </span>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -176,10 +515,25 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
 }
 
 function DuplicateFormModal({ form, onClose }: DuplicateFormModalProps) {
-  const [formData, setFormData] = useState<FormData>(form || {} as FormData);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [prospectEmail, setProspectEmail] = useState('');
-  const [date, setDate] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
+
+  const parseArrayField = (value: any) => {
+    if (!value) return [];
+    if (Array.isArray(value)) return value;
+    try {
+      return JSON.parse(value);
+    } catch (e) {
+      return [];
+    }
+  };
+
+  const isChecked = (array: string | string[] | undefined, value: string) => {
+    if (!array) return false;
+    const parsedArray = typeof array === 'string' ? parseArrayField(array) : array;
+    return parsedArray.includes(value);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -187,216 +541,481 @@ function DuplicateFormModal({ form, onClose }: DuplicateFormModalProps) {
       toast.error('Please enter prospect email');
       return;
     }
+
     setIsSubmitting(true);
     try {
-      const formDataToSubmit = {
-        ...formData,
-        email: prospectEmail,
-        signature_date: date,
-        signature: '',
-        is_duplicate: '1'
-      };
+      const accessToken = localStorage.getItem('auth_token');
+      if (!accessToken) {
+        throw new Error('Authentication token not found. Please login again.');
+      }
 
-      const token = localStorage.getItem('auth_token');
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/duplicate-form-send-mail`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/duplicate-jotform/${form?.id}`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formDataToSubmit)
+        body: JSON.stringify({
+          prospect_email: prospectEmail,
+          form_data: {
+            ...form,
+            business_profile_business_type: parseArrayField(form?.business_profile_business_type),
+            business_type: parseArrayField(form?.business_type),
+            processing_services: parseArrayField(form?.processing_services),
+            terminal: parseArrayField(form?.terminal),
+            mobile_app: parseArrayField(form?.mobile_app),
+            pos_point_of_sale: parseArrayField(form?.pos_point_of_sale),
+            virtual_terminal: parseArrayField(form?.virtual_terminal)
+          }
+        }),
       });
 
+      // Check if the response is JSON
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('Server returned an invalid response. Please try again later.');
+      }
+
       const responseData = await response.json();
+      console.log(responseData);
 
       if (!response.ok) {
+        if (response.status === 401) {
+          localStorage.removeItem('auth_token');
+          navigate('/login');
+          throw new Error('Session expired. Please login again.');
+        }
         throw new Error(responseData.message || 'Failed to duplicate form');
       }
-      // console.log(responseData);
 
-      toast.success('Check your email to replicate the form!');
+      toast.success('Form duplicated successfully!');
       onClose();
-      // window.location.reload(); // Refresh the page to show updated list
     } catch (error) {
       console.error('Error duplicating form:', error);
-      toast.error(error instanceof Error ? error.message : 'Failed to duplicate form');
+      if (error instanceof Error) {
+        if (error.message.includes('Session expired')) {
+          toast.error('Session expired. Please login again.');
+          navigate('/login');
+        } else {
+          toast.error(error.message);
+        }
+      } else {
+        toast.error('Failed to duplicate form. Please try again later.');
+      }
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-zinc-900 rounded-lg p-8 max-w-3xl w-full mx-4 relative max-h-[90vh] overflow-y-auto border border-yellow-400/20">
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-yellow-400 transition-colors"
-        >
-          <X className="h-6 w-6" />
-        </button>
-
-        <div className="text-center mb-8">
-          <h2 className="text-2xl font-bold text-yellow-400">Replicate Form</h2>
-          <div className="mt-2 h-1 w-24 bg-yellow-400 mx-auto rounded-full"></div>
+      <div className="bg-zinc-900 rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        {/* Header */}
+        <div className="bg-yellow-400 rounded-lg p-4 mb-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-bold text-black">Merchant Pre-Application</h2>
+            <button onClick={onClose} className="text-black hover:text-gray-700">
+              <X className="h-6 w-6" />
+            </button>
+          </div>
+          <p className="text-black/80 text-sm">Tracer C2 Financial Services</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-8">
-          {/* Business Information */}
-          <div className="bg-zinc-800/50 rounded-lg p-6 border border-zinc-700">
-            <h3 className="text-lg font-semibold text-yellow-400 mb-4">Business Information</h3>
-            <div className="grid grid-cols-2 gap-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* BUSINESS PROFILE */}
+          <div className="bg-zinc-800 rounded-lg p-4 border border-zinc-700">
+            <h3 className="text-lg font-semibold text-white mb-4">BUSINESS PROFILE</h3>
+            <div className="grid grid-cols-1 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-400">DBA(Doing Business As)</label>
-                <input
-                  type="text"
-                  name="dba"
-                  value={formData.dba || ''}
-                  readOnly
-                  onChange={handleChange}
-                  className="mt-1 block w-full bg-zinc-700 border border-zinc-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
-                />
+                <label className="block text-sm font-medium text-gray-300">Doing Business As (DBA)</label>
+                <input type="text" value={form?.business_dba || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300">Corporate Legal Name</label>
+                <input type="text" value={form?.business_corporate_legal_name || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300">Location Address</label>
+                <input type="text" value={form?.business_location_address || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300">Corporate Address (if different)</label>
+                <input type="text" value={form?.business_corporate_address || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+              </div>
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300">City</label>
+                  <input type="text" value={form?.business_city || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300">State</label>
+                  <input type="text" value={form?.business_state || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300">ZIP</label>
+                  <input type="text" value={form?.business_zip || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300">Business Phone Number</label>
+                  <input type="text" value={form?.business_phone_number || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300">Contact Name</label>
+                  <input type="text" value={form?.business_contact_name || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300">Contact Number</label>
+                  <input type="text" value={form?.business_contact_number || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300">Date</label>
+                  <input type="text" value={form?.business_start_date || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300">Federal Tax ID</label>
+                  <input type="text" value={form?.business_tax_id || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300">Business Type</label>
+                <div className="flex flex-wrap gap-4 mt-2 bg-zinc-700 p-4 rounded-md">
+                  {[
+                    { value: 'corporation', label: 'Corporation' },
+                    { value: 'partnership', label: 'Partnership' },
+                    { value: 'llc', label: 'LLC' },
+                    { value: 'sole_proprietor', label: 'Sole Proprietor' },
+                    { value: 'non_profit', label: 'Non For Profit' },
+                  ].map(({ value, label }) => (
+                    <label key={value} className="inline-flex items-center">
+                      <input
+                        type="checkbox"
+                        value={value}
+                        disabled
+                        checked={isChecked(form?.business_profile_business_type, value)}
+                        className="h-4 w-4 rounded border-zinc-600 text-yellow-400 focus:ring-yellow-400 bg-zinc-600 cursor-not-allowed"
+                      />
+                      <span className="ml-2 text-white">{label}</span>
+                    </label>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Address Information */}
-          <div className="bg-zinc-800/50 rounded-lg p-6 border border-zinc-700">
-            <h3 className="text-lg font-semibold text-yellow-400 mb-4">Address Information</h3>
-            <div className="grid grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-400">Street Address</label>
-                <input
-                  type="text"
-                  name="description"
-                  readOnly
-                  value={formData.description || ''}
-                  onChange={handleChange}
-                  className="mt-1 block w-full bg-zinc-700 border border-zinc-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
-                />
+          {/* OWNERSHIP */}
+          <div className="bg-zinc-800 rounded-lg p-4 border border-zinc-700">
+            <h3 className="text-lg font-semibold text-white mb-4">OWNERSHIP</h3>
+            <div className="grid grid-cols-1 gap-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300">Owner Name</label>
+                  <input type="text" value={form?.ownership_owner_name || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300">Title</label>
+                  <input type="text" value={form?.ownership_title || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300">Ownership %</label>
+                  <input type="text" value={form?.ownership_percent || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300">Phone Number</label>
+                  <input type="text" value={form?.ownership_phone_number || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300">City</label>
+                  <input type="text" value={form?.ownership_city || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300">State</label>
+                  <input type="text" value={form?.ownership_state || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300">ZIP</label>
+                  <input type="text" value={form?.ownership_zip || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-400">Street Address Line 2</label>
-                <input
-                  type="text"
-                  name="address2"
-                  value={formData.address2 || ''}
-                  readOnly
-                  onChange={handleChange}
-                  className="mt-1 block w-full bg-zinc-700 border border-zinc-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
-                />
+                <label className="block text-sm font-medium text-gray-300">Email</label>
+                <input type="text" value={form?.ownership_email || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-400">City</label>
-                <input
-                  type="text"
-                  name="city"
-                  readOnly
-                  value={formData.city || ''}
-                  onChange={handleChange}
-                  className="mt-1 block w-full bg-zinc-700 border border-zinc-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
-                />
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300">Date of Birth</label>
+                  <input type="text" value={form?.ownership_dob || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300">Social Security Number</label>
+                  <input type="text" value={form?.ownership_social_security_number || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                </div>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-400">State</label>
-                <input
-                  type="text"
-                  name="state"
-                  value={formData.state || ''}
-                  readOnly
-                  onChange={handleChange}
-                  className="mt-1 block w-full bg-zinc-700 border border-zinc-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-400">Pincode</label>
-                <input
-                  type="number"
-                  name="pincode"
-                  readOnly
-                  value={formData.pincode || ''}
-                  onChange={handleChange}
-                  className="mt-1 block w-full bg-zinc-700 border border-zinc-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-400">Same Shipping Address</label>
-                <select
-                  name="is_same_shipping_address"
-                  value={formData.is_same_shipping_address || '0'}
-                  onChange={(e) => handleChange({ target: { name: 'is_same_shipping_address', value: e.target.value } } as any)}
-                  className="mt-1 block w-full bg-zinc-700 border border-zinc-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
-                >
-                  <option value="1">Yes</option>
-                  <option value="0">No</option>
-                </select>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300">Residential Street Address</label>
+                  <input type="text" value={form?.ownership_residential_street_address || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300">Driver License Number</label>
+                  <input type="text" value={form?.ownership_driver_licence_number || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Signature Section */}
-          <div className="bg-zinc-800/50 rounded-lg p-6 border border-zinc-700">
-            <h3 className="text-yellow-400 mb-4">Signature</h3>
-            <div className="grid grid-cols-2 gap-6">
+          {/* BANKING INFORMATION */}
+          <div className="bg-zinc-800 rounded-lg p-4 border border-zinc-700">
+            <h3 className="text-lg font-semibold text-white mb-4">BANKING INFORMATION</h3>
+            <div className="grid grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-400">Date</label>
-                <input
-                  type="date"
-                  value={date}
-                  onChange={(e) => setDate(e.target.value)}
-                  className="mt-1 block w-full bg-zinc-700 border border-zinc-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
-                />
+                <label className="block text-sm font-medium text-gray-300">Bank Name</label>
+                <input type="text" value={form?.bank_name || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-400">Signature</label>
-                <div className="mt-1 bg-white rounded-lg h-[150px] w-full border border-zinc-300"></div>
+                <label className="block text-sm font-medium text-gray-300">ABA Routing</label>
+                <input type="text" value={form?.aba_routing || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300">DOA</label>
+                <input type="text" value={form?.doa || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
               </div>
             </div>
           </div>
 
-          {/* Prospect Email */}
-          <div className="bg-zinc-800/50 rounded-lg p-6 border border-zinc-700">
-            <h3 className="text-lg font-semibold text-yellow-400 mb-4">Prospect Information</h3>
+          {/* BUSINESS TYPE */}
+          <div className="bg-zinc-800 rounded-lg p-4 border border-zinc-700">
+            <h3 className="text-lg font-semibold text-white mb-4">BUSINESS TYPE</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-300">Business Type</label>
+                <div className="flex flex-wrap gap-4 mt-2 bg-zinc-700 p-4 rounded-md">
+                  {[
+                    { value: 'retail', label: 'Retail' },
+                    { value: 'hospitality', label: 'Hospitality' },
+                    { value: 'services', label: 'Services' },
+                    { value: 'b2b', label: 'B2B' },
+                  ].map(({ value, label }) => (
+                    <label key={value} className="inline-flex items-center">
+                      <input
+                        type="checkbox"
+                        value={value}
+                        disabled
+                        checked={isChecked(form?.business_type, value)}
+                        className="h-4 w-4 rounded border-zinc-600 text-yellow-400 focus:ring-yellow-400 bg-zinc-600 cursor-not-allowed"
+                      />
+                      <span className="ml-2 text-white">{label}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300">Others (Optional)</label>
+                <input type="text" value={form?.business_type_other || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+              </div>
+            </div>
+          </div>
+
+          {/* PROCESSING SERVICES */}
+          <div className="bg-zinc-800 rounded-lg p-4 border border-zinc-700">
+            <h3 className="text-lg font-semibold text-white mb-4">PROCESSING SERVICES</h3>
             <div>
-              <label className="block text-sm font-medium text-gray-400">Prospect Email*</label>
+              <label className="block text-sm font-medium text-gray-300">Processing Services</label>
+              <div className="flex flex-wrap gap-4 mt-2 bg-zinc-700 p-4 rounded-md">
+                {[
+                  { value: 'traditional_processing', label: 'Traditional Processing' },
+                  { value: 'surcharging', label: 'Surcharging' },
+                  { value: 'qr_code', label: 'QR Code' },
+                  { value: 'check_services', label: 'Check Services' },
+                  { value: 'qb_or_software_integration', label: 'QB/Software Integration' },
+                  { value: 'cash_discounting', label: 'Cash Discounting' },
+                  { value: 'online_ordering', label: 'Online Ordering(OLO)' },
+                  { value: 'gift_cards', label: 'Gift Cards' },
+                  { value: 'invoice_manager', label: 'Invoice Manager' },
+                ].map(({ value, label }) => (
+                  <label key={value} className="inline-flex items-center">
+                    <input
+                      type="checkbox"
+                      value={value}
+                      disabled
+                      checked={isChecked(form?.processing_services, value)}
+                      className="h-4 w-4 rounded border-zinc-600 text-yellow-400 focus:ring-yellow-400 bg-zinc-600 cursor-not-allowed"
+                    />
+                    <span className="ml-2 text-white">{label}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* PROCESSING HARDWARE */}
+          <div className="bg-zinc-800 rounded-lg p-4 border border-zinc-700">
+            <h3 className="text-lg font-semibold text-white mb-4">PROCESSING HARDWARE</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-300">Terminal</label>
+                <div className="flex flex-wrap gap-4 mt-2 bg-zinc-700 p-4 rounded-md">
+                  {[
+                    { value: 'dial', label: 'Dial' },
+                    { value: 'ip', label: 'IP' },
+                    { value: 'wifi', label: 'WIFI' },
+                    { value: '4g', label: '4G' },
+                  ].map(({ value, label }) => (
+                    <label key={value} className="inline-flex items-center">
+                      <input
+                        type="checkbox"
+                        value={value}
+                        disabled
+                        checked={isChecked(form?.terminal, value)}
+                        className="h-4 w-4 rounded border-zinc-600 text-yellow-400 focus:ring-yellow-400 bg-zinc-600 cursor-not-allowed"
+                      />
+                      <span className="ml-2 text-white">{label}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300">Terminal Special Features (Optional)</label>
+                  <input type="text" value={form?.terminal_special_features || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300">Terminal Type/Model</label>
+                  <input type="text" value={form?.terminal_type_or_model || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300">Mobile App</label>
+                <div className="flex flex-wrap gap-4 mt-2 bg-zinc-700 p-4 rounded-md">
+                  {[
+                    { value: 'ios', label: 'IOS' },
+                    { value: 'android', label: 'Android' },
+                  ].map(({ value, label }) => (
+                    <label key={value} className="inline-flex items-center">
+                      <input
+                        type="checkbox"
+                        value={value}
+                        disabled
+                        checked={isChecked(form?.mobile_app, value)}
+                        className="h-4 w-4 rounded border-zinc-600 text-yellow-400 focus:ring-yellow-400 bg-zinc-600 cursor-not-allowed"
+                      />
+                      <span className="ml-2 text-white">{label}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300">Mobile App Special Features (Optional)</label>
+                <input type="text" value={form?.mobile_app_special_features || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300">Cardreader Type/Model</label>
+                <input type="text" value={form?.mobile_app_cardreader_type_model || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300">POS(Point of Sale) System</label>
+                <div className="flex flex-wrap gap-4 mt-2 bg-zinc-700 p-4 rounded-md">
+                  {[
+                    { value: 'ios', label: 'IOS' },
+                    { value: 'android', label: 'Android' },
+                    { value: 'windows_or_pc', label: 'Windows/PC' },
+                  ].map(({ value, label }) => (
+                    <label key={value} className="inline-flex items-center">
+                      <input
+                        type="checkbox"
+                        value={value}
+                        disabled
+                        checked={isChecked(form?.pos_point_of_sale, value)}
+                        className="h-4 w-4 rounded border-zinc-600 text-yellow-400 focus:ring-yellow-400 bg-zinc-600 cursor-not-allowed"
+                      />
+                      <span className="ml-2 text-white">{label}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+              <div className="grid grid-cols-4 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300">POS Special Features</label>
+                  <input type="text" value={form?.pos_special_features || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300">System Type Model</label>
+                  <input type="text" value={form?.system_type_model || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300">Number of Stations</label>
+                  <input type="text" value={form?.number_of_stations || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300">POS other items</label>
+                  <input type="text" value={form?.pos_other_items || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300">Virtual Terminal</label>
+                <div className="flex flex-wrap gap-4 mt-2 bg-zinc-700 p-4 rounded-md">
+                  {[
+                    { value: 'test_or_email_link_to_pay', label: 'Text/Email Link to Pay' },
+                    { value: 'hot_button', label: 'Hot Button on Web Pay Now/Donate Now' },
+                    { value: 'cnp_cash_discount', label: 'CNP Cash Discount/Surcharge' },
+                    { value: 'text_notification', label: 'Text Notification' },
+                  ].map(({ value, label }) => (
+                    <label key={value} className="inline-flex items-center">
+                      <input
+                        type="checkbox"
+                        value={value}
+                        disabled
+                        checked={isChecked(form?.virtual_terminal, value)}
+                        className="h-4 w-4 rounded border-zinc-600 text-yellow-400 focus:ring-yellow-400 bg-zinc-600 cursor-not-allowed"
+                      />
+                      <span className="ml-2 text-white">{label}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Prospect Email Section */}
+          <div className="bg-zinc-800 rounded-lg p-4 border border-zinc-700">
+            <h3 className="text-lg font-semibold text-white mb-4">Prospect Information</h3>
+            <div>
+              <label className="block text-sm font-medium text-gray-300">Prospect Email *</label>
               <input
                 type="email"
                 value={prospectEmail}
                 onChange={(e) => setProspectEmail(e.target.value)}
-                placeholder="Enter prospect's email address"
                 required
-                className="mt-1 block w-full bg-zinc-700 border border-zinc-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white focus:border-yellow-400 focus:ring-yellow-400"
+                placeholder="Enter prospect email"
               />
-              <p className="mt-1 text-sm text-gray-400">The replicated form will be sent to this email address</p>
             </div>
           </div>
 
+          {/* Submit Button */}
           <div className="flex justify-end space-x-4">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 border border-gray-600 text-gray-300 rounded-md hover:bg-gray-700"
+              className="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="inline-flex items-center px-4 py-2 bg-yellow-400 text-black rounded-md hover:bg-yellow-500 disabled:opacity-50"
+              className={`px-4 py-2 text-sm font-medium text-black bg-yellow-400 rounded-md hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400 ${
+                isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
             >
-              {isSubmitting ? (
-                <Loader2 className="h-4 w-4 animate-spin mr-2" />
-              ) : (
-                <Duplicate className="h-4 w-4 mr-2" />
-              )}
-              Replicate Form
+              {isSubmitting ? 'Duplicating...' : 'Submit Form'}
             </button>
           </div>
         </form>
@@ -468,6 +1087,8 @@ export default function PreApplications() {
       });
 
       const responseData: ApiResponse = await response.json();
+
+      console.log(responseData);
 
       if (!response.ok) {
         if (response.status === 422) {
@@ -685,7 +1306,8 @@ export default function PreApplications() {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">DBA</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">City</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">State/Province</th>
-                  {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Pincode</th> */}
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Business Type</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Processing Services</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Status</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Replicated</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Actions</th>
@@ -697,7 +1319,12 @@ export default function PreApplications() {
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{form.dba}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{form.city}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{form.state}</td>
-                    {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{form.pincode}</td> */}
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                      {Array.isArray(form.business_type) ? form.business_type.join(', ') : ''}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                      {Array.isArray(form.processing_services) ? form.processing_services.join(', ') : ''}
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
                         ${form.status === 0 ? 'bg-yellow-100 text-yellow-800' :
