@@ -200,11 +200,10 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
                   ].map(({ value, label }) => (
                     <span
                       key={value}
-                      className={`px-3 py-1 rounded-full text-sm ${
-                        isChecked(form.business_profile_business_type, value)
+                      className={`px-3 py-1 rounded-full text-sm ${isChecked(form.business_profile_business_type, value)
                           ? 'bg-yellow-400 text-black'
                           : 'bg-zinc-700 text-gray-400'
-                      }`}
+                        }`}
                     >
                       {label}
                     </span>
@@ -307,11 +306,10 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
                   ].map(({ value, label }) => (
                     <span
                       key={value}
-                      className={`px-3 py-1 rounded-full text-sm ${
-                        isChecked(form.business_type, value)
+                      className={`px-3 py-1 rounded-full text-sm ${isChecked(form.business_type, value)
                           ? 'bg-yellow-400 text-black'
                           : 'bg-zinc-700 text-gray-400'
-                      }`}
+                        }`}
                     >
                       {label}
                     </span>
@@ -342,11 +340,10 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
               ].map(({ value, label }) => (
                 <span
                   key={value}
-                  className={`px-3 py-1 rounded-full text-sm ${
-                    isChecked(form.processing_services, value)
+                  className={`px-3 py-1 rounded-full text-sm ${isChecked(form.processing_services, value)
                       ? 'bg-yellow-400 text-black'
                       : 'bg-zinc-700 text-gray-400'
-                  }`}
+                    }`}
                 >
                   {label}
                 </span>
@@ -369,11 +366,10 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
                   ].map(({ value, label }) => (
                     <span
                       key={value}
-                      className={`px-3 py-1 rounded-full text-sm ${
-                        isChecked(form.terminal, value)
+                      className={`px-3 py-1 rounded-full text-sm ${isChecked(form.terminal, value)
                           ? 'bg-yellow-400 text-black'
                           : 'bg-zinc-700 text-gray-400'
-                      }`}
+                        }`}
                     >
                       {label}
                     </span>
@@ -399,11 +395,10 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
                   ].map(({ value, label }) => (
                     <span
                       key={value}
-                      className={`px-3 py-1 rounded-full text-sm ${
-                        isChecked(form.mobile_app, value)
+                      className={`px-3 py-1 rounded-full text-sm ${isChecked(form.mobile_app, value)
                           ? 'bg-yellow-400 text-black'
                           : 'bg-zinc-700 text-gray-400'
-                      }`}
+                        }`}
                     >
                       {label}
                     </span>
@@ -428,11 +423,10 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
                   ].map(({ value, label }) => (
                     <span
                       key={value}
-                      className={`px-3 py-1 rounded-full text-sm ${
-                        isChecked(form.pos_point_of_sale, value)
+                      className={`px-3 py-1 rounded-full text-sm ${isChecked(form.pos_point_of_sale, value)
                           ? 'bg-yellow-400 text-black'
                           : 'bg-zinc-700 text-gray-400'
-                      }`}
+                        }`}
                     >
                       {label}
                     </span>
@@ -468,11 +462,10 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
                   ].map(({ value, label }) => (
                     <span
                       key={value}
-                      className={`px-3 py-1 rounded-full text-sm ${
-                        isChecked(form.virtual_terminal, value)
+                      className={`px-3 py-1 rounded-full text-sm ${isChecked(form.virtual_terminal, value)
                           ? 'bg-yellow-400 text-black'
                           : 'bg-zinc-700 text-gray-400'
-                      }`}
+                        }`}
                     >
                       {label}
                     </span>
@@ -535,12 +528,67 @@ function DuplicateFormModal({ form, onClose }: DuplicateFormModalProps) {
     return parsedArray.includes(value);
   };
 
+  const value = localStorage.getItem("auth_user");
+  const parsedUser = value ? JSON.parse(value) : null;
+
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!prospectEmail) {
       toast.error('Please enter prospect email');
       return;
     }
+
+    const formDataToSubmit = {
+      email: prospectEmail,
+      user_id: parsedUser.id.toString(),
+      is_duplicate: "1",
+      business_profile_business_type: parseArrayField(form?.business_profile_business_type),
+      business_type: parseArrayField(form?.business_type),
+      processing_services: parseArrayField(form?.processing_services),
+      terminal: parseArrayField(form?.terminal),
+      mobile_app: parseArrayField(form?.mobile_app),
+      pos_point_of_sale: parseArrayField(form?.pos_point_of_sale),
+      virtual_terminal: parseArrayField(form?.virtual_terminal),
+      business_dba: form?.business_dba || '',
+      business_corporate_legal_name: form?.business_corporate_legal_name || '',
+      business_location_address: form?.business_location_address || '',
+      business_corporate_address: form?.business_corporate_address || '',
+      business_city: form?.business_city || '',
+      business_state: form?.business_state || '',
+      business_zip: form?.business_zip || '',
+      business_phone_number: form?.business_phone_number || '',
+      business_contact_name: form?.business_contact_name || '',
+      business_contact_number: form?.business_contact_number || '',
+      business_start_date: form?.business_start_date || '',
+      business_tax_id: form?.business_tax_id || '',
+      ownership_owner_name: form?.ownership_owner_name || '',
+      ownership_title: form?.ownership_title || '',
+      ownership_percent: form?.ownership_percent || '',
+      ownership_phone_number: form?.ownership_phone_number || '',
+      ownership_city: form?.ownership_city || '',
+      ownership_state: form?.ownership_state || '',
+      ownership_zip: form?.ownership_zip || '',
+      ownership_email: form?.ownership_email || '',
+      ownership_dob: form?.ownership_dob || '',
+      ownership_social_security_number: form?.ownership_social_security_number || '',
+      ownership_residential_street_address: form?.ownership_residential_street_address || '',
+      ownership_driver_licence_number: form?.ownership_driver_licence_number || '',
+      bank_name: form?.bank_name || '',
+      aba_routing: form?.aba_routing || '',
+      doa: form?.doa || '',
+      business_type_other: form?.business_type_other || '',
+      terminal_special_features: form?.terminal_special_features || '',
+      terminal_type_or_model: form?.terminal_type_or_model || '',
+      mobile_app_special_features: form?.mobile_app_special_features || '',
+      mobile_app_cardreader_type_model: form?.mobile_app_cardreader_type_model || '',
+      pos_special_features: form?.pos_special_features || '',
+      system_type_model: form?.system_type_model || '',
+      number_of_stations: form?.number_of_stations || '',
+      pos_other_items: form?.pos_other_items || ''
+    };
+
+    console.log('Form data to submit:', formDataToSubmit);
 
     setIsSubmitting(true);
     try {
@@ -549,35 +597,17 @@ function DuplicateFormModal({ form, onClose }: DuplicateFormModalProps) {
         throw new Error('Authentication token not found. Please login again.');
       }
 
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/duplicate-jotform/${form?.id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/duplicate-form-send-mail`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${accessToken}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          prospect_email: prospectEmail,
-          form_data: {
-            ...form,
-            business_profile_business_type: parseArrayField(form?.business_profile_business_type),
-            business_type: parseArrayField(form?.business_type),
-            processing_services: parseArrayField(form?.processing_services),
-            terminal: parseArrayField(form?.terminal),
-            mobile_app: parseArrayField(form?.mobile_app),
-            pos_point_of_sale: parseArrayField(form?.pos_point_of_sale),
-            virtual_terminal: parseArrayField(form?.virtual_terminal)
-          }
-        }),
+        body: JSON.stringify(formDataToSubmit)
       });
 
-      // Check if the response is JSON
-      const contentType = response.headers.get('content-type');
-      if (!contentType || !contentType.includes('application/json')) {
-        throw new Error('Server returned an invalid response. Please try again later.');
-      }
-
       const responseData = await response.json();
-      console.log(responseData);
+      console.log('Duplicate form response:', responseData);
 
       if (!response.ok) {
         if (response.status === 401) {
@@ -585,10 +615,20 @@ function DuplicateFormModal({ form, onClose }: DuplicateFormModalProps) {
           navigate('/login');
           throw new Error('Session expired. Please login again.');
         }
+        if (response.status === 404) {
+          throw new Error('API endpoint not found. Please contact support.');
+        }
+        if (response.status === 422 && responseData.errors) {
+          const validationErrors = responseData.errors as { [key: string]: string[] };
+          Object.values(validationErrors).forEach((errors: string[]) => {
+            errors.forEach(error => toast.error(error));
+          });
+          throw new Error('Validation failed');
+        }
         throw new Error(responseData.message || 'Failed to duplicate form');
       }
 
-      toast.success('Form duplicated successfully!');
+      toast.success("We've sent you an email to duplicate the form!");
       onClose();
     } catch (error) {
       console.error('Error duplicating form:', error);
@@ -596,11 +636,13 @@ function DuplicateFormModal({ form, onClose }: DuplicateFormModalProps) {
         if (error.message.includes('Session expired')) {
           toast.error('Session expired. Please login again.');
           navigate('/login');
+        } else if (error.message.includes('API endpoint not found')) {
+          toast.error('API endpoint not found. Please contact support.');
         } else {
           toast.error(error.message);
         }
       } else {
-        toast.error('Failed to duplicate form. Please try again later.');
+        toast.error('An unexpected error occurred. Please try again.');
       }
     } finally {
       setIsSubmitting(false);
@@ -625,59 +667,60 @@ function DuplicateFormModal({ form, onClose }: DuplicateFormModalProps) {
           {/* BUSINESS PROFILE */}
           <div className="bg-zinc-800 rounded-lg p-4 border border-zinc-700">
             <h3 className="text-lg font-semibold text-white mb-4">BUSINESS PROFILE</h3>
+            <input type="hidden" name="is_duplicate" value="1" />
             <div className="grid grid-cols-1 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-300">Doing Business As (DBA)</label>
-                <input type="text" value={form?.business_dba || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                <input type="text" name="business_dba" value={form?.business_dba || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-300">Corporate Legal Name</label>
-                <input type="text" value={form?.business_corporate_legal_name || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                <input type="text" name="business_corporate_legal_name" value={form?.business_corporate_legal_name || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-300">Location Address</label>
-                <input type="text" value={form?.business_location_address || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                <input type="text" name="business_location_address" value={form?.business_location_address || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-300">Corporate Address (if different)</label>
-                <input type="text" value={form?.business_corporate_address || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                <input type="text" name="business_corporate_address" value={form?.business_corporate_address || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
               </div>
               <div className="grid grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-300">City</label>
-                  <input type="text" value={form?.business_city || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                  <input type="text" name="business_city" value={form?.business_city || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-300">State</label>
-                  <input type="text" value={form?.business_state || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                  <input type="text" name="business_state" value={form?.business_state || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-300">ZIP</label>
-                  <input type="text" value={form?.business_zip || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                  <input type="text" name="business_zip" value={form?.business_zip || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
                 </div>
               </div>
               <div className="grid grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-300">Business Phone Number</label>
-                  <input type="text" value={form?.business_phone_number || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                  <input type="text" name="business_phone_number" value={form?.business_phone_number || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-300">Contact Name</label>
-                  <input type="text" value={form?.business_contact_name || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                  <input type="text" name="business_contact_name" value={form?.business_contact_name || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-300">Contact Number</label>
-                  <input type="text" value={form?.business_contact_number || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                  <input type="text" name="business_contact_number" value={form?.business_contact_number || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-300">Date</label>
-                  <input type="text" value={form?.business_start_date || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                  <input type="text" name="business_start_date" value={form?.business_start_date || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-300">Federal Tax ID</label>
-                  <input type="text" value={form?.business_tax_id || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                  <input type="text" name="business_tax_id" value={form?.business_tax_id || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
                 </div>
               </div>
               <div>
@@ -695,6 +738,7 @@ function DuplicateFormModal({ form, onClose }: DuplicateFormModalProps) {
                         type="checkbox"
                         value={value}
                         disabled
+                        name="business_profile_business_type[]"
                         checked={isChecked(form?.business_profile_business_type, value)}
                         className="h-4 w-4 rounded border-zinc-600 text-yellow-400 focus:ring-yellow-400 bg-zinc-600 cursor-not-allowed"
                       />
@@ -713,59 +757,59 @@ function DuplicateFormModal({ form, onClose }: DuplicateFormModalProps) {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-300">Owner Name</label>
-                  <input type="text" value={form?.ownership_owner_name || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                  <input type="text" name="ownership_owner_name" value={form?.ownership_owner_name || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-300">Title</label>
-                  <input type="text" value={form?.ownership_title || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                  <input type="text" name="ownership_title" value={form?.ownership_title || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-300">Ownership %</label>
-                  <input type="text" value={form?.ownership_percent || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                  <input type="text" name="ownership_percent" value={form?.ownership_percent || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-300">Phone Number</label>
-                  <input type="text" value={form?.ownership_phone_number || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                  <input type="text" name="ownership_phone_number" value={form?.ownership_phone_number || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
                 </div>
               </div>
               <div className="grid grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-300">City</label>
-                  <input type="text" value={form?.ownership_city || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                  <input type="text" name="ownership_city" value={form?.ownership_city || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-300">State</label>
-                  <input type="text" value={form?.ownership_state || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                  <input type="text" name="ownership_state" value={form?.ownership_state || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-300">ZIP</label>
-                  <input type="text" value={form?.ownership_zip || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                  <input type="text" name="ownership_zip" value={form?.ownership_zip || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
                 </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-300">Email</label>
-                <input type="text" value={form?.ownership_email || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                <input type="text" name="ownership_email" value={form?.ownership_email || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-300">Date of Birth</label>
-                  <input type="text" value={form?.ownership_dob || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                  <input type="text" name="ownership_dob" value={form?.ownership_dob || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-300">Social Security Number</label>
-                  <input type="text" value={form?.ownership_social_security_number || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                  <input type="text" name="ownership_social_security_number" value={form?.ownership_social_security_number || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-300">Residential Street Address</label>
-                  <input type="text" value={form?.ownership_residential_street_address || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                  <input type="text" name="ownership_residential_street_address" value={form?.ownership_residential_street_address || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-300">Driver License Number</label>
-                  <input type="text" value={form?.ownership_driver_licence_number || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                  <input type="text" name="ownership_driver_licence_number" value={form?.ownership_driver_licence_number || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
                 </div>
               </div>
             </div>
@@ -777,15 +821,15 @@ function DuplicateFormModal({ form, onClose }: DuplicateFormModalProps) {
             <div className="grid grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-300">Bank Name</label>
-                <input type="text" value={form?.bank_name || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                <input type="text" name="bank_name" value={form?.bank_name || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-300">ABA Routing</label>
-                <input type="text" value={form?.aba_routing || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                <input type="text" name="aba_routing" value={form?.aba_routing || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-300">DOA</label>
-                <input type="text" value={form?.doa || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                <input type="text" name="doa" value={form?.doa || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
               </div>
             </div>
           </div>
@@ -807,6 +851,7 @@ function DuplicateFormModal({ form, onClose }: DuplicateFormModalProps) {
                       <input
                         type="checkbox"
                         value={value}
+                        name="business_type[]"
                         disabled
                         checked={isChecked(form?.business_type, value)}
                         className="h-4 w-4 rounded border-zinc-600 text-yellow-400 focus:ring-yellow-400 bg-zinc-600 cursor-not-allowed"
@@ -818,7 +863,7 @@ function DuplicateFormModal({ form, onClose }: DuplicateFormModalProps) {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-300">Others (Optional)</label>
-                <input type="text" value={form?.business_type_other || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                <input type="text" name="business_type_other" value={form?.business_type_other || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
               </div>
             </div>
           </div>
@@ -845,6 +890,7 @@ function DuplicateFormModal({ form, onClose }: DuplicateFormModalProps) {
                       type="checkbox"
                       value={value}
                       disabled
+                      name="processing_services[]"
                       checked={isChecked(form?.processing_services, value)}
                       className="h-4 w-4 rounded border-zinc-600 text-yellow-400 focus:ring-yellow-400 bg-zinc-600 cursor-not-allowed"
                     />
@@ -873,6 +919,7 @@ function DuplicateFormModal({ form, onClose }: DuplicateFormModalProps) {
                         type="checkbox"
                         value={value}
                         disabled
+                        name="terminal[]"
                         checked={isChecked(form?.terminal, value)}
                         className="h-4 w-4 rounded border-zinc-600 text-yellow-400 focus:ring-yellow-400 bg-zinc-600 cursor-not-allowed"
                       />
@@ -884,11 +931,11 @@ function DuplicateFormModal({ form, onClose }: DuplicateFormModalProps) {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-300">Terminal Special Features (Optional)</label>
-                  <input type="text" value={form?.terminal_special_features || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                  <input type="text" name="terminal_special_features" value={form?.terminal_special_features || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-300">Terminal Type/Model</label>
-                  <input type="text" value={form?.terminal_type_or_model || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                  <input type="text" name="terminal_type_or_model" value={form?.terminal_type_or_model || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
                 </div>
               </div>
               <div>
@@ -903,6 +950,7 @@ function DuplicateFormModal({ form, onClose }: DuplicateFormModalProps) {
                         type="checkbox"
                         value={value}
                         disabled
+                        name="mobile_app[]"
                         checked={isChecked(form?.mobile_app, value)}
                         className="h-4 w-4 rounded border-zinc-600 text-yellow-400 focus:ring-yellow-400 bg-zinc-600 cursor-not-allowed"
                       />
@@ -913,11 +961,11 @@ function DuplicateFormModal({ form, onClose }: DuplicateFormModalProps) {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-300">Mobile App Special Features (Optional)</label>
-                <input type="text" value={form?.mobile_app_special_features || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                <input type="text" name="mobile_app_special_features" value={form?.mobile_app_special_features || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-300">Cardreader Type/Model</label>
-                <input type="text" value={form?.mobile_app_cardreader_type_model || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                <input type="text" name="mobile_app_cardreader_type_model" value={form?.mobile_app_cardreader_type_model || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-300">POS(Point of Sale) System</label>
@@ -931,6 +979,7 @@ function DuplicateFormModal({ form, onClose }: DuplicateFormModalProps) {
                       <input
                         type="checkbox"
                         value={value}
+                        name="pos_point_of_sale[]"
                         disabled
                         checked={isChecked(form?.pos_point_of_sale, value)}
                         className="h-4 w-4 rounded border-zinc-600 text-yellow-400 focus:ring-yellow-400 bg-zinc-600 cursor-not-allowed"
@@ -943,19 +992,19 @@ function DuplicateFormModal({ form, onClose }: DuplicateFormModalProps) {
               <div className="grid grid-cols-4 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-300">POS Special Features</label>
-                  <input type="text" value={form?.pos_special_features || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                  <input type="text" name="pos_special_features" value={form?.pos_special_features || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-300">System Type Model</label>
-                  <input type="text" value={form?.system_type_model || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                  <input type="text" name="system_type_model" value={form?.system_type_model || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-300">Number of Stations</label>
-                  <input type="text" value={form?.number_of_stations || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                  <input type="text" name="number_of_stations" value={form?.number_of_stations || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-300">POS other items</label>
-                  <input type="text" value={form?.pos_other_items || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
+                  <input type="text" name="pos_other_items" value={form?.pos_other_items || ''} readOnly className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white" />
                 </div>
               </div>
               <div>
@@ -972,6 +1021,7 @@ function DuplicateFormModal({ form, onClose }: DuplicateFormModalProps) {
                         type="checkbox"
                         value={value}
                         disabled
+                        name="virtual_terminal[]"
                         checked={isChecked(form?.virtual_terminal, value)}
                         className="h-4 w-4 rounded border-zinc-600 text-yellow-400 focus:ring-yellow-400 bg-zinc-600 cursor-not-allowed"
                       />
@@ -993,6 +1043,7 @@ function DuplicateFormModal({ form, onClose }: DuplicateFormModalProps) {
                 value={prospectEmail}
                 onChange={(e) => setProspectEmail(e.target.value)}
                 required
+                name="email"
                 className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white focus:border-yellow-400 focus:ring-yellow-400"
                 placeholder="Enter prospect email"
               />
@@ -1011,9 +1062,8 @@ function DuplicateFormModal({ form, onClose }: DuplicateFormModalProps) {
             <button
               type="submit"
               disabled={isSubmitting}
-              className={`px-4 py-2 text-sm font-medium text-black bg-yellow-400 rounded-md hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400 ${
-                isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
-              }`}
+              className={`px-4 py-2 text-sm font-medium text-black bg-yellow-400 rounded-md hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
             >
               {isSubmitting ? 'Duplicating...' : 'Submit Form'}
             </button>
@@ -1040,7 +1090,7 @@ export default function PreApplications() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedDeleteRep, setSelectedDeleteRep] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [formToken, setFormToken] = useState<string>(''); 
+  const [formToken, setFormToken] = useState<string>('');
 
   const preAppLink = `${window.location.origin}/jot-forms?data=${formToken}`; // The base URL for your form
 
@@ -1131,7 +1181,7 @@ export default function PreApplications() {
 
       let body = undefined;
       body = JSON.stringify({ user_id: parsedUser.id });
-      
+
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/generate-form-token`, {
         method: 'POST',
         headers: {
@@ -1223,7 +1273,7 @@ export default function PreApplications() {
   // const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   // const token = localStorage.getItem("auth_token");
 
-  const confirmAndDeleteItem = (item,title) => {
+  const confirmAndDeleteItem = (item, title) => {
     setSelectedDeleteRep({ id: item, name: title });
     setShowDeleteModal(true);
   };
@@ -1304,10 +1354,10 @@ export default function PreApplications() {
               <thead>
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">DBA</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">City</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">State/Province</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Business Type</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Processing Services</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Corporate Legal Name</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Ownership Owner Name</th>
+                  {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Business Type</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Processing Services</th> */}
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Status</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Replicated</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Actions</th>
@@ -1316,15 +1366,17 @@ export default function PreApplications() {
               <tbody className="bg-zinc-900 divide-y divide-gray-700">
                 {forms.map((form) => (
                   <tr key={form.id} className="hover:bg-zinc-800">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{form.dba}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{form.city}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{form.state}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{form.business_dba}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{form.business_corporate_legal_name}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{form.ownership_owner_name}</td>
+                    
+                    {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{form.state}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                       {Array.isArray(form.business_type) ? form.business_type.join(', ') : ''}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                    </td> */}
+                    {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                       {Array.isArray(form.processing_services) ? form.processing_services.join(', ') : ''}
-                    </td>
+                    </td> */}
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
                         ${form.status === 0 ? 'bg-yellow-100 text-yellow-800' :
@@ -1369,7 +1421,7 @@ export default function PreApplications() {
                         </button>
 
                         <button
-                          onClick={() => confirmAndDeleteItem(form.id,form.dba)}
+                          onClick={() => confirmAndDeleteItem(form.id, form.dba)}
                           className="text-yellow-400 hover:text-yellow-500 flex items-center gap-1"
                         >
                           <Trash2 className="h-4 w-4" />
