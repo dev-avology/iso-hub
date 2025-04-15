@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
 
-export default function Notifications() {
-  const [adminNotification, setAdminNotification] = useState<any[]>([]);
+export default function UserNotification() {
+  const [userNotification, setUserNotification] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const fetchNotifications = async () => {
@@ -26,15 +26,15 @@ export default function Notifications() {
 
       const data = await response.json();
       if (data.status === 'success') {
-        setAdminNotification(data.admin_notifications);
+        setUserNotification(data.user_notifications);
         console.log(data, 'data......');
       } else {
         throw new Error(data.message || 'Failed to fetch');
       }
     } catch (error) {
       console.error('Error fetching notifications:', error);
-    }finally{
-      setIsLoading(false);
+    } finally {
+       setIsLoading(false);
     }
   };
 
@@ -51,12 +51,12 @@ export default function Notifications() {
       </div>
 
       <div className="user_data_wrap mt-10">
-       {isLoading ? (
+        {isLoading ? (
           <div className="flex justify-center items-center py-8">
             <Loader2 className="h-8 w-8 animate-spin text-yellow-400" />
           </div>
-        ) : adminNotification.length > 0 ? (
-          adminNotification.map((item: any, index: number) => (
+        ): userNotification.length > 0 ? (
+          userNotification.map((item: any, index: number) => (
             <div
               key={index}
               className="user_dataHead w-full px-5 py-4 rounded bg-gray-700 text-white flex gap-4 mb-4"

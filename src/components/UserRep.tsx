@@ -1,21 +1,29 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { UserPlus } from 'lucide-react';
 
 const UserRep: React.FC = () => {
+  const location = useLocation();
+
   return (
-    <div className="mb-4">
-      <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 px-4">
-        Rep
-      </h3>
-      <ul className="space-y-1">
-        <li>
+    <div className="sub_menu w-full px-2 z-[9] py-1 rounded">
+      <ul>
+        <li className="text-white mt-2 first:mt-0">
           <Link
             to="/user-reps"
-            className="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-zinc-800 hover:text-white rounded-md transition-colors"
+            className={`flex py-2 px-3 gap-2 items-center text-md rounded-md transition-all
+              ${
+                location.pathname === '/user-reps'
+                  ? 'bg-black border-l-4 border-yellow-400 text-yellow-400'
+                  : 'bg-black hover:border-l-4 hover:border-yellow-400 hover:text-yellow-400'
+              }`}
           >
-            <UserPlus className="h-5 w-5 mr-3" />
-            <span>My Rep lists</span>
+            <UserPlus
+              className={`w-5 h-5 ${
+                location.pathname === '/user-reps' ? 'text-yellow-400' : ''
+              }`}
+            />
+            My Rep Lists
           </Link>
         </li>
       </ul>
@@ -23,4 +31,4 @@ const UserRep: React.FC = () => {
   );
 };
 
-export default UserRep; 
+export default UserRep;

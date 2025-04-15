@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Bot } from 'lucide-react';
 
 export default function JACC() {
-  const [isMinimized, setIsMinimized] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(true);
   const [iframeUrl, setIframeUrl] = useState('');
 
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;

@@ -27,6 +27,7 @@ import Marketing from './pages/Marketing/marketing';
 import Forms from './pages/Forms/forms';
 import JotForm from './pages/JotForms/JotForm';
 import UserReps from './pages/UserReps';
+import UserNotification from './components/UserNotification';
 
 function Dashboard() {
   return (
@@ -102,6 +103,7 @@ function App() {
           <Route path="/secure" element={<ProtectedLayout><SecurePortal /></ProtectedLayout>} />
           <Route path="/marketing" element={<ProtectedLayout><Marketing /></ProtectedLayout>} />
           <Route path="/user-reps" element={<ProtectedLayout><UserReps /></ProtectedLayout>} />
+          <Route path="/user-notification" element={<ProtectedLayout><UserNotification /></ProtectedLayout>} />
           
           {/* Admin protected routes */}
           <Route path="/admin" element={<ProtectedAdminLayout><Admin /></ProtectedAdminLayout>} />
