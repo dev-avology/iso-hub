@@ -24,10 +24,6 @@ const nonAdminCategories: Category[] = [
   // { name: 'Residuals', icon: FileText, href: 'https://dev.tracerpos.com/'  },
 ];
 
-const userRep = [
-  {name: 'Reps',icon: Cpu}
-];
-
 const adminCategories = [
   ...nonAdminCategories,
   { name: 'Admin', icon: User, href: '/admin' },
@@ -42,21 +38,27 @@ const adminSubMenu = [
   // { name: 'Forms', icon: FormInput, path: '/forms' },
 ];
 
-export default function Sidebar({ 
-  open, 
-  setOpen 
-}: { 
+const userSubMenu = [
+  { name: 'User Notification', icon: Bell, path: '/user-notification' },
+];
+
+
+export default function Sidebar({
+  open,
+  setOpen
+}: {
   open: boolean;
   setOpen: (open: boolean) => void;
 }) {
   const { logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   // Get role_id from auth_user in localStorage
   const authUser = JSON.parse(localStorage.getItem('auth_user') || '{}');
   const isAdmin = authUser?.role_id === 2;
   const isUser = authUser?.role_id === 5;
+  const isUserNotification = ![1, 2].includes(authUser?.role_id ?? 0);
 
   const handleLogout = async () => {
     try {
@@ -74,9 +76,9 @@ export default function Sidebar({
     return location.pathname === path;
   };
 
-  
+
   const categories = isAdmin ? adminCategories : nonAdminCategories;
-  console.log(categories,'categories');
+  console.log(categories, 'categories');
 
   return (
     <div className={`
@@ -118,16 +120,16 @@ export default function Sidebar({
                     <Link
                       to={category.href || `/${category.name.toLowerCase()}`}
                       className={`group flex items-center px-3 py-2 text-sm font-medium rounded-md hover:text-yellow-400 relative transition-all
-                        ${isActive(category.href || `/${category.name.toLowerCase()}`) 
-                          ? 'text-yellow-400 border-l-4 border-yellow-400 pl-2' 
+                        ${isActive(category.href || `/${category.name.toLowerCase()}`)
+                          ? 'text-yellow-400 border-l-4 border-yellow-400 pl-2'
                           : 'text-gray-300 hover:border-l-4 hover:border-yellow-400'}`}
                     >
-                      <category.icon className={`h-5 w-5 mr-3 ${isActive(category.href || `/${category.name.toLowerCase()}`) 
-                        ? 'text-yellow-400' 
+                      <category.icon className={`h-5 w-5 mr-3 ${isActive(category.href || `/${category.name.toLowerCase()}`)
+                        ? 'text-yellow-400'
                         : 'text-gray-400 group-hover:text-yellow-400'}`} />
                       {category.name}
                     </Link>
-                    
+
                     {category.name === 'Admin' && (
                       <div className={`sub_menu absolute top-full left-0 w-full bg-zinc-800 px-2 z-[9] py-5 rounded 
                         ${adminSubMenu.some(item => location.pathname === item.path) ? 'block' : 'hidden group-hover:block'}`}
@@ -135,14 +137,14 @@ export default function Sidebar({
                         <ul>
                           {adminSubMenu.map((item) => (
                             <li key={item.path} className="text-white mt-2 first:mt-0">
-                              <Link 
+                              <Link
                                 to={item.path}
                                 className={`flex py-2 px-3 gap-2 items-center text-md rounded-md transition-all
-                                  ${location.pathname === item.path 
-                                    ? 'bg-black border-l-4 border-yellow-400 text-yellow-400' 
+                                  ${location.pathname === item.path
+                                    ? 'bg-black border-l-4 border-yellow-400 text-yellow-400'
                                     : 'bg-black hover:border-l-4 hover:border-yellow-400 hover:text-yellow-400'}`}
                               >
-                                <item.icon className={`w-5 h-5 ${location.pathname === item.path ? 'text-yellow-400' : ''}`}/> 
+                                <item.icon className={`w-5 h-5 ${location.pathname === item.path ? 'text-yellow-400' : ''}`} />
                                 {item.name}
                               </Link>
                             </li>
@@ -154,12 +156,44 @@ export default function Sidebar({
                 )}
               </div>
             ))}
+
+
+            {isUserNotification && (
+              <div className="relative group mt-4">
+                {isUser && <UserRep />}
+                {/* <div
+                  className={`group flex items-center px-3 py-2 text-sm font-medium rounded-md hover:text-yellow-400 transition-all text-gray-300 hover:border-l-4 hover:border-yellow-400`}
+                >
+                  <Users className="h-5 w-5 mr-3 text-gray-400 group-hover:text-yellow-400" />
+                  Users
+                </div> */}
+                <div className="sub_menu w-full px-2 z-[9] py-1 rounded">
+                  <ul>
+                    {userSubMenu.map((item) => (
+                      <li key={item.path} className="text-white mt-2 first:mt-0">
+                        <Link
+                          to={item.path}
+                          className={`flex py-2 px-3 gap-2 items-center text-md rounded-md transition-all
+                ${location.pathname === item.path
+                              ? 'bg-black border-l-4 border-yellow-400 text-yellow-400'
+                              : 'bg-black hover:border-l-4 hover:border-yellow-400 hover:text-yellow-400'}`}
+                        >
+                          <item.icon className={`w-5 h-5 ${location.pathname === item.path ? 'text-yellow-400' : ''}`} />
+                          {item.name}
+                        </Link>
+                      </li>
+
+                    ))}
+                  </ul>
+                </div>
+                
+              </div>
+            )}
           </nav>
         </div>
 
-        {isUser && <UserRep />}
 
-        <button 
+        <button
           onClick={handleLogout}
           className='absolute bottom-5 left-[50%] translate-x-[-50%] w-[90%] bg-yellow-400 rounded py-3 font-semibold uppercase flex items-center justify-center hover:bg-yellow-600 gap-2 text-black'
         >
