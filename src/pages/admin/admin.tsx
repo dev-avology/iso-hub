@@ -100,11 +100,11 @@ export default function Admin() {
     e.preventDefault();
     setIsSubmitting(true);
     setErrors({});
-    
+
     try {
       // Try different ways to get the token
       let token = localStorage.getItem('auth_token');
-      
+
       // If not found in auth_token, try other common token storage keys
       if (!token) {
         token = localStorage.getItem('token');
@@ -112,22 +112,22 @@ export default function Admin() {
       if (!token) {
         token = localStorage.getItem('access_token');
       }
-      
+
       console.log('Token found:', token);
-      
+
       // Check if token exists
       if (!token) {
         toast.error('You are not logged in. Please log in again.');
         setIsSubmitting(false);
         return;
       }
-      
+
       // Make sure token is properly formatted - remove any existing Bearer prefix first
       const cleanToken = token.replace('Bearer ', '');
       const formattedToken = `Bearer ${cleanToken}`;
-      
+
       console.log('Formatted token:', formattedToken);
-      
+
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/user/create`, {
         method: 'POST',
         headers: {
@@ -139,7 +139,7 @@ export default function Admin() {
 
       const data = await response.json();
       console.log('API response:', data);
-      
+
       if (!response.ok) {
         if (response.status === 401) {
           toast.error('Your session has expired. Please log in again.');
@@ -148,14 +148,23 @@ export default function Admin() {
           setIsSubmitting(false);
           return;
         }
-        
+
         if (response.status === 422) {
-          setErrors(data.errors || {});
-          Object.keys(data.errors || {}).forEach((key) => {
-            data.errors[key].forEach((errorMsg: string) => {
-              toast.error(errorMsg);
-            });
+          // setErrors(data.errors || {});
+          // Object.keys(data.errors || {}).forEach((key) => {
+          //   data.errors[key].forEach((errorMsg: string) => {
+          //     toast.error(errorMsg);
+          //   });
+          // });
+
+          const validationErrors = data.errors || {};
+          setErrors(validationErrors);
+
+          // Show toast for each error message
+          Object.values(validationErrors).forEach((fieldErrors: string[] | any) => {
+            fieldErrors.forEach((msg: string) => toast.error(msg));
           });
+
         } else {
           throw new Error(data.message || 'Form submission failed');
         }
@@ -164,7 +173,7 @@ export default function Admin() {
       }
 
       if (data.status === 'success') {
-        
+
         toast.success('User created successfully');
 
         setFormData({
@@ -176,7 +185,7 @@ export default function Admin() {
           role_id: '5'
         });
         setIsModalOpen(false);
-        
+
         // Refresh the users list
         await fetchUsers();
       } else {
@@ -261,7 +270,7 @@ export default function Admin() {
       });
       setIsEditModalOpen(false);
       setSelectedUser(null);
-      
+
       // Refresh the users list
       fetchUsers();
     } catch (error) {
@@ -286,7 +295,7 @@ export default function Admin() {
   const filteredUsers = users.filter((user) => {
     // First exclude role_id 1 and 2
     if (user.role_id === 1 || user.role_id === 2) return false;
-    
+
     // Then apply checkbox filters
     if (!managersChecked && !teamLeadersChecked && !usersChecked) return true;
     if (managersChecked && user.role_id === 3) return true;
@@ -364,13 +373,13 @@ export default function Admin() {
               <div className="userdata w-[20%]">{ROLE_MAPPING[user.role_id.toString() as keyof typeof ROLE_MAPPING]}</div>
               <div className="edit-delete-btn absolute right-5 hidden group-hover:block">
                 <div className="edit_data flex gap-2 items-center">
-                  <button 
+                  <button
                     onClick={() => handleEdit(user)}
                     className="hover:text-yellow-500"
                   >
                     <Edit />
                   </button>
-                  <button 
+                  <button
                     onClick={() => {
                       setSelectedUser(user);
                       setDeleteModalOpen(true);
@@ -390,40 +399,48 @@ export default function Admin() {
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-zinc-900 p-8 rounded-lg w-full max-w-xl relative">
-            <button 
+            <button
               onClick={() => setIsModalOpen(false)}
               className="absolute top-4 right-4 text-gray-400 hover:text-white"
             >
               <X className="w-6 h-6" />
             </button>
-            
+
             <h2 className="text-2xl font-bold text-white mb-6">Add New User</h2>
-            
+
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block text-gray-300 mb-2">First Name</label>
-                <input
-                  type="text"
-                  name="first_name"
-                  value={formData.first_name}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                  required
-                />
+
+              <div className="flex gap-4">
+                <div className="w-1/2">
+                  <label className="block text-gray-300 mb-2">First Name</label>
+                  <input
+                    type="text"
+                    name="first_name"
+                    value={formData.first_name}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    required
+                  />
+                  {errors.first_name && (
+                    <p className="text-red-500 text-sm mt-1">{errors.first_name[0]}</p>
+                  )}
+                </div>
+                <div className="w-1/2">
+                  <label className="block text-gray-300 mb-2">Last Name</label>
+                  <input
+                    type="text"
+                    name="last_name"
+                    value={formData.last_name}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    required
+                  />
+                  {errors.last_name && (
+                    <p className="text-red-500 text-sm mt-1">{errors.last_name[0]}</p>
+                  )}
+                </div>
               </div>
-              
-              <div>
-                <label className="block text-gray-300 mb-2">Last Name</label>
-                <input
-                  type="text"
-                  name="last_name"
-                  value={formData.last_name}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                  required
-                />
-              </div>
-              
+
               <div>
                 <label className="block text-gray-300 mb-2">Email</label>
                 <input
@@ -434,8 +451,11 @@ export default function Admin() {
                   className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
                   required
                 />
+                {errors.email && (
+                  <p className="text-red-500 text-sm mt-1">{errors.email[0]}</p>
+                )}
               </div>
-              
+
               <div>
                 <label className="block text-gray-300 mb-2">Phone Number</label>
                 <input
@@ -446,6 +466,9 @@ export default function Admin() {
                   className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
                   required
                 />
+                {errors.phone && (
+                  <p className="text-red-500 text-sm mt-1">{errors.phone[0]}</p>
+                )}
               </div>
 
               <div>
@@ -458,8 +481,11 @@ export default function Admin() {
                   className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
                   required
                 />
+                {errors.password && (
+                  <p className="text-red-500 text-sm mt-1">{errors.password[0]}</p>
+                )}
               </div>
-              
+
               <div>
                 <label className="block text-gray-300 mb-2">Role</label>
                 <select
@@ -484,6 +510,7 @@ export default function Admin() {
                 </button>
               </div>
             </form>
+
           </div>
         </div>
       )}
@@ -492,7 +519,7 @@ export default function Admin() {
       {isEditModalOpen && selectedUser && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-zinc-900 p-8 rounded-lg w-full max-w-xl relative">
-            <button 
+            <button
               onClick={() => {
                 setIsEditModalOpen(false);
                 setSelectedUser(null);
@@ -509,11 +536,11 @@ export default function Admin() {
             >
               <X className="w-6 h-6" />
             </button>
-            
+
             <h2 className="text-2xl font-bold text-white mb-6">Edit User</h2>
-            
+
             <form onSubmit={handleUpdate} className="space-y-4">
-              <div>
+              {/* <div>
                 <label className="block text-gray-300 mb-2">First Name</label>
                 <input
                   type="text"
@@ -524,7 +551,7 @@ export default function Admin() {
                   required
                 />
               </div>
-              
+
               <div>
                 <label className="block text-gray-300 mb-2">Last Name</label>
                 <input
@@ -535,8 +562,35 @@ export default function Admin() {
                   className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
                   required
                 />
+              </div> */}
+
+              <div className="flex gap-4">
+                <div className="w-1/2">
+                  <label className="block text-gray-300 mb-2">First Name</label>
+                  <input
+                    type="text"
+                    name="first_name"
+                    value={formData.first_name}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    required
+                  />
+
+                </div>
+                <div className="w-1/2">
+                  <label className="block text-gray-300 mb-2">Last Name</label>
+                  <input
+                    type="text"
+                    name="last_name"
+                    value={formData.last_name}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    required
+                  />
+
+                </div>
               </div>
-              
+
               <div>
                 <label className="block text-gray-300 mb-2">Email</label>
                 <input
@@ -548,7 +602,7 @@ export default function Admin() {
                   required
                 />
               </div>
-              
+
               <div>
                 <label className="block text-gray-300 mb-2">Phone Number</label>
                 <input
@@ -571,7 +625,7 @@ export default function Admin() {
                   className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
                 />
               </div>
-              
+
               <div>
                 <label className="block text-gray-300 mb-2">Role</label>
                 <select
@@ -604,7 +658,7 @@ export default function Admin() {
       {deleteModalOpen && selectedUser && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-zinc-900 p-8 rounded-lg w-full max-w-md relative">
-            <button 
+            <button
               onClick={() => {
                 setDeleteModalOpen(false);
                 setSelectedUser(null);
@@ -613,19 +667,19 @@ export default function Admin() {
             >
               <X className="w-6 h-6" />
             </button>
-            
+
             <div className="text-center">
               <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
                 <Trash className="h-6 w-6 text-red-600" />
               </div>
-              
+
               <h3 className="text-2xl font-bold text-white mb-2">Delete User</h3>
-              
+
               <p className="text-gray-300 mb-6">
-                Are you sure you want to delete <span className="font-semibold">{selectedUser.first_name} {selectedUser.last_name}</span>? 
+                Are you sure you want to delete <span className="font-semibold">{selectedUser.first_name} {selectedUser.last_name}</span>?
                 This action cannot be undone.
               </p>
-              
+
               <div className="flex gap-4 justify-center">
                 <button
                   onClick={() => {

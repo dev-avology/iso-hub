@@ -26,8 +26,6 @@ export default function TopNav({
   };
 
   const [userNotificationCount, setUserNotificationCount] = useState(0);
-  const [adminNotification, setAdminNotification] = useState([]);
-  const [userNotification, setUserNotification] = useState([]);
 
   const [isNotificationPath, setIsNotificationPath] = useState('');
   // Get role_id from auth_user in localStorage
@@ -64,12 +62,10 @@ export default function TopNav({
       }
 
       const data = await response.json();
-      console.log(data,'get data');
+      // console.log(data,'get data');
       if (data.status === 'success') {
         setUserNotificationCount(data.count);
-        setAdminNotification(data.admin_notifications);
-        setUserNotification(data.user_notifications);
-        console.log(data);
+        // console.log(data);
       } else {
         throw new Error(data.message || 'Failed to fetch');
       }
@@ -97,14 +93,7 @@ export default function TopNav({
       if (!response.ok) {
         throw new Error('Failed to fetch notifications..');
       }
-
       const data = await response.json();
-     
-      // if (data.status === 'success') {
-      //   // setUserNotificationCount(0);
-      // } else {
-      //   throw new Error(data.message || 'Failed to fetch');
-      // }
     } catch (error) {
       console.error('Error update notification count:', error);
       toast.error('Failed to update notification count');
@@ -168,9 +157,11 @@ export default function TopNav({
             >
               <span className="sr-only">View notifications</span>
               <div className="relative">
-                <div className="absolute -top-2 -right-1 h-4 w-4 bg-yellow-400 text-black text-[12px] font-bold flex items-center justify-center rounded-full">
-                  {userNotificationCount}
-                </div>
+                {userNotificationCount > 0 && (
+                  <div className="absolute -top-2 -right-1 h-4 w-4 bg-yellow-400 text-black text-[12px] font-bold flex items-center justify-center rounded-full">
+                    {userNotificationCount}
+                  </div>
+                )}
                 <svg className="h-6 w-6 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path
                     strokeLinecap="round"

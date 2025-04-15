@@ -1,5 +1,6 @@
 import { Loader2 } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
+import { toast } from 'react-hot-toast';
 
 export default function UserNotification() {
   const [userNotification, setUserNotification] = useState<any[]>([]);
@@ -38,8 +39,34 @@ export default function UserNotification() {
     }
   };
 
+  const updateNotificationCount = async () => {
+    try {
+      const token = localStorage.getItem('auth_token');
+      const value = localStorage.getItem("auth_user");
+      const parsedUser = value ? JSON.parse(value) : null;
+
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/notification/remove-notification`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({user_id: parsedUser.id})
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch notifications..');
+      }
+      const data = await response.json();
+    } catch (error) {
+      console.error('Error update notification count:', error);
+      toast.error('Failed to update notification count');
+    }
+  }
+
   useEffect(() => {
     fetchNotifications();
+    updateNotificationCount();
   }, []);
 
   return (
