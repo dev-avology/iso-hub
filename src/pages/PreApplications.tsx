@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FormInput, Eye, Loader2, X, Copy, CheckCircle, ExternalLink, Send, Copy as Duplicate, Trash2 } from 'lucide-react';
+import { FormInput, Eye, Loader2, X, Copy, CheckCircle, ExternalLink, Send, Copy as Duplicate, Trash2, Download, SpaceIcon } from 'lucide-react';
 import { toast, Toaster } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
@@ -79,6 +79,9 @@ interface FormData {
 
   virtual_terminal: string[];
   business_type_other: string;
+  mail_status: number;
+  personal_guarantee_required: string;
+  clear_signature: string;
 }
 
 interface ApiResponse {
@@ -106,6 +109,98 @@ interface DuplicateFormModalProps {
 }
 
 function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
+
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [guaranteeRequired, setGuaranteeRequired] = useState("yes"); // default selected
+  const [signatureType, setSignatureType] = useState("clearance");   // default selected
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
+
+  const handleEmailSend = async (e) => {
+    e.preventDefault();
+
+    const emailRegex = /\S+@\S+\.\S+/;
+    if (!email || !emailRegex.test(email)) {
+      toast.error("Please enter a valid email address.");
+      return;
+    }
+
+    const value = localStorage.getItem("auth_user");
+    const parsedUser = value ? JSON.parse(value) : null;
+
+    console.log(guaranteeRequired, email, signatureType);
+
+    const formDataToSubmit = {
+      user_id: parsedUser.id.toString(),
+      form_id: form?.id.toString(),
+      personal_guarantee_required: guaranteeRequired,
+      clear_signature: signatureType,
+      email: email,
+    };
+
+    console.log(formDataToSubmit);
+
+    setLoading(true); // use loading here
+    try {
+      const accessToken = localStorage.getItem('auth_token');
+      if (!accessToken) {
+        throw new Error('Authentication token not found. Please login again.');
+      }
+
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/user/clear-signature-mail`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formDataToSubmit)
+      });
+
+      const responseData = await response.json();
+      console.log('Duplicate form response:', responseData);
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          localStorage.removeItem('auth_token');
+          navigate('/login');
+          throw new Error('Session expired. Please login again.');
+        }
+        if (response.status === 404) {
+          throw new Error('API endpoint not found. Please contact support.');
+        }
+        if (response.status === 422 && responseData.errors) {
+          const validationErrors = responseData.errors as { [key: string]: string[] };
+          Object.values(validationErrors).forEach((errors: string[]) => {
+            errors.forEach(error => toast.error(error));
+          });
+          throw new Error('Validation failed');
+        }
+        throw new Error(responseData.message || 'Failed to duplicate form');
+      }
+
+      toast.success("We've sent you an email to clear e-signature!");
+      onClose();
+    } catch (error) {
+      console.error('Error to send mail clear e-signature:', error);
+      if (error instanceof Error) {
+        if (error.message.includes('Session expired')) {
+          toast.error('Session expired. Please login again.');
+          navigate('/login');
+        } else if (error.message.includes('API endpoint not found')) {
+          toast.error('API endpoint not found. Please contact support.');
+        } else {
+          toast.error(error.message);
+        }
+      } else {
+        toast.error('An unexpected error occurred. Please try again.');
+      }
+    } finally {
+      setLoading(false); // stop loader
+    }
+  };
+
+
   if (!form) return null;
 
   const isChecked = (array: string | string[] | undefined, value: string) => {
@@ -201,8 +296,8 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
                     <span
                       key={value}
                       className={`px-3 py-1 rounded-full text-sm ${isChecked(form.business_profile_business_type, value)
-                          ? 'bg-yellow-400 text-black'
-                          : 'bg-zinc-700 text-gray-400'
+                        ? 'bg-yellow-400 text-black'
+                        : 'bg-zinc-700 text-gray-400'
                         }`}
                     >
                       {label}
@@ -307,8 +402,8 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
                     <span
                       key={value}
                       className={`px-3 py-1 rounded-full text-sm ${isChecked(form.business_type, value)
-                          ? 'bg-yellow-400 text-black'
-                          : 'bg-zinc-700 text-gray-400'
+                        ? 'bg-yellow-400 text-black'
+                        : 'bg-zinc-700 text-gray-400'
                         }`}
                     >
                       {label}
@@ -341,8 +436,8 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
                 <span
                   key={value}
                   className={`px-3 py-1 rounded-full text-sm ${isChecked(form.processing_services, value)
-                      ? 'bg-yellow-400 text-black'
-                      : 'bg-zinc-700 text-gray-400'
+                    ? 'bg-yellow-400 text-black'
+                    : 'bg-zinc-700 text-gray-400'
                     }`}
                 >
                   {label}
@@ -367,8 +462,8 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
                     <span
                       key={value}
                       className={`px-3 py-1 rounded-full text-sm ${isChecked(form.terminal, value)
-                          ? 'bg-yellow-400 text-black'
-                          : 'bg-zinc-700 text-gray-400'
+                        ? 'bg-yellow-400 text-black'
+                        : 'bg-zinc-700 text-gray-400'
                         }`}
                     >
                       {label}
@@ -396,8 +491,8 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
                     <span
                       key={value}
                       className={`px-3 py-1 rounded-full text-sm ${isChecked(form.mobile_app, value)
-                          ? 'bg-yellow-400 text-black'
-                          : 'bg-zinc-700 text-gray-400'
+                        ? 'bg-yellow-400 text-black'
+                        : 'bg-zinc-700 text-gray-400'
                         }`}
                     >
                       {label}
@@ -424,8 +519,8 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
                     <span
                       key={value}
                       className={`px-3 py-1 rounded-full text-sm ${isChecked(form.pos_point_of_sale, value)
-                          ? 'bg-yellow-400 text-black'
-                          : 'bg-zinc-700 text-gray-400'
+                        ? 'bg-yellow-400 text-black'
+                        : 'bg-zinc-700 text-gray-400'
                         }`}
                     >
                       {label}
@@ -463,8 +558,8 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
                     <span
                       key={value}
                       className={`px-3 py-1 rounded-full text-sm ${isChecked(form.virtual_terminal, value)
-                          ? 'bg-yellow-400 text-black'
-                          : 'bg-zinc-700 text-gray-400'
+                        ? 'bg-yellow-400 text-black'
+                        : 'bg-zinc-700 text-gray-400'
                         }`}
                     >
                       {label}
@@ -501,6 +596,61 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
               </div>
             </div>
           </div>
+
+          {/* Signature Section */}
+
+          <form onSubmit={handleEmailSend}>
+            <div className="bg-zinc-800/50 rounded-lg p-6 border border-zinc-700">
+              <h3 className="text-yellow-400 mb-4">Clear E-Signature</h3>
+
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-400 mb-1">
+                  Personal Guarantee Required
+                </label>
+                <select
+                  className="w-full rounded-lg border border-zinc-600 bg-zinc-700 text-white px-3 py-2"
+                  value={guaranteeRequired}
+                  onChange={(e) => setGuaranteeRequired(e.target.value)}>
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
+                </select>
+              </div>
+
+
+              <div className="mb-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-400">Signature</label>
+                  <select className="w-full rounded-lg border border-zinc-600 mt-2 bg-zinc-700 text-white px-3 py-2" value={signatureType}
+                    onChange={(e) => setSignatureType(e.target.value)}>
+                    <option value="clearance">clearance</option>
+                    <option value="e-signature">e-signature clear</option>
+                  </select>
+                </div>
+              </div>
+
+
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-400 mb-1">Email</label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full rounded-lg border border-zinc-600 bg-zinc-700 text-white px-3 py-2"
+                  placeholder="Enter email"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className={`bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-6 py-2 rounded-lg flex items-center justify-center gap-2 ${loading ? "opacity-70 cursor-not-allowed" : ""}`}
+              >
+                {loading && <span className="animate-spin h-4 w-4 border-2 border-black border-t-transparent rounded-full"></span>}
+                {loading ? "Sending..." : "Send Email"}
+              </button>
+            </div>
+          </form>
+
         </div>
       </div>
     </div>
@@ -1091,6 +1241,7 @@ export default function PreApplications() {
   const [selectedDeleteRep, setSelectedDeleteRep] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [formToken, setFormToken] = useState<string>('');
+  const [downloadingId, setDownloadingId] = useState<number | null>(null);
 
   const preAppLink = `${window.location.origin}/jot-forms?data=${formToken}`; // The base URL for your form
 
@@ -1278,6 +1429,41 @@ export default function PreApplications() {
     setShowDeleteModal(true);
   };
 
+  const handleDownloadDocs = async (id: number) => {
+    setDownloadingId(id); // start loader
+    try {
+      const token = localStorage.getItem('auth_token');
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/file/download-zip/${id}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        // Try to extract error message from JSON if possible
+        const errorData = await response.json().catch(() => ({ error: 'Failed to download documents' }));
+        throw new Error(errorData.error || 'Failed to download documents');
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `documents-${id}.zip`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error('Error downloading documents:', error);
+      toast.error('Failed to download documents');
+    } finally {
+      setDownloadingId(null); // stop loader
+    }
+  };
+
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <Toaster position="top-right" />
@@ -1354,22 +1540,33 @@ export default function PreApplications() {
               <thead>
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">DBA</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Corporate Legal Name</th>
+                  {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Corporate Legal Name</th> */}
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Ownership Owner Name</th>
+                  {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Personal Guarantee Required</th> */}
                   {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Business Type</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Processing Services</th> */}
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Status</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Replicated</th>
+                  {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Replicated</th> */}
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Actions</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Docs status</th>
                 </tr>
               </thead>
               <tbody className="bg-zinc-900 divide-y divide-gray-700">
                 {forms.map((form) => (
                   <tr key={form.id} className="hover:bg-zinc-800">
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{form.business_dba}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{form.business_corporate_legal_name}</td>
+                    {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{form.business_corporate_legal_name}</td> */}
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{form.ownership_owner_name}</td>
-                    
+                    {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                      {form.personal_guarantee_required && (
+                      <span className="inline-flex items-center gap-1 text-sm font-medium bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">
+                        <i className="fas fa-paper-plane text-gray-500"></i>
+                        {form.personal_guarantee_required}
+                      </span>
+                      )}
+                    </td> */}
+
+
                     {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{form.state}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                       {Array.isArray(form.business_type) ? form.business_type.join(', ') : ''}
@@ -1378,7 +1575,7 @@ export default function PreApplications() {
                       {Array.isArray(form.processing_services) ? form.processing_services.join(', ') : ''}
                     </td> */}
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                      <span className={`px-2 py-0.5 text-[12px] font-medium rounded-full 
                         ${form.status === 0 ? 'bg-yellow-100 text-yellow-800' :
                           form.status === 1 ? 'bg-blue-100 text-blue-800' :
                             form.status === 2 ? 'bg-green-100 text-green-800' :
@@ -1391,12 +1588,12 @@ export default function PreApplications() {
                                 'Unknown'}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    {/* <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
                         ${form.is_duplicate === '1' ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-800'}`}>
                         {form.is_duplicate === '1' ? 'Yes' : 'No'}
                       </span>
-                    </td>
+                    </td> */}
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                       <div className="flex items-center space-x-4">
                         <button
@@ -1407,9 +1604,9 @@ export default function PreApplications() {
                           className="text-yellow-400 hover:text-yellow-500 flex items-center gap-1"
                         >
                           <Eye className="h-4 w-4" />
-                          View
+                          {/* View */}
                         </button>
-                        <button
+                        {/* <button
                           onClick={() => {
                             setSelectedForm(form);
                             setShowDuplicateModal(true);
@@ -1418,18 +1615,105 @@ export default function PreApplications() {
                         >
                           <Duplicate className="h-4 w-4" />
                           Replicate
-                        </button>
+                        </button> */}
 
                         <button
                           onClick={() => confirmAndDeleteItem(form.id, form.dba)}
                           className="text-yellow-400 hover:text-yellow-500 flex items-center gap-1"
                         >
                           <Trash2 className="h-4 w-4" />
-                          Delete
+                          {/* Delete */}
                         </button>
 
                       </div>
                     </td>
+
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                      <div className="flex items-center space-x-4">
+
+                        {form.mail_status === 1 && (
+                          <span className="inline-flex items-center gap-1 text-xs font-medium text-gray-600 bg-yellow-100 px-2 py-0.5 rounded-full">
+                            <i className="fas fa-paper-plane text-white-500 text-sm"></i>
+                            Sent
+                          </span>
+                        )}
+
+
+                        {form.mail_status === 2 && (
+                          <span className="inline-flex items-center gap-1 text-xs font-medium text-green-700 bg-green-100 px-2 py-0.5 rounded-full">
+                            <CheckCircle className="h-3.5 w-3.5 text-green-600" />
+                            Uploaded
+                          </span>
+                        )}
+
+
+                        {form.mail_status === 2 && (
+                          <button
+                            onClick={() => handleDownloadDocs(form.id)}
+                            disabled={downloadingId === form.id}
+                            className={`inline-flex items-center gap-1 text-xs font-medium ${downloadingId === form.id ? 'bg-yellow-200 text-yellow-500' : 'bg-yellow-100 text-yellow-600 hover:bg-yellow-200'
+                              } px-2 py-0.5 rounded-full`}
+                            title="Download uploaded documents"
+                          >
+                            {downloadingId === form.id ? (
+                              <>
+                                <svg className="animate-spin h-4 w-4 text-yellow-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                                </svg>
+                                Loading...
+                              </>
+                            ) : (
+                              <>
+                                <Download className="h-3.5 w-3.5" />
+                                Download
+                              </>
+                            )}
+                          </button>
+                        )}
+
+
+
+                        {form.mail_status === 2 && (
+                          <div className="text-xs text-center leading-tight">
+                            <div className="text-white-500 font-medium">
+                              <span className="block">Personal</span>
+                              <span className="block">Guarantee</span>
+                            </div>
+                            <div
+                              className={`mt-1 px-2 py-0.5 rounded-full inline-block font-semibold ${form.personal_guarantee_required === 'yes'
+                                ? 'bg-green-100 text-green-700'
+                                : 'bg-gray-200 text-gray-600'
+                                }`}
+                            >
+                              {form.personal_guarantee_required}
+                            </div>
+                          </div>
+                        )}
+
+
+
+
+                        {form.mail_status === 0 && (
+                          <span
+                            className="inline-flex items-center gap-1 text-xs font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full"
+                            title="No action taken yet"
+                          >
+                            <svg
+                              className="h-2 w-2 animate-pulse text-gray-400"
+                              fill="currentColor"
+                              viewBox="0 0 8 8"
+                            >
+                              <circle cx="4" cy="4" r="3" />
+                            </svg>
+                            Pending
+                          </span>
+                        )}
+
+
+                      </div>
+                    </td>
+
                   </tr>
                 ))}
               </tbody>
