@@ -102,15 +102,15 @@ export default function TopNav({
 
   useEffect(() => {
     fetchNotifications();
-    const handleAnyClick = () => {
-      fetchNotifications();
-    };
+    // const handleAnyClick = () => {
+    //   fetchNotifications();
+    // };
 
-    window.addEventListener('click', handleAnyClick);
+    // window.addEventListener('click', handleAnyClick);
 
-    return () => {
-      window.removeEventListener('click', handleAnyClick);
-    };
+    // return () => {
+    //   window.removeEventListener('click', handleAnyClick);
+    // };
   }, []);
 
   const isActive = (href: string) => {

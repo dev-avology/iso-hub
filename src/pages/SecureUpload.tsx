@@ -1,15 +1,20 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { File as FileIcon, Shield, Clock, Upload, AlertCircle } from 'lucide-react';
+import { File as FileIcon, Shield, Clock, Upload, AlertCircle, Calendar } from 'lucide-react';
 import { toast, Toaster } from 'react-hot-toast';
 import { useSearchParams, useNavigate } from 'react-router-dom';
+import SignaturePad from 'react-signature-canvas';
 
 const SecureUpload: React.FC = () => {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [isValidLink, setIsValidLink] = useState<boolean>(false);
   const [isCheckingLink, setIsCheckingLink] = useState<boolean>(true);
+  const [signatureDate, setSignatureDate] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const signatureRef = useRef<SignaturePad>(null);
   const [searchParams] = useSearchParams();
+  const [personalGuarantee, setPersonalGuarantee] = useState("no");
+  const [signatureType, setSignatureType] = useState("e-signature");
   const data = searchParams.get('data');
 
   useEffect(() => {
@@ -22,9 +27,13 @@ const SecureUpload: React.FC = () => {
 
       try {
         const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/file/check-unique-string/${data}`);
-        
+
+        const responseData = await response.json();
+
         if (response.ok) {
           setIsValidLink(true);
+          setSignatureType(responseData.data.clear_signature);
+          setPersonalGuarantee(responseData.data.personal_guarantee_required);
         } else {
           setIsValidLink(false);
           toast.error('Invalid or expired upload link');
@@ -47,7 +56,7 @@ const SecureUpload: React.FC = () => {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     if (!e.target.files) return;
-    
+
     const files = Array.from(e.target.files);
     setUploadedFiles((prevFiles) => [...prevFiles, ...files]);
     if (fileInputRef.current) {
@@ -74,6 +83,12 @@ const SecureUpload: React.FC = () => {
     setUploadedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
   };
 
+  const clearSignature = () => {
+    if (signatureRef.current) {
+      signatureRef.current.clear();
+    }
+  };
+
   const handleUpload = async (): Promise<void> => {
     if (!data) {
       toast.error('Invalid upload link');
@@ -85,12 +100,31 @@ const SecureUpload: React.FC = () => {
       return;
     }
 
+    const signaturePad = signatureRef.current;
+
+    if(signatureType === "e-signature"){
+      if (!signatureDate) {
+        toast.error('Please select a date');
+        return;
+      }
+      if (!signaturePad || signaturePad.isEmpty()) {
+        toast.error('Please provide a signature');
+        return;
+      }
+    }
+
     try {
       setIsUploading(true);
-      
       const formData = new FormData();
       formData.append('unique_string', data);
       
+      if (signatureType === "e-signature") {
+        formData.append('signature_date', signatureDate);
+        formData.append('signature', signaturePad.toDataURL());
+      } else {
+        formData.append('signature_date', '');
+        formData.append('signature', '');
+      }
       // Append each file to FormData
       uploadedFiles.forEach((file) => {
         formData.append('files[]', file);
@@ -111,9 +145,11 @@ const SecureUpload: React.FC = () => {
 
       const responseData = await response.json();
       console.log('Upload response:', responseData);
-      
+
       toast.success(responseData.message || 'Files uploaded successfully!');
       setUploadedFiles([]);
+      setSignatureDate('');
+      clearSignature();
     } catch (error) {
       console.error('Upload error:', error);
       toast.error('Failed to upload files');
@@ -210,7 +246,7 @@ const SecureUpload: React.FC = () => {
 
             {/* Upload Area */}
             <div
-              className="border-2 border-dashed border-yellow-400/20 rounded-lg p-8 text-center mb-8"
+              className="border-2 border-dashed border-yellow-400/20 rounded-lg p-8 text-center mb-6"
               onDragOver={handleDragOver}
               onDrop={handleDrop}
             >
@@ -236,7 +272,7 @@ const SecureUpload: React.FC = () => {
 
             {/* Selected Files */}
             {uploadedFiles.length > 0 && (
-              <div className="mb-8">
+              <div className="mb-6">
                 <h2 className="text-lg font-semibold text-white mb-4">Selected Files</h2>
                 <div className="space-y-2">
                   {uploadedFiles.map((file, idx) => (
@@ -262,22 +298,97 @@ const SecureUpload: React.FC = () => {
               </div>
             )}
 
+            {/* Signature Section - Conditional Arrangement */}
+            {signatureType === "clearance" ? (
+              <div className="border border-yellow-400/20 rounded-lg p-4 mb-6">
+                <h3 className="text-sm font-medium text-yellow-400 mb-4">Clearance Signature</h3>
+                <p className="text-gray-400">Please submit a physical clearance signature or upload scanned copy.</p>
+              </div>
+            ) : (
+              <div className="border border-yellow-400/20 rounded-lg p-4 mb-6">
+                <h3 className="text-sm font-medium text-yellow-400 mb-4">E-signature</h3>
+
+                {/* Date Field */}
+                <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
+                  <div>
+                    <label htmlFor="signature_date" className="block text-sm font-medium text-gray-300 mb-1">
+                      Date
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="date"
+                        id="signature_date"
+                        name="signature_date"
+                        value={signatureDate}
+                        onChange={(e) => setSignatureDate(e.target.value)}
+                        className="block w-full rounded bg-gray-700 text-white border border-gray-600 focus:border-yellow-400 focus:ring-yellow-400 px-3 py-1.5 text-sm"
+                        required
+                      />
+                      <Calendar className="absolute right-2 top-1.5 h-4 w-4 text-gray-400 pointer-events-none" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Signature Field */}
+                <div className="mt-3">
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Signature</label>
+                  <div className="border border-gray-600 rounded bg-white">
+                    <SignaturePad
+                      ref={signatureRef}
+                      canvasProps={{ className: 'w-full h-28' }}
+                    />
+                  </div>
+                </div>
+
+                {/* Clear Signature Button */}
+                <div className="flex items-center justify-end md:justify-start mt-2">
+                  <button
+                    type="button"
+                    onClick={clearSignature}
+                    className="text-xs text-gray-300 hover:text-white flex items-center space-x-1 bg-gray-700 px-2 py-1 rounded"
+                  >
+                    <span>Clear Signature</span>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Personal Guarantee Section */}
+            <div className="mb-6 border border-yellow-400/20 rounded-lg p-4 mb-6">
+              <h3 className="text-sm font-medium text-yellow-400 mb-2">Is Personal Guarantee Required?</h3>
+              <div className="flex gap-6 text-sm text-gray-300">
+                <label className="flex items-center space-x-2">
+                  <input
+                    type="radio"
+                    name="personalGuarantee"
+                    value="yes"
+                    checked
+                    className="accent-yellow-400"
+                  />
+                 <span>{personalGuarantee.charAt(0).toUpperCase() + personalGuarantee.slice(1)}</span>
+
+                </label>
+              </div>
+            </div>
+
+
+
             {/* Upload Button */}
             {uploadedFiles.length > 0 && (
               <button
                 onClick={handleUpload}
                 disabled={isUploading}
-                className="w-full bg-yellow-400 rounded py-3 font-semibold text-black hover:bg-yellow-500 disabled:opacity-50 flex items-center justify-center gap-2"
+                className="w-full bg-yellow-400 rounded py-2.5 font-semibold text-black hover:bg-yellow-500 disabled:opacity-50 flex items-center justify-center gap-2 text-sm"
               >
                 {isUploading ? (
                   <>
-                    <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin" />
-                    Uploading...
+                    <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                    <span>Uploading...</span>
                   </>
                 ) : (
                   <>
-                    <Upload className="w-5 h-5" />
-                    Upload Files
+                    <Upload className="w-4 h-4" />
+                    <span>Upload Files</span>
                   </>
                 )}
               </button>
