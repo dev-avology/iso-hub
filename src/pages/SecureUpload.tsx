@@ -4,6 +4,8 @@ import { toast, Toaster } from 'react-hot-toast';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import SignaturePad from 'react-signature-canvas';
 
+const imageTypes = ['jpg', 'jpeg', 'png', 'gif'];
+
 const SecureUpload: React.FC = () => {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [isUploading, setIsUploading] = useState<boolean>(false);
@@ -16,6 +18,7 @@ const SecureUpload: React.FC = () => {
   const [personalGuarantee, setPersonalGuarantee] = useState("no");
   const [signatureType, setSignatureType] = useState("e-signature");
   const data = searchParams.get('data');
+  const [hoveredFileIdx, setHoveredFileIdx] = useState<number | null>(null);
 
   useEffect(() => {
     const checkUniqueString = async () => {
@@ -274,26 +277,53 @@ const SecureUpload: React.FC = () => {
             {uploadedFiles.length > 0 && (
               <div className="mb-6">
                 <h2 className="text-lg font-semibold text-white mb-4">Selected Files</h2>
-                <div className="space-y-2">
-                  {uploadedFiles.map((file, idx) => (
-                    <div key={idx} className="flex items-center justify-between bg-zinc-800 rounded p-3">
-                      <div className="flex items-center gap-3">
-                        <FileIcon className="w-5 h-5 text-yellow-400" />
-                        <span className="text-white">{file.name}</span>
+                <div className="space-y-2 relative">
+                  {uploadedFiles.map((file, idx) => {
+                    const ext = file.name.split('.').pop()?.toLowerCase() || '';
+                    const isImage = imageTypes.includes(ext);
+                    return (
+                      <div
+                        key={idx}
+                        className="flex items-center justify-between bg-zinc-800 rounded p-3 relative"
+                        onMouseEnter={() => setHoveredFileIdx(idx)}
+                        onMouseLeave={() => setHoveredFileIdx(null)}
+                      >
+                        <div className="flex items-center gap-3">
+                          <FileIcon className="w-5 h-5 text-yellow-400" />
+                          <span className="text-white">{file.name}</span>
+                        </div>
+                        <div className="flex items-center gap-4">
+                          <span className="text-sm text-gray-400">
+                            {formatFileSize(file.size)}
+                          </span>
+                          <button
+                            onClick={() => handleRemoveFile(idx)}
+                            className="text-gray-400 hover:text-red-500"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                        {/* Preview Popup */}
+                        {hoveredFileIdx === idx && (
+                          <div className="absolute left-0 top-full mt-2 z-50 bg-zinc-900 border border-yellow-400/40 rounded shadow-lg p-2 min-w-[120px] max-w-[220px] flex flex-col items-center">
+                            {isImage ? (
+                              <img
+                                src={URL.createObjectURL(file)}
+                                alt={file.name}
+                                className="max-w-[200px] max-h-[160px] rounded shadow border border-zinc-700"
+                                style={{ objectFit: 'contain' }}
+                              />
+                            ) : (
+                              <div className="flex flex-col items-center justify-center py-4">
+                                <FileIcon className="w-10 h-10 text-yellow-400 mb-2" />
+                                <span className="text-xs text-gray-400">Preview not available</span>
+                              </div>
+                            )}
+                          </div>
+                        )}
                       </div>
-                      <div className="flex items-center gap-4">
-                        <span className="text-sm text-gray-400">
-                          {formatFileSize(file.size)}
-                        </span>
-                        <button
-                          onClick={() => handleRemoveFile(idx)}
-                          className="text-gray-400 hover:text-red-500"
-                        >
-                          Remove
-                        </button>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             )}
