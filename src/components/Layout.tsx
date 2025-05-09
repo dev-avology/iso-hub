@@ -4,7 +4,7 @@ import Sidebar from './Sidebar';
 import TopNav from './TopNav';
 
 const topMenuItems = [
-  { name: 'Dashboard', href: '/', icon: LayoutDashboard },
+  // { name: 'Dashboard', href: '/', icon: LayoutDashboard },
   // { name: 'Residuals', href: 'https://dev.tracerpos.com/', icon: FileText },
   { name: 'Logins', href: '/logins', icon: Key },
   { name: 'Document Center', href: '/documents', icon: FileText },

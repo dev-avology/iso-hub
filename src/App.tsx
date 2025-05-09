@@ -69,7 +69,7 @@ function ProtectedAdminLayout({ children }: { children: React.ReactNode }) {
   const isAdmin = authUser?.role_id === 2;
 
   if (!isAdmin) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/logins" replace />;
   }
 
   return (
@@ -95,7 +95,7 @@ function App() {
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           
           {/* Regular protected routes */}
-          <Route path="/" element={<ProtectedLayout><Dashboard /></ProtectedLayout>} />
+          <Route path="/" element={<ProtectedLayout><Logins /></ProtectedLayout>} />
           <Route path="/logins" element={<ProtectedLayout><Logins /></ProtectedLayout>} />
           <Route path="/users" element={<ProtectedLayout><Users /></ProtectedLayout>} />
           <Route path="/documents" element={<ProtectedLayout><DocumentCenter /></ProtectedLayout>} />
