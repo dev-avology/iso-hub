@@ -25,6 +25,8 @@ interface EmailFormData {
   name: string;
 }
 
+const imageTypes = ['jpg', 'jpeg', 'png', 'gif'];
+
 const SecurePortal: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -38,6 +40,7 @@ const SecurePortal: React.FC = () => {
   const [files, setFiles] = useState<FileData[]>([]);
   const [isLoadingFiles, setIsLoadingFiles] = useState(true);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [hoveredFileId, setHoveredFileId] = useState<number | null>(null);
 
   useEffect(() => {
     fetchFiles();
@@ -67,6 +70,7 @@ const SecurePortal: React.FC = () => {
       }
 
       const data: ApiResponse = await response.json();
+      console.log(data);
       setFiles(data.data || []);
     } catch (error) {
       console.error('Error fetching files:', error);
@@ -259,8 +263,16 @@ const SecurePortal: React.FC = () => {
               <div>
                 {files.map((file) => {
                   const remainingDays = calculateRemainingDays(file.uploaded_at);
+                  const ext = file.file_original_name.split('.').pop()?.toLowerCase() || '';
+                  const isImage = imageTypes.includes(ext);
+                  const fileUrl = `${import.meta.env.VITE_API_BASE_URL}/file/download/${file.id}`;
                   return (
-                    <div key={file.id} className='group mt-5 w-full px-5 py-3 rounded bg-zinc-900 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500 relative'>
+                    <div
+                      key={file.id}
+                      className='group mt-5 w-full px-5 py-3 rounded bg-zinc-900 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500 relative'
+                      onMouseEnter={() => setHoveredFileId(file.id)}
+                      onMouseLeave={() => setHoveredFileId(null)}
+                    >
                       <div className="flex flex-col">
                         <p className='uploaded-file-name'>
                           <span className='cursor-pointer hover:text-yellow-600'>
@@ -278,6 +290,25 @@ const SecurePortal: React.FC = () => {
                           </p>
                         )}
                       </div>
+
+                      {/* Preview Popup */}
+                      {hoveredFileId === file.id && (
+                        <div className="absolute left-0 top-full mt-2 z-50 bg-zinc-900 border border-yellow-400/40 rounded shadow-lg p-2 min-w-[120px] max-w-[220px] flex flex-col items-center">
+                          {isImage ? (
+                            <img
+                              src={fileUrl}
+                              alt={file.file_original_name}
+                              className="max-w-[200px] max-h-[160px] rounded shadow border border-zinc-700"
+                              style={{ objectFit: 'contain' }}
+                            />
+                          ) : (
+                            <div className="flex flex-col items-center justify-center py-4">
+                              <Download className="w-10 h-10 text-yellow-400 mb-2" />
+                              <span className="text-xs text-gray-400">Preview not available</span>
+                            </div>
+                          )}
+                        </div>
+                      )}
 
                       <div className="addedDetail absolute right-[20px] top-[50%] translate-y-[-50%] hidden group-hover:block">
                         <ul className='flex gap-4 align-center'>
