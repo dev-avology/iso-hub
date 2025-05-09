@@ -263,9 +263,12 @@ const SecurePortal: React.FC = () => {
               <div>
                 {files.map((file) => {
                   const remainingDays = calculateRemainingDays(file.uploaded_at);
-                  const ext = file.file_original_name.split('.').pop()?.toLowerCase() || '';
+                  const ext = file.file_path.split('.').pop()?.toLowerCase() || '';
                   const isImage = imageTypes.includes(ext);
-                  const fileUrl = `${import.meta.env.VITE_API_BASE_URL}/file/download/${file.id}`;
+                  const fileUrl = `${import.meta.env.VITE_IMAGE_URL}${file.file_path}`;
+
+                  console.log(fileUrl);
+
                   return (
                     <div
                       key={file.id}
