@@ -28,6 +28,7 @@ import Forms from './pages/Forms/forms';
 import JotForm from './pages/JotForms/JotForm';
 import UserReps from './pages/UserReps';
 import UserNotification from './components/UserNotification';
+import PrivacyPolicy from './pages/PrivacyPolicy';
 
 function Dashboard() {
   return (
@@ -91,6 +92,7 @@ function App() {
           <Route path="/login" element={<LogIn />} />
           <Route path="/secure-upload" element={<SecureUpload />} />
           <Route path="/jot-forms" element={<JotForm />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           
           {/* Regular protected routes */}
           <Route path="/" element={<ProtectedLayout><Dashboard /></ProtectedLayout>} />
