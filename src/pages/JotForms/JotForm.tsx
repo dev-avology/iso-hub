@@ -155,8 +155,27 @@ const datePickerStyles = `
   }
 `;
 
+type OwnerImage = {
+  file: File;
+  url: string;
+  name: string;
+  size: string;
+};
+type OwnerData = {
+  [key: string]: any;
+  driver_license_image: OwnerImage[];
+};
+type BankingDoc = {
+  file: File;
+  url: string;
+  name: string;
+  size: string;
+};
+
 export default function JotForm() {
   const [formData, setFormData] = useState<FormData>({ ...blankFormData });
+  const [ownerFormData, setOwnerFormData] = useState<OwnerData[]>([]);
+  const [uploadedFiles, setUploadedFiles] = useState<BankingDoc[]>([]);
 
   const signatureRef = useRef<SignaturePad>(null);
 
@@ -264,8 +283,15 @@ export default function JotForm() {
     // console.log('Current form data:', formData);
   }, [isReadOnly, formData]);
 
+  const handleBankingDocsChange = (files: BankingDoc[]) => {
+    setUploadedFiles(files);
+    console.log("Files received from child:", files);
+  };
+
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
   ) => {
     const { name, value, type } = e.target;
 
@@ -319,29 +345,54 @@ export default function JotForm() {
       return;
     }
 
-    const finalFormData = {
-      ...formData,
-      signature: signatureData,
-      unique_string: data,
-    };
+    // Build FormData for multipart/form-data
+    const formDataToSend = new FormData();
+    // Append all text fields
+    Object.entries(formData).forEach(([key, value]) => {
+      if (Array.isArray(value)) {
+        value.forEach((v, i) => formDataToSend.append(`${key}[${i}]`, v));
+      } else {
+        formDataToSend.append(key, value);
+      }
+    });
+    formDataToSend.append('signature', signatureData);
+    formDataToSend.append('unique_string', data);
 
-    // console.log(finalFormData);
-    // return false;
+    // Append owner data and files
+    ownerFormData.forEach((owner, ownerIdx) => {
+      Object.entries(owner).forEach(([key, value]) => {
+        if (key === 'driver_license_image' && Array.isArray(value)) {
+          (value as OwnerImage[]).forEach((imgObj, fileIdx) => {
+            if (imgObj && imgObj.file instanceof File) {
+              formDataToSend.append(`owners[${ownerIdx}][driver_license_image][${fileIdx}]`, imgObj.file);
+            }
+          });
+        } else if (typeof value === 'string' || typeof value === 'number') {
+          formDataToSend.append(`owners[${ownerIdx}][${key}]`, String(value));
+        }
+      });
+    });
+
+    // Append banking docs files
+    uploadedFiles.forEach((imgObj, idx) => {
+      if (imgObj && imgObj.file instanceof File) {
+        formDataToSend.append(`bankingDocs[${idx}]`, imgObj.file);
+      }
+    });
 
     setIsSubmitting(true);
 
     try {
       const token = localStorage.getItem("auth_token");
-
       const response = await fetch(
         `${import.meta.env.VITE_API_BASE_URL}/jot-forms`,
         {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
+            // Do NOT set Content-Type header for FormData
           },
-          body: JSON.stringify(finalFormData),
+          body: formDataToSend,
         }
       );
 
@@ -468,7 +519,7 @@ export default function JotForm() {
                   </p>
                 )}
               </div>
-              <div>
+              {/* <div>
                 <label className="block text-sm font-medium text-white">
                   Address
                 </label>
@@ -487,7 +538,7 @@ export default function JotForm() {
                     {errors.dba_address[0]}
                   </p>
                 )}
-              </div>
+              </div> */}
               <div>
                 <label className="block text-sm font-medium text-white">
                   Street Address
@@ -667,7 +718,7 @@ export default function JotForm() {
               Corporate Contact Information
             </legend>
             <div className="space-y-4">
-              <div>
+              {/* <div>
                 <label className="block text-sm font-medium text-white">
                   Address
                 </label>
@@ -688,7 +739,7 @@ export default function JotForm() {
                     {errors.corporate_address[0]}
                   </p>
                 )}
-              </div>
+              </div> */}
               <div>
                 <label className="block text-sm font-medium text-white">
                   Street Address
@@ -877,27 +928,21 @@ export default function JotForm() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            
                 <div>
                   <label className="block text-sm font-medium text-white">
-                    Date Business Started
+                     Date Business Started
                   </label>
-                  <input
-                    type="text"
-                    {...isReadOnly}
-                    name="business_contact_name"
-                    required
-                    onChange={handleInputChange}
-                    className={`mt-1 block w-full rounded-md shadow-sm ${
-                      errors.business_date_started
-                        ? "border-red-500"
-                        : "border-gray-300"
-                    }`}
-                  />
-                  {errors.business_date_started && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.business_date_started[0]}
-                    </p>
-                  )}
+                  <div className="relative">
+                    <input
+                      type="date"
+                      name="business_start_date"
+                      onChange={handleInputChange}
+                      required
+                      className="mt-1 block w-full rounded bg-gray-700 text-white border border-gray-600 px-3 py-2"
+                    />
+                    <Calendar className="absolute right-3 top-2.5 h-5 w-5 text-gray-400 pointer-events-none" />
+                  </div>
                 </div>
 
                 <div>
@@ -1029,7 +1074,10 @@ export default function JotForm() {
               Owner / Officer Information
             </legend>
 
-            <OwnerForm />
+            <OwnerForm
+              formData={ownerFormData}
+              setFormData={setOwnerFormData}
+            />
           </fieldset>
 
           {/* BANKING INFORMATION */}
@@ -1103,7 +1151,7 @@ export default function JotForm() {
                   )}
                 </div>
               </div>
-              <BankingDocs></BankingDocs>
+              <BankingDocs onFilesChange={handleBankingDocsChange} />
             </div>
           </fieldset>
 
@@ -1680,8 +1728,6 @@ export default function JotForm() {
                       </p>
                     )}
                   </div>
-                  
-                
                 </div>
               </div>
             </div>
@@ -1711,7 +1757,9 @@ export default function JotForm() {
                 </label>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-xs text-white">Card Present / Swiped</label>
+                    <label className="block text-xs text-white">
+                      Card Present / Swiped
+                    </label>
                     <div className="flex items-center gap-2">
                       <input
                         type="range"
@@ -1722,7 +1770,9 @@ export default function JotForm() {
                         onChange={handleInputChange}
                         className="w-full accent-green-400"
                       />
-                      <span className="text-white w-8 text-right">{formData.transaction_card_present || 0}%</span>
+                      <span className="text-white w-8 text-right">
+                        {formData.transaction_card_present || 0}%
+                      </span>
                     </div>
                   </div>
                   <div>
@@ -1737,11 +1787,15 @@ export default function JotForm() {
                         onChange={handleInputChange}
                         className="w-full accent-green-400"
                       />
-                      <span className="text-white w-8 text-right">{formData.transaction_keyed_in || 0}%</span>
+                      <span className="text-white w-8 text-right">
+                        {formData.transaction_keyed_in || 0}%
+                      </span>
                     </div>
                   </div>
                   <div>
-                    <label className="block text-xs text-white">All Online</label>
+                    <label className="block text-xs text-white">
+                      All Online
+                    </label>
                     <div className="flex items-center gap-2">
                       <input
                         type="range"
@@ -1752,14 +1806,17 @@ export default function JotForm() {
                         onChange={handleInputChange}
                         className="w-full accent-green-400"
                       />
-                      <span className="text-white w-8 text-right">{formData.transaction_all_online || 0}%</span>
+                      <span className="text-white w-8 text-right">
+                        {formData.transaction_all_online || 0}%
+                      </span>
                     </div>
                   </div>
                 </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-white mb-2">
-                  Auto Settle / Batch time (Next day funding cutoff time is 8 pm CST)
+                  Auto Settle / Batch time (Next day funding cutoff time is 8 pm
+                  CST)
                 </label>
                 <input
                   type="time"
@@ -1778,7 +1835,7 @@ export default function JotForm() {
                     type="radio"
                     name="auto_settle_type"
                     value="manual"
-                    checked={formData.auto_settle_type === 'manual'}
+                    checked={formData.auto_settle_type === "manual"}
                     onChange={handleInputChange}
                     className="mr-2"
                   />
@@ -1789,7 +1846,7 @@ export default function JotForm() {
                     type="radio"
                     name="auto_settle_type"
                     value="auto"
-                    checked={formData.auto_settle_type === 'auto'}
+                    checked={formData.auto_settle_type === "auto"}
                     onChange={handleInputChange}
                     className="mr-2"
                   />
@@ -1805,7 +1862,7 @@ export default function JotForm() {
                     type="radio"
                     name="add_tips_to_account"
                     value="yes"
-                    checked={formData.add_tips_to_account === 'yes'}
+                    checked={formData.add_tips_to_account === "yes"}
                     onChange={handleInputChange}
                     className="mr-2"
                   />
@@ -1816,7 +1873,7 @@ export default function JotForm() {
                     type="radio"
                     name="add_tips_to_account"
                     value="no"
-                    checked={formData.add_tips_to_account === 'no'}
+                    checked={formData.add_tips_to_account === "no"}
                     onChange={handleInputChange}
                     className="mr-2"
                   />
@@ -1828,8 +1885,11 @@ export default function JotForm() {
                   Select Tip Amounts to be added to the receipts
                 </label>
                 <div className="flex flex-col gap-2">
-                  {['18%', '20%', '25%', '15%'].map((tip) => (
-                    <label key={tip} className="inline-flex items-center text-white">
+                  {["18%", "20%", "25%", "15%"].map((tip) => (
+                    <label
+                      key={tip}
+                      className="inline-flex items-center text-white"
+                    >
                       <input
                         type="checkbox"
                         name="tip_amounts"

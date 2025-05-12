@@ -1,30 +1,8 @@
 import React, { useState } from "react";
 import { Calendar } from "lucide-react"; // Replace or remove if not using this icon
 
-const OwnerForm = () => {
+const OwnerForm = ({ formData, setFormData }) => {
   const [ownerCount, setOwnerCount] = useState(1);
-  const [formData, setFormData] = useState([
-    {
-      ownership_first_name: "",
-      ownership_last_name: "",
-      ownership_percent: "",
-      ownership_phone_number: "",
-      ownership_city: "",
-      ownership_state: "",
-      ownership_zip: "",
-      ownership_email: "",
-      ownership_dob: "",
-      ownership_social_security_number: "",
-      ownership_residential_street_address: "",
-      ownership_driver_licence_number: "",
-      ownership_address: "",
-      owner_street_address: "",
-      owner_street_address2: "",
-      ownership_title: "",
-      driver_license_image: [], // Added for image
-    },
-  ]);
-  const [submitting, setSubmitting] = useState(false);
 
   const handleOwnerChange = (e) => {
     const count = parseInt(e.target.value, 10);
@@ -89,15 +67,12 @@ const OwnerForm = () => {
   const handleImageChange = (index, event) => {
     const files = Array.from(event.target.files);
     if (files.length) {
-      const updatedImages = files.map((file) => {
-        const imageUrl = URL.createObjectURL(file);
-        return {
-          url: imageUrl,
-          name: file.name,
-          size: (file.size / 1024).toFixed(1) + "KB", // File size in KB
-        };
-      });
-
+      const updatedImages = files.map((file) => ({
+        file, // store the actual File object
+        url: URL.createObjectURL(file),
+        name: file.name,
+        size: (file.size / 1024).toFixed(1) + "KB",
+      }));
       setFormData((prev) => {
         const updated = [...prev];
         updated[index].driver_license_image = [
@@ -109,30 +84,18 @@ const OwnerForm = () => {
     }
   };
 
-  const handleSubmit = async () => {
-    setSubmitting(true);
-    try {
-      for (let i = 0; i < formData.length; i++) {
-        const response = await fetch("/api/owners", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData[i]),
-        });
+  // const handleImageChange = (index, event) => {
+  //   const files = Array.from(event.target.files);
 
-        if (!response.ok) {
-          throw new Error(`Failed to submit owner ${i + 1}`);
-        }
-      }
-      alert("All owners submitted successfully.");
-    } catch (error) {
-      console.error("Error submitting owners:", error);
-      alert("There was an error submitting the owner information.");
-    } finally {
-      setSubmitting(false);
-    }
-  };
+  //   setFormData((prev) => {
+  //     const updated = [...prev];
+  //     updated[index].driver_license_image = [
+  //       ...updated[index].driver_license_image,
+  //       ...files, // store actual files
+  //     ];
+  //     return updated;
+  //   });
+  // };
 
   return (
     <div>
@@ -146,7 +109,7 @@ const OwnerForm = () => {
           value={ownerCount}
           onChange={handleOwnerChange}
         >
-          <option value="">Select Owner</option>
+          <option value="" selected>Select Owner</option>
           <option value="1">1 Owner</option>
           <option value="2">2 Owners</option>
           <option value="3">3 Owners</option>

@@ -1,20 +1,33 @@
 import React, { useState } from "react";
 
-const BankingDocs = () => {
+const BankingDocs = ({ onFilesChange }) => {
   const [bankingDocs, setBankingDocs] = useState([]);
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
     const newDocs = files.map((file) => ({
+      file,
       url: URL.createObjectURL(file),
       name: file.name,
       size: (file.size / 1024).toFixed(1) + "KB",
     }));
-    setBankingDocs((prev) => [...prev, ...newDocs]);
+    setBankingDocs((prev) => {
+      const updatedDocs = [...prev, ...newDocs];
+      if (onFilesChange) {
+        onFilesChange(updatedDocs);
+      }
+      return updatedDocs;
+    });
   };
 
   const handleImageRemove = (index) => {
-    setBankingDocs((prev) => prev.filter((_, i) => i !== index));
+    setBankingDocs((prev) => {
+      const updatedDocs = prev.filter((_, i) => i !== index);
+      if (onFilesChange) {
+        onFilesChange(updatedDocs);
+      }
+      return updatedDocs;
+    });
   };
 
   return (
