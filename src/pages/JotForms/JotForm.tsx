@@ -73,7 +73,7 @@ interface FormData {
   auto_settle_time: string;
   auto_settle_type: string; // 'auto' or 'manual'
   add_tips_to_account: string; // 'yes' or 'no'
-  tip_amounts: string;
+  tip_amounts: string[];
 }
 
 // Put this outside your component
@@ -143,7 +143,7 @@ const blankFormData: FormData = {
   auto_settle_time: "",
   auto_settle_type: "auto",
   add_tips_to_account: "no",
-  tip_amounts: "",
+  tip_amounts: [],
 };
 
 // Add this CSS at the top of the file
@@ -265,7 +265,7 @@ export default function JotForm() {
   }, [isReadOnly, formData]);
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value, type } = e.target;
 
@@ -1682,6 +1682,165 @@ export default function JotForm() {
                   </div>
                   
                 
+                </div>
+              </div>
+            </div>
+          </fieldset>
+
+          {/* CREDIT CARD PROCESSING INFORMATION */}
+          <fieldset className="border border-gray-300 rounded-lg p-6">
+            <legend className="text-lg font-semibold text-gray-800 px-2 text-white">
+              Credit Card Processing Information
+            </legend>
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-white">
+                  Estimated Highest ticket you will process
+                </label>
+                <input
+                  type="text"
+                  name="estimated_highest_ticket"
+                  value={formData.estimated_highest_ticket}
+                  onChange={handleInputChange}
+                  className="mt-1 block w-full rounded-md shadow-sm border-gray-300"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-white mb-2">
+                  Transaction Types
+                </label>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-xs text-white">Card Present / Swiped</label>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        name="transaction_card_present"
+                        value={formData.transaction_card_present}
+                        onChange={handleInputChange}
+                        className="w-full accent-green-400"
+                      />
+                      <span className="text-white w-8 text-right">{formData.transaction_card_present || 0}%</span>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs text-white">Keyed In</label>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        name="transaction_keyed_in"
+                        value={formData.transaction_keyed_in}
+                        onChange={handleInputChange}
+                        className="w-full accent-green-400"
+                      />
+                      <span className="text-white w-8 text-right">{formData.transaction_keyed_in || 0}%</span>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs text-white">All Online</label>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        name="transaction_all_online"
+                        value={formData.transaction_all_online}
+                        onChange={handleInputChange}
+                        className="w-full accent-green-400"
+                      />
+                      <span className="text-white w-8 text-right">{formData.transaction_all_online || 0}%</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-white mb-2">
+                  Auto Settle / Batch time (Next day funding cutoff time is 8 pm CST)
+                </label>
+                <input
+                  type="time"
+                  name="auto_settle_time"
+                  value={formData.auto_settle_time}
+                  onChange={handleInputChange}
+                  className="w-40 rounded-md border-gray-300"
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <label className="block text-sm font-medium text-white mb-1">
+                  I do not need Auto Settle
+                </label>
+                <label className="inline-flex items-center text-white">
+                  <input
+                    type="radio"
+                    name="auto_settle_type"
+                    value="manual"
+                    checked={formData.auto_settle_type === 'manual'}
+                    onChange={handleInputChange}
+                    className="mr-2"
+                  />
+                  I will Settle / Batch myself
+                </label>
+                <label className="inline-flex items-center text-white">
+                  <input
+                    type="radio"
+                    name="auto_settle_type"
+                    value="auto"
+                    checked={formData.auto_settle_type === 'auto'}
+                    onChange={handleInputChange}
+                    className="mr-2"
+                  />
+                  Auto Settle
+                </label>
+              </div>
+              <div className="flex flex-col gap-2">
+                <label className="block text-sm font-medium text-white mb-1">
+                  Add Tips to my account
+                </label>
+                <label className="inline-flex items-center text-white">
+                  <input
+                    type="radio"
+                    name="add_tips_to_account"
+                    value="yes"
+                    checked={formData.add_tips_to_account === 'yes'}
+                    onChange={handleInputChange}
+                    className="mr-2"
+                  />
+                  I would like to have the tip function added to my account
+                </label>
+                <label className="inline-flex items-center text-white">
+                  <input
+                    type="radio"
+                    name="add_tips_to_account"
+                    value="no"
+                    checked={formData.add_tips_to_account === 'no'}
+                    onChange={handleInputChange}
+                    className="mr-2"
+                  />
+                  No tip function needed
+                </label>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-white mb-2">
+                  Select Tip Amounts to be added to the receipts
+                </label>
+                <div className="flex flex-col gap-2">
+                  {['18%', '20%', '25%', '15%'].map((tip) => (
+                    <label key={tip} className="inline-flex items-center text-white">
+                      <input
+                        type="checkbox"
+                        name="tip_amounts"
+                        value={tip}
+                        checked={formData.tip_amounts.includes(tip)}
+                        onChange={handleInputChange}
+                        className="mr-2"
+                      />
+                      {tip}
+                    </label>
+                  ))}
                 </div>
               </div>
             </div>
