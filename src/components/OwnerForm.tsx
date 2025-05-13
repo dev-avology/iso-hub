@@ -44,18 +44,6 @@ const OwnerForm = ({ formData, setFormData }) => {
     });
   };
 
-  //   const handleImageChange = (index, event) => {
-  //     const file = event.target.files[0];
-  //     if (file) {
-  //       const imageUrl = URL.createObjectURL(file);
-  //       setFormData((prev) => {
-  //         const updated = [...prev];
-  //         updated[index].driver_license_image = imageUrl;
-  //         return updated;
-  //       });
-  //     }
-  //   };
-
   const handleImageRemove = (index, imageIndex) => {
     setFormData((prev) => {
       const updated = [...prev];
@@ -64,38 +52,58 @@ const OwnerForm = ({ formData, setFormData }) => {
     });
   };
 
+  // const handleImageChange = (index, event) => {
+  //   const files = Array.from(event.target.files);
+  //   if (files.length) {
+  //     const updatedImages = files.map((file) => ({
+  //       file, // store the actual File object
+  //       url: URL.createObjectURL(file),
+  //       name: file.name,
+  //       size: (file.size / 1024).toFixed(1) + "KB",
+  //     }));
+  //     setFormData((prev) => {
+  //       const updated = [...prev];
+  //       updated[index].driver_license_image = [
+  //         ...updated[index].driver_license_image,
+  //         ...updatedImages,
+  //       ];
+  //       return updated;
+  //     });
+  //   }
+  // };
+
   const handleImageChange = (index, event) => {
     const files = Array.from(event.target.files);
     if (files.length) {
       const updatedImages = files.map((file) => ({
-        file, // store the actual File object
+        file,
         url: URL.createObjectURL(file),
         name: file.name,
         size: (file.size / 1024).toFixed(1) + "KB",
       }));
+
       setFormData((prev) => {
         const updated = [...prev];
+
+        // Prevent duplicate file names
+        const existingNames = updated[index].driver_license_image.map(
+          (img) => img.name
+        );
+        const nonDuplicateImages = updatedImages.filter(
+          (img) => !existingNames.includes(img.name)
+        );
+
         updated[index].driver_license_image = [
           ...updated[index].driver_license_image,
-          ...updatedImages,
+          ...nonDuplicateImages,
         ];
         return updated;
       });
+
+      // Reset file input value
+      event.target.value = null;
     }
   };
-
-  // const handleImageChange = (index, event) => {
-  //   const files = Array.from(event.target.files);
-
-  //   setFormData((prev) => {
-  //     const updated = [...prev];
-  //     updated[index].driver_license_image = [
-  //       ...updated[index].driver_license_image,
-  //       ...files, // store actual files
-  //     ];
-  //     return updated;
-  //   });
-  // };
 
   return (
     <div>
@@ -109,7 +117,9 @@ const OwnerForm = ({ formData, setFormData }) => {
           value={ownerCount}
           onChange={handleOwnerChange}
         >
-          <option value="" selected>Select Owner</option>
+          <option value="">
+            Select Owner
+          </option>
           <option value="1">1 Owner</option>
           <option value="2">2 Owners</option>
           <option value="3">3 Owners</option>
@@ -162,17 +172,7 @@ const OwnerForm = ({ formData, setFormData }) => {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {/* <div>
-                  <label className="block text-sm font-medium text-white">Address</label>
-                  <input
-                    type="text"
-                    name="ownership_address"
-                    value={owner.ownership_address}
-                    onChange={(e) => handleInputChange(index, e)}
-                    required
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-                  />
-                </div> */}
+               
                 <div>
                   <label className="block text-sm font-medium text-white">
                     Street Address

@@ -74,6 +74,12 @@ interface FormData {
   auto_settle_type: string; // 'auto' or 'manual'
   add_tips_to_account: string; // 'yes' or 'no'
   tip_amounts: string[];
+  is_same_shipping_address: string;
+  business_website: string;
+  business_legal_name: string;
+  business_products_sold: string;
+  business_return_policy: string;
+  terminal_other: string;
 }
 
 // Put this outside your component
@@ -144,6 +150,12 @@ const blankFormData: FormData = {
   auto_settle_type: "auto",
   add_tips_to_account: "no",
   tip_amounts: [],
+  is_same_shipping_address: "0",
+  business_website: "",
+  business_legal_name: "",
+  business_products_sold: "",
+  business_return_policy: "",
+  terminal_other: ""
 };
 
 // Add this CSS at the top of the file
@@ -331,7 +343,6 @@ export default function JotForm() {
     const signaturePad = signatureRef.current;
     const signatureData =
       signaturePad && !signaturePad.isEmpty() ? signaturePad.toDataURL() : "";
-
     // Reset previous errors
     setErrors({});
 
@@ -355,19 +366,22 @@ export default function JotForm() {
         formDataToSend.append(key, value);
       }
     });
-    formDataToSend.append('signature', signatureData);
-    formDataToSend.append('unique_string', data);
+    formDataToSend.append("signature", signatureData);
+    formDataToSend.append("unique_string", data);
 
     // Append owner data and files
     ownerFormData.forEach((owner, ownerIdx) => {
       Object.entries(owner).forEach(([key, value]) => {
-        if (key === 'driver_license_image' && Array.isArray(value)) {
+        if (key === "driver_license_image" && Array.isArray(value)) {
           (value as OwnerImage[]).forEach((imgObj, fileIdx) => {
             if (imgObj && imgObj.file instanceof File) {
-              formDataToSend.append(`owners[${ownerIdx}][driver_license_image][${fileIdx}]`, imgObj.file);
+              formDataToSend.append(
+                `owners[${ownerIdx}][driver_license_image][${fileIdx}]`,
+                imgObj.file
+              );
             }
           });
-        } else if (typeof value === 'string' || typeof value === 'number') {
+        } else if (typeof value === "string" || typeof value === "number") {
           formDataToSend.append(`owners[${ownerIdx}][${key}]`, String(value));
         }
       });
@@ -504,7 +518,6 @@ export default function JotForm() {
                 </label>
                 <input
                   type="text"
-                  {...isReadOnly}
                   required
                   onChange={handleInputChange}
                   name="business_dba"
@@ -513,32 +526,13 @@ export default function JotForm() {
                     errors.business_dba ? "border-red-500" : "border-gray-300"
                   }`}
                 />
-                {errors.business_dba && (
+                {/* {errors.business_dba && (
                   <p className="text-red-500 text-sm mt-1">
                     {errors.business_dba[0]}
                   </p>
-                )}
+                )} */}
               </div>
-              {/* <div>
-                <label className="block text-sm font-medium text-white">
-                  Address
-                </label>
-                <input
-                  type="text"
-                  {...isReadOnly}
-                  required
-                  onChange={handleInputChange}
-                  name="dba_address"
-                  className={`mt-1 block w-full rounded-md shadow-sm ${
-                    errors.dba_address ? "border-red-500" : "border-gray-300"
-                  }`}
-                />
-                {errors.dba_address && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.dba_address[0]}
-                  </p>
-                )}
-              </div> */}
+
               <div>
                 <label className="block text-sm font-medium text-white">
                   Street Address
@@ -556,11 +550,11 @@ export default function JotForm() {
                   }`}
                 />
 
-                {errors.dba_street_address && (
+                {/* {errors.dba_street_address && (
                   <p className="text-red-500 text-sm mt-1">
                     {errors.dba_street_address[0]}
                   </p>
-                )}
+                )} */}
               </div>
               <div>
                 <label className="block text-sm font-medium text-white">
@@ -568,8 +562,8 @@ export default function JotForm() {
                 </label>
                 <input
                   type="text"
-                  {...isReadOnly}
-                  name="business_corporate_address"
+                  required
+                  name="dba_street_address2"
                   onChange={handleInputChange}
                   className={`mt-1 block w-full rounded-md shadow-sm ${
                     errors.dba_street_address2
@@ -577,11 +571,11 @@ export default function JotForm() {
                       : "border-gray-300"
                   }`}
                 />
-                {errors.dba_street_address2 && (
+                {/* {errors.dba_street_address2 && (
                   <p className="text-red-500 text-sm mt-1">
                     {errors.dba_street_address2[0]}
                   </p>
-                )}
+                )} */}
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
@@ -590,7 +584,6 @@ export default function JotForm() {
                   </label>
                   <input
                     type="text"
-                    {...isReadOnly}
                     name="business_city"
                     required
                     onChange={handleInputChange}
@@ -601,11 +594,11 @@ export default function JotForm() {
                         : "border-gray-300"
                     }`}
                   />
-                  {errors.business_city && (
+                  {/* {errors.business_city && (
                     <p className="text-red-500 text-sm mt-1">
                       {errors.business_city[0]}
                     </p>
-                  )}
+                  )} */}
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-white">
@@ -613,7 +606,6 @@ export default function JotForm() {
                   </label>
                   <input
                     type="text"
-                    {...isReadOnly}
                     name="business_state"
                     required
                     onChange={handleInputChange}
@@ -624,11 +616,11 @@ export default function JotForm() {
                         : "border-gray-300"
                     }`}
                   />
-                  {errors.business_state && (
+                  {/* {errors.business_state && (
                     <p className="text-red-500 text-sm mt-1">
                       {errors.business_state[0]}
                     </p>
-                  )}
+                  )} */}
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-white">
@@ -636,7 +628,6 @@ export default function JotForm() {
                   </label>
                   <input
                     type="text"
-                    {...isReadOnly}
                     name="business_zip"
                     required
                     onChange={handleInputChange}
@@ -645,11 +636,11 @@ export default function JotForm() {
                       errors.business_zip ? "border-red-500" : "border-gray-300"
                     }`}
                   />
-                  {errors.business_zip && (
+                  {/* {errors.business_zip && (
                     <p className="text-red-500 text-sm mt-1">
                       {errors.business_zip[0]}
                     </p>
-                  )}
+                  )} */}
                 </div>
               </div>
 
@@ -659,21 +650,20 @@ export default function JotForm() {
                 </label>
                 <div className="flex flex-wrap gap-4">
                   {[
-                    { value: "llc", label: "LLC" },
-                    { value: "corp", label: "Corp" },
-                    { value: "non_profit", label: "Non-Profit" },
-                    { value: "sole_prop", label: "Sole Prop" },
-                    { value: "gov", label: "Gov" },
-                    { value: "association", label: "Association/Estate/Trust" },
-                    { value: "other", label: "Other" },
+                    { value: "LLC", label: "LLC" },
+                    { value: "Corp", label: "Corp" },
+                    { value: "Non-Profit", label: "Non-Profit" },
+                    { value: "Sole Prop", label: "Sole Prop" },
+                    { value: "Gov", label: "Gov" },
+                    { value: "Association/Estate/Trust", label: "Association/Estate/Trust" },
+                    { value: "Other", label: "Other" },
                   ].map(({ value, label }) => (
                     <label
                       key={value}
                       className="inline-flex items-center text-white"
                     >
                       <input
-                        type="checkbox"
-                        {...isReadOnly}
+                        type="checkbox"                        
                         onChange={handleInputChange}
                         name="business_profile_business_type"
                         value={value}
@@ -683,15 +673,15 @@ export default function JotForm() {
                         className="h-4 w-4 mr-2 rounded border-gray-300 text-yellow-400 focus:ring-yellow-400"
                       />
                       {label}
-                      {errors.business_profile_business_type && (
+                      {/* {errors.business_profile_business_type && (
                         <p className="text-red-500 text-sm mt-1">
                           {errors.business_profile_business_type[0]}
                         </p>
-                      )}
+                      )} */}
                     </label>
                   ))}
                 </div>
-                {formData.business_profile_business_type.includes("other") && (
+                {formData.business_profile_business_type.includes("Other") && (
                   <div className="mt-4">
                     {/* <label className="block text-sm font-medium text-white">Other</label> */}
                     <input
@@ -709,6 +699,24 @@ export default function JotForm() {
                   </div>
                 )}
               </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="block text-sm font-medium text-white mb-1">
+                  Shipping Address
+                </label>
+
+                <label className="inline-flex items-center text-white">
+                  <input
+                    type="radio"
+                    name="is_same_shipping_address"
+                    value="1"
+                    checked={formData.is_same_shipping_address === "1"}
+                    onChange={handleInputChange}
+                    className="mr-2"
+                  />
+                  Shipping Address is the Same
+                </label>
+              </div>
             </div>
           </fieldset>
 
@@ -718,35 +726,12 @@ export default function JotForm() {
               Corporate Contact Information
             </legend>
             <div className="space-y-4">
-              {/* <div>
-                <label className="block text-sm font-medium text-white">
-                  Address
-                </label>
-                <input
-                  type="text"
-                  {...isReadOnly}
-                  required
-                  onChange={handleInputChange}
-                  name="corporate_address"
-                  className={`mt-1 block w-full rounded-md shadow-sm ${
-                    errors.corporate_address
-                      ? "border-red-500"
-                      : "border-gray-300"
-                  }`}
-                />
-                {errors.corporate_address && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.corporate_address[0]}
-                  </p>
-                )}
-              </div> */}
               <div>
                 <label className="block text-sm font-medium text-white">
                   Street Address
                 </label>
                 <input
                   type="text"
-                  {...isReadOnly}
                   required
                   onChange={handleInputChange}
                   name="corporate_street_address1"
@@ -756,11 +741,11 @@ export default function JotForm() {
                       : "border-gray-300"
                   }`}
                 />
-                {errors.corporate_street_address1 && (
+                {/* {errors.corporate_street_address1 && (
                   <p className="text-red-500 text-sm mt-1">
                     {errors.corporate_street_address1[0]}
                   </p>
-                )}
+                )} */}
               </div>
               <div>
                 <label className="block text-sm font-medium text-white">
@@ -768,7 +753,6 @@ export default function JotForm() {
                 </label>
                 <input
                   type="text"
-                  {...isReadOnly}
                   required
                   onChange={handleInputChange}
                   name="corporate_street_address2"
@@ -779,11 +763,11 @@ export default function JotForm() {
                   }`}
                 />
 
-                {errors.corporate_street_address2 && (
+                {/* {errors.corporate_street_address2 && (
                   <p className="text-red-500 text-sm mt-1">
                     {errors.corporate_street_address2[0]}
                   </p>
-                )}
+                )} */}
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -793,7 +777,6 @@ export default function JotForm() {
                   </label>
                   <input
                     type="text"
-                    {...isReadOnly}
                     name="corporate_city"
                     required
                     onChange={handleInputChange}
@@ -803,11 +786,11 @@ export default function JotForm() {
                         : "border-gray-300"
                     }`}
                   />
-                  {errors.corporate_city && (
+                  {/* {errors.corporate_city && (
                     <p className="text-red-500 text-sm mt-1">
                       {errors.corporate_city[0]}
                     </p>
-                  )}
+                  )} */}
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-white">
@@ -815,7 +798,6 @@ export default function JotForm() {
                   </label>
                   <input
                     type="text"
-                    {...isReadOnly}
                     name="corporate_state"
                     required
                     onChange={handleInputChange}
@@ -825,11 +807,11 @@ export default function JotForm() {
                         : "border-gray-300"
                     }`}
                   />
-                  {errors.corporate_state && (
+                  {/* {errors.corporate_state && (
                     <p className="text-red-500 text-sm mt-1">
                       {errors.corporate_state[0]}
                     </p>
-                  )}
+                  )} */}
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-white">
@@ -846,11 +828,11 @@ export default function JotForm() {
                         : "border-gray-300"
                     }`}
                   />
-                  {errors.corporate_zip && (
+                  {/* {errors.corporate_zip && (
                     <p className="text-red-500 text-sm mt-1">
                       {errors.corporate_zip[0]}
                     </p>
-                  )}
+                  )} */}
                 </div>
               </div>
 
@@ -872,11 +854,11 @@ export default function JotForm() {
                         : "border-gray-300"
                     }`}
                   />
-                  {errors.business_contact_name && (
+                  {/* {errors.business_contact_name && (
                     <p className="text-red-500 text-sm mt-1">
                       {errors.business_contact_name[0]}
                     </p>
-                  )}
+                  )} */}
                 </div>
 
                 <div>
@@ -896,11 +878,11 @@ export default function JotForm() {
                     }`}
                   />
 
-                  {errors.business_contact_mail && (
+                  {/* {errors.business_contact_mail && (
                     <p className="text-red-500 text-sm mt-1">
                       {errors.business_contact_mail[0]}
                     </p>
-                  )}
+                  )} */}
                 </div>
 
                 <div>
@@ -909,7 +891,6 @@ export default function JotForm() {
                   </label>
                   <input
                     type="number"
-                    {...isReadOnly}
                     name="business_location_phone_number"
                     required
                     onChange={handleInputChange}
@@ -919,19 +900,18 @@ export default function JotForm() {
                         : "border-gray-300"
                     }`}
                   />
-                  {errors.business_location_phone_number && (
+                  {/* {errors.business_location_phone_number && (
                     <p className="text-red-500 text-sm mt-1">
                       {errors.business_location_phone_number[0]}
                     </p>
-                  )}
+                  )} */}
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            
                 <div>
                   <label className="block text-sm font-medium text-white">
-                     Date Business Started
+                    Date Business Started
                   </label>
                   <div className="relative">
                     <input
@@ -951,7 +931,6 @@ export default function JotForm() {
                   </label>
                   <input
                     type="text"
-                    {...isReadOnly}
                     name="business_website"
                     required
                     onChange={handleInputChange}
@@ -962,11 +941,11 @@ export default function JotForm() {
                     }`}
                   />
 
-                  {errors.business_website && (
+                  {/* {errors.business_website && (
                     <p className="text-red-500 text-sm mt-1">
                       {errors.business_website[0]}
                     </p>
-                  )}
+                  )} */}
                 </div>
 
                 <div>
@@ -974,8 +953,7 @@ export default function JotForm() {
                     Business Legal Name as appears on tax return
                   </label>
                   <input
-                    type="number"
-                    {...isReadOnly}
+                    type="text"
                     name="business_legal_name"
                     required
                     onChange={handleInputChange}
@@ -985,11 +963,11 @@ export default function JotForm() {
                         : "border-gray-300"
                     }`}
                   />
-                  {errors.business_legal_name && (
+                  {/* {errors.business_legal_name && (
                     <p className="text-red-500 text-sm mt-1">
                       {errors.business_legal_name[0]}
                     </p>
-                  )}
+                  )} */}
                 </div>
               </div>
 
@@ -1001,20 +979,20 @@ export default function JotForm() {
                   <input
                     type="text"
                     {...isReadOnly}
-                    name="business_federal_tax_id"
+                    name="business_tax_id"
                     required
                     onChange={handleInputChange}
                     className={`mt-1 block w-full rounded-md shadow-sm ${
-                      errors.business_federal_tax_id
+                      errors.business_tax_id
                         ? "border-red-500"
                         : "border-gray-300"
                     }`}
                   />
-                  {errors.business_federal_tax_id && (
+                  {/* {errors.business_federal_tax_id && (
                     <p className="text-red-500 text-sm mt-1">
                       {errors.business_federal_tax_id[0]}
                     </p>
-                  )}
+                  )} */}
                 </div>
 
                 <div>
@@ -1034,11 +1012,11 @@ export default function JotForm() {
                     }`}
                   />
 
-                  {errors.business_products_sold && (
+                  {/* {errors.business_products_sold && (
                     <p className="text-red-500 text-sm mt-1">
                       {errors.business_products_sold[0]}
                     </p>
-                  )}
+                  )} */}
                 </div>
 
                 <div>
@@ -1046,7 +1024,7 @@ export default function JotForm() {
                     Return Policy
                   </label>
                   <input
-                    type="number"
+                    type="text"
                     {...isReadOnly}
                     name="business_return_policy"
                     required
@@ -1057,11 +1035,11 @@ export default function JotForm() {
                         : "border-gray-300"
                     }`}
                   />
-                  {errors.business_return_policy && (
+                  {/* {errors.business_return_policy && (
                     <p className="text-red-500 text-sm mt-1">
                       {errors.business_return_policy[0]}
                     </p>
-                  )}
+                  )} */}
                 </div>
               </div>
             </div>
@@ -1095,7 +1073,6 @@ export default function JotForm() {
                   </label>
                   <input
                     type="text"
-                    {...isReadOnly}
                     required
                     name="bank_name"
                     onChange={handleInputChange}
@@ -1104,11 +1081,11 @@ export default function JotForm() {
                       errors.bank_name ? "border-red-500" : "border-gray-300"
                     }`}
                   />
-                  {errors.bank_name && (
+                  {/* {errors.bank_name && (
                     <p className="text-red-500 text-sm mt-1">
                       {errors.bank_name[0]}
                     </p>
-                  )}
+                  )} */}
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-white">
@@ -1116,7 +1093,6 @@ export default function JotForm() {
                   </label>
                   <input
                     type="text"
-                    {...isReadOnly}
                     required
                     name="aba_routing"
                     onChange={handleInputChange}
@@ -1125,11 +1101,11 @@ export default function JotForm() {
                       errors.aba_routing ? "border-red-500" : "border-gray-300"
                     }`}
                   />
-                  {errors.aba_routing && (
+                  {/* {errors.aba_routing && (
                     <p className="text-red-500 text-sm mt-1">
                       {errors.aba_routing[0]}
                     </p>
-                  )}
+                  )} */}
                 </div>
 
                 <div>
@@ -1138,7 +1114,7 @@ export default function JotForm() {
                   </label>
                   <input
                     type="text"
-                    {...isReadOnly}
+                    required
                     name="doa"
                     onChange={handleInputChange}
                     value={formData.doa}
@@ -1146,9 +1122,9 @@ export default function JotForm() {
                       errors.doa ? "border-red-500" : "border-gray-300"
                     }`}
                   />
-                  {errors.doa && (
+                  {/* {errors.doa && (
                     <p className="text-red-500 text-sm mt-1">{errors.doa[0]}</p>
-                  )}
+                  )} */}
                 </div>
               </div>
               <BankingDocs onFilesChange={handleBankingDocsChange} />
@@ -1169,11 +1145,11 @@ export default function JotForm() {
                 </label>
                 <div className="flex flex-wrap gap-4">
                   {[
-                    { value: "retail", label: "Retail" },
-                    { value: "hospitality", label: "Hospitality" },
-                    { value: "services", label: "Services" },
-                    { value: "b2b", label: "B2B" },
-                    { value: "other", label: "Other" },
+                    { value: "Retail", label: "Retail" },
+                    { value: "Hospitality", label: "Hospitality" },
+                    { value: "Services", label: "Services" },
+                    { value: "B2B", label: "B2B" },
+                    { value: "Other", label: "Other" },
                   ].map(({ value, label }) => (
                     <label
                       key={value}
@@ -1192,11 +1168,11 @@ export default function JotForm() {
                   ))}
                 </div>
 
-                {errors.business_type && (
+                {/* {errors.business_type && (
                   <p className="text-red-500 text-sm mt-2">
                     {errors.business_type[0]}
                   </p>
-                )}
+                )} */}
               </div>
 
               {/* Show "Other" input if selected */}
@@ -1234,23 +1210,23 @@ export default function JotForm() {
                   <div className="flex flex-wrap gap-4">
                     {[
                       {
-                        value: "traditional_processing",
+                        value: "Traditional Processing",
                         label: "Traditional Processing",
                       },
-                      { value: "surcharging", label: "Surcharging" },
-                      { value: "qr_code", label: "QR Code" },
-                      { value: "check_services", label: "Check Services" },
+                      { value: "Surcharging", label: "Surcharging" },
+                      { value: "QR Code", label: "QR Code" },
+                      { value: "Check Services", label: "Check Services" },
                       {
-                        value: "qb_or_software_integration",
+                        value: "QB/Software Integration",
                         label: "QB/Software Integration",
                       },
-                      { value: "cash_discounting", label: "Cash Discounting" },
+                      { value: "Cash Discounting", label: "Cash Discounting" },
                       {
-                        value: "online_ordering",
+                        value: "Online Ordering(OLO)",
                         label: "Online Ordering(OLO)",
                       },
-                      { value: "gift_cards", label: "Gift Cards" },
-                      { value: "invoice_manager", label: "Invoice Manager" },
+                      { value: "Gift Cards", label: "Gift Cards" },
+                      { value: "Invoice Manager", label: "Invoice Manager" },
                     ].map(({ value, label }) => (
                       <label
                         key={value}
@@ -1258,9 +1234,9 @@ export default function JotForm() {
                       >
                         <input
                           type="radio"
-                          {...isReadOnly}
                           name="processing_services"
                           onChange={handleInputChange}
+                          required
                           value={value}
                           checked={formData.processing_services === value}
                           className="mr-2 h-4 w-4 border-gray-300 text-yellow-400 focus:ring-yellow-400"
@@ -1270,11 +1246,11 @@ export default function JotForm() {
                     ))}
                   </div>
 
-                  {errors.processing_services && (
+                  {/* {errors.processing_services && (
                     <p className="text-red-500 text-sm mt-2">
                       {errors.processing_services[0]}
                     </p>
-                  )}
+                  )} */}
                 </div>
               </div>
             </div>
@@ -1294,11 +1270,11 @@ export default function JotForm() {
                   </label>
                   <div className="flex flex-wrap gap-4">
                     {[
-                      { value: "dial", label: "Dial" },
-                      { value: "ip", label: "IP" },
-                      { value: "wifi", label: "WIFI" },
-                      { value: "4g", label: "4G" },
-                      { value: "other", label: "Other" },
+                      { value: "Dial", label: "Dial" },
+                      { value: "IP", label: "IP" },
+                      { value: "WIFI", label: "WIFI" },
+                      { value: "4G", label: "4G" },
+                      { value: "Other", label: "Other" },
                     ].map(({ value, label }) => (
                       <label
                         key={value}
@@ -1306,7 +1282,6 @@ export default function JotForm() {
                       >
                         <input
                           type="radio"
-                          {...isReadOnly}
                           name="terminal"
                           onChange={handleInputChange}
                           value={value}
@@ -1318,7 +1293,7 @@ export default function JotForm() {
                     ))}
 
                     {/* Show input box when "other" is selected */}
-                    {formData.terminal === "other" && (
+                    {formData.terminal === "Other" && (
                       <div className="w-full mt-2">
                         <input
                           type="text"
@@ -1332,11 +1307,11 @@ export default function JotForm() {
                               : "border-gray-300"
                           }`}
                         />
-                        {errors.terminal_other && (
+                        {/* {errors.terminal_other && (
                           <p className="text-red-500 text-sm mt-1">
                             {errors.terminal_other[0]}
                           </p>
-                        )}
+                        )} */}
                       </div>
                     )}
                   </div>
@@ -1350,7 +1325,6 @@ export default function JotForm() {
                   </label>
                   <input
                     type="text"
-                    {...isReadOnly}
                     required
                     name="terminal_type_or_model"
                     onChange={handleInputChange}
@@ -1376,8 +1350,8 @@ export default function JotForm() {
                   </label>
                   <div className="flex flex-wrap gap-4">
                     {[
-                      { value: "ios", label: "IOS" },
-                      { value: "android", label: "Android" },
+                      { value: "IOS", label: "IOS" },
+                      { value: "Android", label: "Android" },
                     ].map(({ value, label }) => (
                       <label
                         key={value}
@@ -1385,7 +1359,7 @@ export default function JotForm() {
                       >
                         <input
                           type="radio"
-                          {...isReadOnly}
+                          required
                           name="mobile_app"
                           onChange={handleInputChange}
                           value={value}
@@ -1396,11 +1370,11 @@ export default function JotForm() {
                       </label>
                     ))}
 
-                    {errors.mobile_app && (
+                    {/* {errors.mobile_app && (
                       <p className="text-red-500 text-sm mt-1">
                         {errors.mobile_app[0]}
                       </p>
-                    )}
+                    )} */}
                   </div>
                 </div>
 
@@ -1411,7 +1385,6 @@ export default function JotForm() {
                     </label>
                     <input
                       type="text"
-                      {...isReadOnly}
                       name="mobile_app_special_features"
                       onChange={handleInputChange}
                       value={formData.mobile_app_special_features}
@@ -1421,11 +1394,11 @@ export default function JotForm() {
                           : "border-gray-300"
                       }`}
                     />
-                    {errors.mobile_app_special_features && (
+                    {/* {errors.mobile_app_special_features && (
                       <p className="text-red-500 text-sm mt-1">
                         {errors.mobile_app_special_features[0]}
                       </p>
-                    )}
+                    )} */}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-white">
@@ -1433,7 +1406,7 @@ export default function JotForm() {
                     </label>
                     <input
                       type="text"
-                      {...isReadOnly}
+                      required
                       name="mobile_app_cardreader_type_model"
                       onChange={handleInputChange}
                       value={formData.mobile_app_cardreader_type_model}
@@ -1443,11 +1416,11 @@ export default function JotForm() {
                           : "border-gray-300"
                       }`}
                     />
-                    {errors.mobile_app_cardreader_type_model && (
+                    {/* {errors.mobile_app_cardreader_type_model && (
                       <p className="text-red-500 text-sm mt-1">
                         {errors.mobile_app_cardreader_type_model[0]}
                       </p>
-                    )}
+                    )} */}
                   </div>
                 </div>
               </div>
@@ -1480,11 +1453,11 @@ export default function JotForm() {
                       </label>
                     ))}
 
-                    {errors.pos_point_of_sale && (
+                    {/* {errors.pos_point_of_sale && (
                       <p className="text-red-500 text-sm mt-1">
                         {errors.pos_point_of_sale[0]}
                       </p>
-                    )}
+                    )} */}
                   </div>
                 </div>
 
@@ -1495,7 +1468,7 @@ export default function JotForm() {
                     </label>
                     <input
                       type="text"
-                      {...isReadOnly}
+                      required
                       name="pos_special_features"
                       onChange={handleInputChange}
                       value={formData.pos_special_features}
@@ -1505,11 +1478,11 @@ export default function JotForm() {
                           : "border-gray-300"
                       }`}
                     />
-                    {errors.pos_special_features && (
+                    {/* {errors.pos_special_features && (
                       <p className="text-red-500 text-sm mt-1">
                         {errors.pos_special_features[0]}
                       </p>
-                    )}
+                    )} */}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-white">
@@ -1517,7 +1490,6 @@ export default function JotForm() {
                     </label>
                     <input
                       type="text"
-                      {...isReadOnly}
                       required
                       name="system_type_model"
                       onChange={handleInputChange}
@@ -1528,11 +1500,11 @@ export default function JotForm() {
                           : "border-gray-300"
                       }`}
                     />
-                    {errors.system_type_model && (
+                    {/* {errors.system_type_model && (
                       <p className="text-red-500 text-sm mt-1">
                         {errors.system_type_model[0]}
                       </p>
-                    )}
+                    )} */}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-white">
@@ -1540,7 +1512,6 @@ export default function JotForm() {
                     </label>
                     <input
                       type="text"
-                      {...isReadOnly}
                       required
                       name="number_of_stations"
                       onChange={handleInputChange}
@@ -1551,11 +1522,11 @@ export default function JotForm() {
                           : "border-gray-300"
                       }`}
                     />
-                    {errors.number_of_stations && (
+                    {/* {errors.number_of_stations && (
                       <p className="text-red-500 text-sm mt-1">
                         {errors.number_of_stations[0]}
                       </p>
-                    )}
+                    )} */}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-white">
@@ -1563,7 +1534,6 @@ export default function JotForm() {
                     </label>
                     <input
                       type="text"
-                      {...isReadOnly}
                       required
                       name="pos_other_items"
                       onChange={handleInputChange}
@@ -1574,11 +1544,11 @@ export default function JotForm() {
                           : "border-gray-300"
                       }`}
                     />
-                    {errors.pos_other_items && (
+                    {/* {errors.pos_other_items && (
                       <p className="text-red-500 text-sm mt-1">
                         {errors.pos_other_items[0]}
                       </p>
-                    )}
+                    )} */}
                   </div>
                 </div>
               </div>
@@ -1591,19 +1561,19 @@ export default function JotForm() {
                   <div className="flex flex-wrap gap-4">
                     {[
                       {
-                        value: "test_or_email_link_to_pay",
+                        value: "Text/Email Link to Pay",
                         label: "Text/Email Link to Pay",
                       },
                       {
-                        value: "hot_button",
+                        value: "Hot Button on Web Pay Now/Donate Now",
                         label: "Hot Button on Web Pay Now/Donate Now",
                       },
                       {
-                        value: "cnp_cash_discount",
+                        value: "CNP Cash Discount/Surcharge",
                         label: "CNP Cash Discount/Surcharge",
                       },
                       {
-                        value: "text_notification",
+                        value: "Text Notification",
                         label: "Text Notification",
                       },
                     ].map(({ value, label }) => (
@@ -1613,7 +1583,7 @@ export default function JotForm() {
                       >
                         <input
                           type="radio"
-                          {...isReadOnly}
+                          required
                           name="virtual_terminal"
                           onChange={handleInputChange}
                           value={value}
@@ -1624,11 +1594,11 @@ export default function JotForm() {
                       </label>
                     ))}
 
-                    {errors.virtual_terminal && (
+                    {/* {errors.virtual_terminal && (
                       <p className="text-red-500 text-sm mt-1">
                         {errors.virtual_terminal[0]}
                       </p>
-                    )}
+                    )} */}
                   </div>
                 </div>
               </div>
@@ -1641,23 +1611,23 @@ export default function JotForm() {
                   <div className="flex flex-wrap gap-4">
                     {[
                       {
-                        value: "shopping_center",
+                        value: "Shopping center",
                         label: "Shopping center",
                       },
                       {
-                        value: "industrial_building",
+                        value: "Industrial Building",
                         label: "Industrial Building",
                       },
                       {
-                        value: "residence",
+                        value: "Residence",
                         label: "Residence",
                       },
                       {
-                        value: "tradeshow",
+                        value: "Tradeshow",
                         label: "Tradeshow",
                       },
                       {
-                        value: "brick_and_mortar",
+                        value: "Brick and Mortar",
                         label: "Brick and Mortar",
                       },
                     ].map(({ value, label }) => (
@@ -1667,7 +1637,7 @@ export default function JotForm() {
                       >
                         <input
                           type="radio"
-                          {...isReadOnly}
+                          required
                           name="location_description"
                           onChange={handleInputChange}
                           value={value}
@@ -1678,21 +1648,22 @@ export default function JotForm() {
                       </label>
                     ))}
 
-                    {errors.location_description && (
+                    {/* {errors.location_description && (
                       <p className="text-red-500 text-sm mt-1">
                         {errors.location_description[0]}
                       </p>
-                    )}
+                    )} */}
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-white">
                       Estimated Yearly VisaMastercardAMEXDiscover
                     </label>
                     <input
                       type="text"
+                      required
                       name="estimation_early_master_card"
                       onChange={handleInputChange}
                       className={`mt-1 block w-full rounded-md shadow-sm ${
@@ -1701,11 +1672,11 @@ export default function JotForm() {
                           : "border-gray-300"
                       }`}
                     />
-                    {errors.estimation_early_master_card && (
+                    {/* {errors.estimation_early_master_card && (
                       <p className="text-red-500 text-sm mt-1">
                         {errors.estimation_early_master_card[0]}
                       </p>
-                    )}
+                    )} */}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-white">
@@ -1722,11 +1693,11 @@ export default function JotForm() {
                           : "border-gray-300"
                       }`}
                     />
-                    {errors.estimated_average_ticket && (
+                    {/* {errors.estimated_average_ticket && (
                       <p className="text-red-500 text-sm mt-1">
                         {errors.estimated_average_ticket[0]}
                       </p>
-                    )}
+                    )} */}
                   </div>
                 </div>
               </div>
@@ -1745,6 +1716,7 @@ export default function JotForm() {
                 </label>
                 <input
                   type="text"
+                  required
                   name="estimated_highest_ticket"
                   value={formData.estimated_highest_ticket}
                   onChange={handleInputChange}
@@ -1763,6 +1735,7 @@ export default function JotForm() {
                     <div className="flex items-center gap-2">
                       <input
                         type="range"
+                        required
                         min="0"
                         max="100"
                         name="transaction_card_present"
@@ -1781,6 +1754,7 @@ export default function JotForm() {
                       <input
                         type="range"
                         min="0"
+                        required
                         max="100"
                         name="transaction_keyed_in"
                         value={formData.transaction_keyed_in}
@@ -1801,6 +1775,7 @@ export default function JotForm() {
                         type="range"
                         min="0"
                         max="100"
+                        required
                         name="transaction_all_online"
                         value={formData.transaction_all_online}
                         onChange={handleInputChange}
@@ -1820,6 +1795,7 @@ export default function JotForm() {
                 </label>
                 <input
                   type="time"
+                  required
                   name="auto_settle_time"
                   value={formData.auto_settle_time}
                   onChange={handleInputChange}
@@ -1841,7 +1817,7 @@ export default function JotForm() {
                   />
                   I will Settle / Batch myself
                 </label>
-                <label className="inline-flex items-center text-white">
+                {/* <label className="inline-flex items-center text-white">
                   <input
                     type="radio"
                     name="auto_settle_type"
@@ -1851,12 +1827,13 @@ export default function JotForm() {
                     className="mr-2"
                   />
                   Auto Settle
-                </label>
+                </label> */}
               </div>
               <div className="flex flex-col gap-2">
                 <label className="block text-sm font-medium text-white mb-1">
                   Add Tips to my account
                 </label>
+
                 <label className="inline-flex items-center text-white">
                   <input
                     type="radio"
@@ -1867,17 +1844,6 @@ export default function JotForm() {
                     className="mr-2"
                   />
                   I would like to have the tip function added to my account
-                </label>
-                <label className="inline-flex items-center text-white">
-                  <input
-                    type="radio"
-                    name="add_tips_to_account"
-                    value="no"
-                    checked={formData.add_tips_to_account === "no"}
-                    onChange={handleInputChange}
-                    className="mr-2"
-                  />
-                  No tip function needed
                 </label>
               </div>
               <div>
@@ -1922,6 +1888,7 @@ export default function JotForm() {
                   <input
                     type="date"
                     id="signature_date"
+                    required
                     name="signature_date"
                     value={formData.signature_date}
                     onChange={handleInputChange}
@@ -1929,11 +1896,11 @@ export default function JotForm() {
                   />
                   <Calendar className="absolute right-3 top-2.5 h-5 w-5 text-gray-400 pointer-events-none" />
                 </div>
-                {errors.signature_date && (
+                {/* {errors.signature_date && (
                   <p className="text-red-500 text-sm mt-1">
                     {errors.signature_date[0]}
                   </p>
-                )}
+                )} */}
               </div>
 
               <div>
