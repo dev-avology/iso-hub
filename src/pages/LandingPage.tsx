@@ -94,20 +94,19 @@ export default function LandingPage({ onAuthenticate, onNavigate }: LandingPageP
           </div>
 
           <div className="relative w-full max-w-4xl mx-auto bg-zinc-800 rounded-xl overflow-hidden shadow-2xl">
-            <div className="aspect-w-16 aspect-h-9">
-              <div className="w-full h-full bg-zinc-800 flex items-center justify-center">
-                <iframe
-                  width="100%"
-                  height="100%"
-                  src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-                  title="ISOHub Demo Video"
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                ></iframe>
-              </div>
+            <div className="w-full h-[500px] bg-zinc-800 flex items-center justify-center"> {/* height can be adjusted */}
+              <iframe
+                width="100%"
+                height="100%"
+                src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+                title="ISOHub Demo Video"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              ></iframe>
             </div>
           </div>
+
         </div>
       </div>
 
@@ -244,10 +243,10 @@ export default function LandingPage({ onAuthenticate, onNavigate }: LandingPageP
 
               {/* Calendar Embed Container */}
               <div className="w-full bg-zinc-900/50 rounded-lg mb-6">
-                <iframe 
-                  src="https://api.leadconnectorhq.com/widget/booking/w81N45IZKBMP1TwyhPbW" 
-                  style={{width: '100%', height: '690px', border: 'none', overflow: 'hidden'}} 
-                  scrolling="yes" 
+                <iframe
+                  src="https://api.leadconnectorhq.com/widget/booking/w81N45IZKBMP1TwyhPbW"
+                  style={{ width: '100%', height: '690px', border: 'none', overflow: 'hidden' }}
+                  scrolling="yes"
                   id="w81N45IZKBMP1TwyhPbW_1747062225604"
                 ></iframe>
               </div>
@@ -271,7 +270,8 @@ export default function LandingPage({ onAuthenticate, onNavigate }: LandingPageP
           <div className="max-w-3xl mx-auto bg-zinc-800 rounded-xl overflow-hidden shadow-2xl">
             <iframe
               src="https://api.leadconnectorhq.com/widget/form/XlJsv8aFfLYN18CDgQub"
-              style={{ width: '100%', height: '537px', border: 'none', borderRadius: '4px' }}
+              scrolling="no"
+              style={{ width: '100%', height: '641px', border: 'none', borderRadius: '4px' }}
               id="inline-XlJsv8aFfLYN18CDgQub"
               data-layout="{'id':'INLINE'}"
               data-trigger-type="alwaysShow"
@@ -281,12 +281,13 @@ export default function LandingPage({ onAuthenticate, onNavigate }: LandingPageP
               data-deactivation-type="neverDeactivate"
               data-deactivation-value=""
               data-form-name="Contact Us"
-              data-height="537"
+              data-height="700"
               data-layout-iframe-id="inline-XlJsv8aFfLYN18CDgQub"
               data-form-id="XlJsv8aFfLYN18CDgQub"
               title="Contact Us"
             />
           </div>
+
         </div>
       </div>
 
