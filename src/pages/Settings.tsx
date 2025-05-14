@@ -115,7 +115,7 @@ export default function Settings() {
     <div>
       <Toaster position="top-right" reverseOrder={false} />
       <div className="max-w-xl mx-auto mt-2 bg-zinc-800 rounded-xl p-8 border border-yellow-400/20 shadow-2xl">
-        <h2 className="text-3xl font-bold text-white mb-6">Edit Profile</h2>
+        <h2 className="text-2xl font-bold text-white mb-6">User Setting</h2>
         <form onSubmit={handleSave} className="space-y-6">
           {/* First and Last Name */}
           <div className="flex gap-4">

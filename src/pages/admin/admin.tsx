@@ -268,9 +268,9 @@ export default function Admin() {
         password: '',
         role_id: '5'
       });
+      toast.success('User updated successfully');
       setIsEditModalOpen(false);
       setSelectedUser(null);
-
       // Refresh the users list
       fetchUsers();
     } catch (error) {
@@ -306,6 +306,7 @@ export default function Admin() {
 
   return (
     <>
+      <Toaster position="top-right" reverseOrder={false} />
       <div className="shortmembers my-10 flex gap-7 items-center w-full text-center bg-yellow-500 py-5 px-5 rounded">
         <div className="short text-white font-medium flex items-center gap-2">
           <input
