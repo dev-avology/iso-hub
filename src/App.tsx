@@ -16,7 +16,7 @@ import { LayoutDashboard } from 'lucide-react';
 import EditUsers from './pages/users/editUser';
 import Admin from './pages/admin/admin';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './providers/AuthProvider';
+import { AuthProvider, useAuth } from './providers/AuthProvider';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import TeamMember from './pages/team-member/teamMember';
 import Vendor from './pages/Vendor/vendor';
@@ -85,45 +85,43 @@ function ProtectedAdminLayout({ children }: { children: React.ReactNode }) {
   );
 }
 
+function AppRoutes() {
+  const { isAuthenticated } = useAuth();
+  return (
+    <Routes>
+      <Route path="/" element={isAuthenticated ? <ProtectedLayout><Logins /></ProtectedLayout> : <LandingPage onAuthenticate={() => {}} onNavigate={() => {}} />} />
+      <Route path="/login" element={<LogIn />} />
+      <Route path="/secure-upload" element={<SecureUpload />} />
+      <Route path="/jot-forms" element={<JotForm />} />
+      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+      <Route path="/users" element={<ProtectedLayout><Users /></ProtectedLayout>} />
+      <Route path="/documents" element={<ProtectedLayout><DocumentCenter /></ProtectedLayout>} />
+      <Route path="/documents/new-vendor" element={<ProtectedLayout><VendorTemplate /></ProtectedLayout>} />
+      <Route path="/documents/:vendorId" element={<ProtectedLayout><VendorDocuments vendorId="1" /></ProtectedLayout>} />
+      <Route path="/applications" element={<ProtectedLayout><PreApplications /></ProtectedLayout>} />
+      <Route path="/secure" element={<ProtectedLayout><SecurePortal /></ProtectedLayout>} />
+      <Route path="/marketing" element={<ProtectedLayout><Marketing /></ProtectedLayout>} />
+      <Route path="/user-reps" element={<ProtectedLayout><UserReps /></ProtectedLayout>} />
+      <Route path="/user-notification" element={<ProtectedLayout><UserNotification /></ProtectedLayout>} />
+      <Route path="/admin" element={<ProtectedAdminLayout><Admin /></ProtectedAdminLayout>} />
+      <Route path="/teammember" element={<ProtectedAdminLayout><TeamMember /></ProtectedAdminLayout>} />
+      <Route path="/vendor" element={<ProtectedAdminLayout><Vendor /></ProtectedAdminLayout>} />
+      <Route path="/master_database_documents" element={<ProtectedAdminLayout><Documents /></ProtectedAdminLayout>} />
+      <Route path="/all_reps" element={<ProtectedAdminLayout><Reps /></ProtectedAdminLayout>} />
+      <Route path="/application_notifications" element={<ProtectedAdminLayout><Notifications /></ProtectedAdminLayout>} />
+      <Route path="/addusers" element={<ProtectedAdminLayout><AddUsers /></ProtectedAdminLayout>} />
+      <Route path="/edituser" element={<ProtectedAdminLayout><EditUsers /></ProtectedAdminLayout>} />
+      <Route path="/forms" element={<ProtectedAdminLayout><Forms /></ProtectedAdminLayout>} />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  );
+}
+
 function App() {
   return (
     <Router>
       <AuthProvider>
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/login" element={<LogIn />} />
-          <Route path="/secure-upload" element={<SecureUpload />} />
-          <Route path="/jot-forms" element={<JotForm />} />
-          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-          
-          {/* Regular protected routes */}
-          
-          {/* <Route path="/dashoar" element={<ProtectedLayout><Logins /></ProtectedLayout>} /> */}
-          {/* <Route path="/" element={<ProtectedLayout><Logins /></ProtectedLayout>} /> */}
-          <Route path="/logins" element={<ProtectedLayout><Logins /></ProtectedLayout>} />
-          <Route path="/users" element={<ProtectedLayout><Users /></ProtectedLayout>} />
-          <Route path="/documents" element={<ProtectedLayout><DocumentCenter /></ProtectedLayout>} />
-          <Route path="/documents/new-vendor" element={<ProtectedLayout><VendorTemplate /></ProtectedLayout>} />
-          <Route path="/documents/:vendorId" element={<ProtectedLayout><VendorDocuments vendorId="1" /></ProtectedLayout>} />
-          <Route path="/applications" element={<ProtectedLayout><PreApplications /></ProtectedLayout>} />
-          <Route path="/secure" element={<ProtectedLayout><SecurePortal /></ProtectedLayout>} />
-          <Route path="/marketing" element={<ProtectedLayout><Marketing /></ProtectedLayout>} />
-          <Route path="/user-reps" element={<ProtectedLayout><UserReps /></ProtectedLayout>} />
-          <Route path="/user-notification" element={<ProtectedLayout><UserNotification /></ProtectedLayout>} />
-          
-          {/* Admin protected routes */}
-          <Route path="/admin" element={<ProtectedAdminLayout><Admin /></ProtectedAdminLayout>} />
-          <Route path="/teammember" element={<ProtectedAdminLayout><TeamMember /></ProtectedAdminLayout>} />
-          <Route path="/vendor" element={<ProtectedAdminLayout><Vendor /></ProtectedAdminLayout>} />
-          <Route path="/master_database_documents" element={<ProtectedAdminLayout><Documents /></ProtectedAdminLayout>} />
-          <Route path="/all_reps" element={<ProtectedAdminLayout><Reps /></ProtectedAdminLayout>} />
-          <Route path="/application_notifications" element={<ProtectedAdminLayout><Notifications /></ProtectedAdminLayout>} />
-          <Route path="/addusers" element={<ProtectedAdminLayout><AddUsers /></ProtectedAdminLayout>} />
-          <Route path="/edituser" element={<ProtectedAdminLayout><EditUsers /></ProtectedAdminLayout>} />
-          <Route path="/forms" element={<ProtectedAdminLayout><Forms /></ProtectedAdminLayout>} />
-          
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
+        <AppRoutes />
       </AuthProvider>
     </Router>
   );
