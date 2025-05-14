@@ -86,7 +86,14 @@ function ProtectedAdminLayout({ children }: { children: React.ReactNode }) {
 }
 
 function AppRoutes() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
+  if (isLoading) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center bg-black">
+        <span className="text-yellow-400 text-2xl">Loading...</span>
+      </div>
+    );
+  }
   return (
     <Routes>
       <Route path="/" element={isAuthenticated ? <ProtectedLayout><Logins /></ProtectedLayout> : <LandingPage onAuthenticate={() => {}} onNavigate={() => {}} />} />
