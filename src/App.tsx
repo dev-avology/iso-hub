@@ -30,6 +30,7 @@ import UserReps from './pages/UserReps';
 import UserNotification from './components/UserNotification';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import LandingPage from './pages/LandingPage';
+import Settings from './pages/Settings';
 
 function Dashboard() {
   return (
@@ -109,6 +110,7 @@ function AppRoutes() {
       <Route path="/secure" element={<ProtectedLayout><SecurePortal /></ProtectedLayout>} />
       <Route path="/marketing" element={<ProtectedLayout><Marketing /></ProtectedLayout>} />
       <Route path="/user-reps" element={<ProtectedLayout><UserReps /></ProtectedLayout>} />
+      <Route path="/settings" element={<ProtectedLayout><Settings /></ProtectedLayout>} />
       <Route path="/user-notification" element={<ProtectedLayout><UserNotification /></ProtectedLayout>} />
       <Route path="/admin" element={<ProtectedAdminLayout><Admin /></ProtectedAdminLayout>} />
       <Route path="/teammember" element={<ProtectedAdminLayout><TeamMember /></ProtectedAdminLayout>} />
