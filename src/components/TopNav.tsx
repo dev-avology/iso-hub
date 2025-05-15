@@ -81,6 +81,11 @@ export default function TopNav({
       const value = localStorage.getItem("auth_user");
       const parsedUser = value ? JSON.parse(value) : null;
 
+      if (!token || !parsedUser) {
+        toast.error('Authentication required');
+        return;
+      }
+
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/notification/remove-notification`, {
         method: 'POST',
         headers: {
@@ -91,26 +96,26 @@ export default function TopNav({
       });
 
       if (!response.ok) {
-        throw new Error('Failed to fetch notifications..');
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to update notification count');
       }
+
       const data = await response.json();
+      if (data.status === 'success') {
+        setUserNotificationCount(0);
+        // Navigate to the appropriate notification page
+        navigate(isNotificationPath);
+      } else {
+        throw new Error(data.message || 'Failed to update notification count');
+      }
     } catch (error) {
-      console.error('Error update notification count:', error);
-      toast.error('Failed to update notification count');
+      console.error('Error updating notification count:', error);
+      toast.error(error instanceof Error ? error.message : 'Failed to update notification count');
     }
-  }
+  };
 
   useEffect(() => {
     fetchNotifications();
-    // const handleAnyClick = () => {
-    //   fetchNotifications();
-    // };
-
-    // window.addEventListener('click', handleAnyClick);
-
-    // return () => {
-    //   window.removeEventListener('click', handleAnyClick);
-    // };
   }, []);
 
   const isActive = (href: string) => {
@@ -151,8 +156,8 @@ export default function TopNav({
             ))}
           </div>
           <div className="flex items-center gap-4">
-            <Link onClick={updateNotificationCount}
-              to={isNotificationPath || '#'}
+            <button
+              onClick={updateNotificationCount}
               className="p-2 rounded-full bg-zinc-800 hover:bg-zinc-700 border border-yellow-400/20"
             >
               <span className="sr-only">View notifications</span>
@@ -171,7 +176,7 @@ export default function TopNav({
                   />
                 </svg>
               </div>
-            </Link>
+            </button>
 
             <button
               onClick={handleLogout}
