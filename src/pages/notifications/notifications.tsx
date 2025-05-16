@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Loader2 } from 'lucide-react';
-import { toast } from 'react-hot-toast';
+import { Loader2, Trash2, Trash } from 'lucide-react';
+import { toast, Toaster } from "react-hot-toast";
+
 
 export default function Notifications() {
   const [adminNotification, setAdminNotification] = useState<any[]>([]);
@@ -28,58 +29,94 @@ export default function Notifications() {
       const data = await response.json();
       if (data.status === 'success') {
         setAdminNotification(data.admin_notifications);
-        console.log(data, 'data......');
       } else {
         throw new Error(data.message || 'Failed to fetch');
       }
     } catch (error) {
       console.error('Error fetching notifications:', error);
-    }finally{
-      setIsLoading(false);
+    } finally {
+      setIsLoading(false);  
     }
   };
 
-  const updateNotificationCount = async () => {
+  const deleteNotification = async (id: number) => {
     try {
       const token = localStorage.getItem('auth_token');
-      const value = localStorage.getItem("auth_user");
-      const parsedUser = value ? JSON.parse(value) : null;
-
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/notification/remove-notification`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/notification/delete-notification`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({user_id: parsedUser.id})
+        body: JSON.stringify({ id: String(id) })
       });
 
       if (!response.ok) {
-        throw new Error('Failed to fetch notifications..');
+        throw new Error('Failed to delete notification');
       }
-      const data = await response.json();
+
+      toast.success('Notification deleted successfully');
+
+      await fetchNotifications();
     } catch (error) {
-      console.error('Error update notification count:', error);
-      toast.error('Failed to update notification count');
+      console.error('Error deleting notification:', error);
+      toast.error('Failed to delete notification');
     }
-  }
+  };
+
+  const deleteAllNotifications = async () => {
+    try {
+      const token = localStorage.getItem('auth_token');
+      const value = localStorage.getItem("auth_user");
+      const parsedUser = value ? JSON.parse(value) : null;
+
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/notification/delete-all-notification`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ user_id: parsedUser.id })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete all notifications');
+      }
+
+      await fetchNotifications();
+      toast.success('All notifications deleted successfully');
+    } catch (error) {
+      console.error('Error deleting all notifications:', error);
+      toast.error('Failed to delete all notifications');
+    }
+  };
 
   useEffect(() => {
     fetchNotifications();
-    updateNotificationCount();
-    console.log('this useeffect called');
   }, []);
 
   return (
     <>
+    <Toaster position="top-right" reverseOrder={false} />
       <div className="user_cont my-10">
-        <div className="w-full text-center bg-yellow-500 hover:bg-yellow-600 text-white py-5 px-5 rounded font-medium uppercase transition duration-200 block">
-          All Notifications
+        <div className="flex justify-between items-center">
+          <div className="w-full text-center bg-yellow-500 hover:bg-yellow-600 text-white py-5 px-5 rounded font-medium uppercase transition duration-200">
+            All Notifications
+          </div>
+          {adminNotification.length > 0 && (
+            <button
+              onClick={deleteAllNotifications}
+              className="ml-4 p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors flex items-center gap-2"
+            >
+              <Trash className="h-5 w-5" />
+              Delete All
+            </button>
+          )}
         </div>
       </div>
 
       <div className="user_data_wrap mt-10">
-       {isLoading ? (
+        {isLoading ? (
           <div className="flex justify-center items-center py-8">
             <Loader2 className="h-8 w-8 animate-spin text-yellow-400" />
           </div>
@@ -87,16 +124,21 @@ export default function Notifications() {
           adminNotification.map((item: any, index: number) => (
             <div
               key={index}
-              className="user_dataHead w-full px-5 py-4 rounded bg-gray-700 text-white flex gap-4 mb-4"
+              className="user_dataHead w-full px-5 py-4 rounded bg-gray-700 text-white flex justify-between items-center gap-4 mb-4"
             >
               <div className="w-[80%]">{item.message}</div>
+              <button
+                onClick={() => deleteNotification(item.id)}
+                className="p-2 text-red-400 hover:text-red-500 transition-colors"
+              >
+                <Trash2 className="h-5 w-5" />
+              </button>
             </div>
           ))
         ) : (
           <div className="w-full text-center text-gray-400">No notifications available</div>
         )}
       </div>
-
     </>
   );
 }
