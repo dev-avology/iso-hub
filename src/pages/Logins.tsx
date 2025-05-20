@@ -78,6 +78,7 @@ export default function Logins() {
     hardware: [],
   });
   const fileInputs = useRef<any[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     // Fetch vendors for each category
@@ -89,37 +90,50 @@ export default function Logins() {
   }, []);
 
   const fetchVendors = async (vendorType: string) => {
-    const value = localStorage.getItem("auth_user");
-    const parsedUser = value ? JSON.parse(value) : null;
-
-    const body: any = {};
-    if (parsedUser?.role_id !== 2) {
-      body.user_id = parsedUser.id;
-    }
-
     try {
-      const res = await fetch(
+      setIsLoading(true);
+      const accessToken = localStorage.getItem("auth_token");
+      if (!accessToken) {
+        throw new Error("Authentication token not found. Please login again.");
+      }
+      const parsedUser = JSON.parse(localStorage.getItem("auth_user") || "{}");
+      const body: any = {};
+      if (parsedUser?.role_id !== 2) {
+        body.user_id = parsedUser.id;
+      }
+
+      const response = await fetch(
         `${import.meta.env.VITE_API_BASE_URL}/vendor/get-all-vendors-list`,
         {
           method: "POST",
           headers: {
+            Authorization: `Bearer ${accessToken}`,
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
           },
           body: JSON.stringify(body),
         }
       );
 
-      const responseData = await res.json();
-
+      const responseData = await response.json();
+      console.log("Vendor response:", responseData);
+      
       if (responseData.status === "success") {
+        // The data is already categorized by vendor type
+        const vendorsByType = responseData.data;
+        
+        // Update the vendors state with the categorized data
         setVendors((prev) => ({
           ...prev,
-          [vendorType]: [...prev[vendorType], responseData.data],
+          processors: vendorsByType.processors || [],
+          gateways: vendorsByType.gateways || [],
+          hardware: vendorsByType.hardware || [],
         }));
       }
     } catch (error) {
       console.error(`Error fetching ${vendorType} vendors:`, error);
+      toast.error(`Failed to fetch ${vendorType} vendors`);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -522,62 +536,67 @@ export default function Logins() {
                 </button>
                 <button
                   onClick={() => openAddVendorModal(category.id)}
-                  className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                  disabled={isLoading}
+                  className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Add {category.name.slice(0, -1)}
+                  {isLoading ? (
+                    <span className="flex items-center">
+                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Loading...
+                    </span>
+                  ) : (
+                    `Add ${category.name.slice(0, -1)}`
+                  )}
                 </button>
               </div>
 
               {isOpen && (
-                <div className="px-6 pb-6">
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                    {items.map((item) => (
-                      <div
-                        key={item.id}
-                        className="relative group bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors duration-200"
-                      >
-                        <div className="flex items-center space-x-4">
-                          <div className="flex-shrink-0">
-                            <img
-                              src={item.logo_url}
-                              alt={item.vendor_name}
-                              className="h-12 w-12 rounded-full object-cover"
-                            />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <h3 className="text-lg font-medium text-gray-900 truncate">
-                              {item.vendor_name}
-                            </h3>
-                            <div className="mt-2 space-y-1">
+                <div className="border-t border-gray-200">
+                  {isLoading ? (
+                    <div className="p-4 text-center text-gray-500">
+                      Loading vendors...
+                    </div>
+                  ) : items.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+                      {items.map((vendor) => (
+                        <div
+                          key={vendor.id}
+                          className="bg-white border rounded-lg p-4 hover:shadow-md transition-shadow"
+                        >
+                          <div className="flex items-center space-x-3">
+                            {vendor.logo_url ? (
+                              <img
+                                src={vendor.logo_url}
+                                alt={vendor.vendor_name}
+                                className="h-12 w-12 object-contain"
+                              />
+                            ) : (
+                              <div className="h-12 w-12 bg-gray-100 rounded-full flex items-center justify-center">
+                                <span className="text-gray-400 text-lg">
+                                  {vendor.vendor_name.charAt(0)}
+                                </span>
+                              </div>
+                            )}
+                            <div>
+                              <h3 className="font-medium text-gray-900">
+                                {vendor.vendor_name}
+                              </h3>
                               <p className="text-sm text-gray-500">
-                                <span className="font-medium">Rep:</span>{" "}
-                                {item.rep_name}
+                                {vendor.description || "No description available"}
                               </p>
-                              <p className="text-sm text-gray-500">
-                                <span className="font-medium">Support:</span>{" "}
-                                {item.support_info}
-                              </p>
-                              {item.notes && (
-                                <p className="text-sm text-gray-500 italic">
-                                  {item.notes}
-                                </p>
-                              )}
                             </div>
                           </div>
-                          <div className="flex-shrink-0">
-                            <a
-                              href={item.login_url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center p-2 border border-transparent rounded-full shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-                            >
-                              <ExternalLink className="h-5 w-5" />
-                            </a>
-                          </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="p-4 text-center text-gray-500">
+                      No vendors found in this category. Add a new vendor to get started.
+                    </div>
+                  )}
                 </div>
               )}
             </div>
