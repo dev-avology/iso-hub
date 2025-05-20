@@ -8,8 +8,11 @@ import {
   Router,
   HardDrive,
   X,
+  Pencil,
+  Trash2,
 } from "lucide-react";
 import axios from "axios";
+import EditVendor from '../components/EditVendor';
 
 const categories = [
   { id: "processors", name: "Processors", icon: CreditCard },
@@ -79,6 +82,7 @@ export default function Logins() {
   });
   const fileInputs = useRef<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [editVendorId, setEditVendorId] = useState<number | null>(null);
 
   useEffect(() => {
     // Fetch vendors for each category
@@ -116,11 +120,11 @@ export default function Logins() {
 
       const responseData = await response.json();
       console.log("Vendor response:", responseData);
-      
+
       if (responseData.status === "success") {
         // The data is already categorized by vendor type
         const vendorsByType = responseData.data;
-        
+
         // Update the vendors state with the categorized data
         setVendors((prev) => ({
           ...prev,
@@ -311,21 +315,21 @@ export default function Logins() {
         cards.map((c, i) =>
           i === idx
             ? {
-                vendor_name: "",
-                vendor_email: "",
-                vendor_phone: "",
-                logo_url: null,
-                logoFile: null,
-                login_url: "",
-                rep_name: "",
-                rep_email: "",
-                rep_phone: "",
-                notes: "",
-                support_info: "",
-                description: "",
-                vendor_type: selectedCategory,
-                role_id: "",
-              }
+              vendor_name: "",
+              vendor_email: "",
+              vendor_phone: "",
+              logo_url: null,
+              logoFile: null,
+              login_url: "",
+              rep_name: "",
+              rep_email: "",
+              rep_phone: "",
+              notes: "",
+              support_info: "",
+              description: "",
+              vendor_type: selectedCategory,
+              role_id: "",
+            }
             : c
         )
       );
@@ -443,7 +447,7 @@ export default function Logins() {
 
       // ✅ Handle API response (including non-ok)
       if (response.ok && data?.status === "success") {
-        toast.success("Processor saved successfully.");
+        toast.success("Vendor template saved successfully.");
         // Uncomment below if needed
         setShowAddVendorModal(false);
         categories.forEach((category) => fetchVendors(category.id));
@@ -467,10 +471,34 @@ export default function Logins() {
             : "";
           toast.error(`${details}`);
           return;
-        } catch {}
+        } catch { }
       }
 
       toast.error("Error creating vendors.");
+    }
+  };
+
+  const handleDeleteVendor = async (vendorId: number) => {
+    if (!window.confirm("Are you sure you want to delete this vendor? This action cannot be undone.")) return;
+    try {
+      const accessToken = localStorage.getItem("auth_token");
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/vendor/delete-vendor`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id: vendorId }),
+      });
+      const data = await response.json();
+      if (data.status === "success") {
+        toast.success("Vendor deleted successfully");
+        categories.forEach((category) => fetchVendors(category.id));
+      } else {
+        toast.error(data.message || "Failed to delete vendor");
+      }
+    } catch (err) {
+      toast.error("Error deleting vendor");
     }
   };
 
@@ -564,12 +592,38 @@ export default function Logins() {
                       {items.map((vendor) => (
                         <div
                           key={vendor.id}
-                          className="bg-white border rounded-lg p-4 hover:shadow-md transition-shadow"
+                          className="bg-white border rounded-lg p-4 hover:shadow-md transition-shadow relative"
                         >
+                          <div className="absolute top-2 right-2 flex items-center space-x-2">
+                            <button
+                              className="text-blue-500 hover:text-blue-700"
+                              title="Edit Vendor"
+                              onClick={() => setEditVendorId(vendor.id)}
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </button>
+                            <a
+                              href={vendor.login_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-green-600 hover:text-green-800"
+                              title="Open Login URL"
+                              onClick={e => e.stopPropagation()}
+                            >
+                              <ExternalLink className="h-4 w-4" />
+                            </a>
+                            <button
+                              className="text-red-500 hover:text-red-700"
+                              title="Delete Vendor"
+                              onClick={() => handleDeleteVendor(vendor.id)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          </div>
                           <div className="flex items-center space-x-3">
                             {vendor.logo_url ? (
                               <img
-                                src={vendor.logo_url}
+                                src={`${import.meta.env.VITE_IMAGE_URL}${vendor.logo_url}`}
                                 alt={vendor.vendor_name}
                                 className="h-12 w-12 object-contain"
                               />
@@ -697,7 +751,7 @@ export default function Logins() {
                       Vendor Phone
                     </label>
                     <input
-                      type="text"
+                      type="number"
                       className="block w-48 rounded border-gray-300 text-xs py-1 px-2"
                       value={card.vendor_phone}
                       onChange={(e) =>
@@ -773,7 +827,7 @@ export default function Logins() {
                       Rep Phone
                     </label>
                     <input
-                      type="tel"
+                      type="number"
                       className="block w-48 rounded border-gray-300 text-xs py-1 px-2"
                       value={card.rep_phone}
                       onChange={(e) =>
@@ -839,6 +893,18 @@ export default function Logins() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Edit Vendor Modal */}
+      {editVendorId && (
+        <EditVendor
+          vendorId={editVendorId}
+          onClose={() => setEditVendorId(null)}
+          onUpdated={() => {
+            setEditVendorId(null);
+            categories.forEach((category) => fetchVendors(category.id));
+          }}
+        />
       )}
     </div>
   );
