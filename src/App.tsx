@@ -31,6 +31,7 @@ import UserNotification from './components/UserNotification';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import LandingPage from './pages/LandingPage';
 import Settings from './pages/Settings';
+import IsoAiPage from './pages/IsoAiPage';
 
 function Dashboard() {
   return (
@@ -100,7 +101,7 @@ function AppRoutes() {
       <Route path="/" element={isAuthenticated ? <ProtectedLayout><Logins /></ProtectedLayout> : <LandingPage onAuthenticate={() => {}} onNavigate={() => {}} />} />
       <Route path="/login" element={<LogIn />} />
       <Route path="/secure-upload" element={<SecureUpload />} />
-      <Route path="/jot-forms" element={<JotForm />} />
+      <Route path="/iso-forms" element={<JotForm />} />
       <Route path="/privacy-policy" element={<PrivacyPolicy />} />
       <Route path="/users" element={<ProtectedLayout><Users /></ProtectedLayout>} />
       <Route path="/documents" element={<ProtectedLayout><DocumentCenter /></ProtectedLayout>} />
@@ -112,6 +113,7 @@ function AppRoutes() {
       <Route path="/user-reps" element={<ProtectedLayout><UserReps /></ProtectedLayout>} />
       <Route path="/settings" element={<ProtectedLayout><Settings /></ProtectedLayout>} />
       <Route path="/user-notification" element={<ProtectedLayout><UserNotification /></ProtectedLayout>} />
+      <Route path="/iso-ai" element={<ProtectedLayout><IsoAiPage /></ProtectedLayout>} />
       <Route path="/admin" element={<ProtectedAdminLayout><Admin /></ProtectedAdminLayout>} />
       <Route path="/teammember" element={<ProtectedAdminLayout><TeamMember /></ProtectedAdminLayout>} />
       <Route path="/vendor" element={<ProtectedAdminLayout><Vendor /></ProtectedAdminLayout>} />

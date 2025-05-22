@@ -2180,7 +2180,7 @@ export default function PreApplications() {
   const [formToken, setFormToken] = useState<string>("");
   const [downloadingId, setDownloadingId] = useState<number | null>(null);
 
-  const preAppLink = `${window.location.origin}/jot-forms?data=${formToken}`; // The base URL for your form
+  const preAppLink = `${window.location.origin}/iso-forms?data=${formToken}`; // The base URL for your form
 
   const copyLink = async () => {
     try {
