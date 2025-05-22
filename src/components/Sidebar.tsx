@@ -18,7 +18,7 @@ const nonAdminCategories: Category[] = [
   // { name: 'Internal', icon: Briefcase },
   // { name: 'Misc', icon: MoreHorizontal },
   { name: 'ISO-Residuals', icon: FileText, href: 'https://dev.tracerpos.com/', external: true },
-  { name: 'ISO-AI', icon: Cpu },
+  { name: 'ISO-AI', icon: Cpu, href: '/iso-ai' },
   { name: 'Settings', icon: Settings },
   // { name: 'Users', icon: User, href: '/users' },
   // { name: 'Residuals', icon: FileText, href: 'https://dev.tracerpos.com/'  },
@@ -31,9 +31,9 @@ const adminCategories = [
 
 const adminSubMenu = [
   { name: 'Team Member', icon: User, path: '/teammember' },
-  { name: 'Vendor', icon: User, path: '/vendor' },
+  // { name: 'Vendor', icon: User, path: '/vendor' },
   { name: 'Documents', icon: File, path: '/master_database_documents' },
-  { name: 'All Reps', icon: User, path: '/all_reps' },
+  // { name: 'All Reps', icon: User, path: '/all_reps' },
   { name: 'Notifications', icon: Bell, path: '/application_notifications' },
   // { name: 'Forms', icon: FormInput, path: '/forms' },
 ];

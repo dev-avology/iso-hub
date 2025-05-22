@@ -576,7 +576,7 @@ export default function Logins() {
                       Loading...
                     </span>
                   ) : (
-                    `Add ${category.name.slice(0, -1)}`
+                    `Add ${category.name}`
                   )}
                 </button>
               </div>
@@ -664,7 +664,7 @@ export default function Logins() {
           <div className="bg-white rounded-lg p-4 max-w-3xl w-full mx-4 overflow-y-auto max-h-[90vh]">
             <div className="flex justify-between items-center mb-2">
               <h2 className="text-lg font-bold text-gray-900">
-                Add {selectedCategory.slice(0, -1)}
+                Add {selectedCategory}
               </h2>
               <button
                 onClick={() => setShowAddVendorModal(false)}
