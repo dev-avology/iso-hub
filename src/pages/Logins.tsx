@@ -56,6 +56,104 @@ interface VendorCard {
   role_id: string;
 }
 
+interface VendorLoginModalProps {
+  vendor: VendorTemplate;
+  onClose: () => void;
+}
+
+function VendorLoginModal({ vendor, onClose }: VendorLoginModalProps) {
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-zinc-900 p-6 rounded-xl w-full max-w-md relative shadow-2xl border border-yellow-400/30">
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-gray-400 hover:text-yellow-400 transition-colors"
+        >
+          <X className="h-6 w-6" />
+        </button>
+
+        {/* Top Row: Logo | Name | Link */}
+        <div className="flex items-center justify-between mb-6 gap-4">
+          {/* Logo */}
+          {vendor.logo_url ? (
+            <img
+              src={`${import.meta.env.VITE_IMAGE_URL}${vendor.logo_url}`}
+              alt={vendor.vendor_name}
+              className="w-14 h-14 object-contain rounded-full border-2 border-yellow-400 bg-white shadow"
+            />
+          ) : (
+            <div className="w-14 h-14 bg-zinc-800 rounded-full flex items-center justify-center border-2 border-yellow-400">
+              <span className="text-2xl font-bold text-yellow-400">
+                {vendor.vendor_name.charAt(0)}
+              </span>
+            </div>
+          )}
+
+          {/* Vendor Name */}
+          <div className="flex-1 text-center">
+            <h2 className="text-2xl font-extrabold text-yellow-400 drop-shadow mb-1">{vendor.vendor_name}</h2>
+            <p className="text-gray-400 text-xs tracking-wide">Vendor Portal</p>
+          </div>
+
+          {/* External Link */}
+          <a
+            href={vendor.login_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-green-500 hover:text-green-700 transition-colors bg-zinc-800 p-2 rounded-full border border-green-500 shadow"
+            title="Open Login URL"
+          >
+            <ExternalLink className="h-6 w-6" />
+          </a>
+        </div>
+
+        {/* Vendor Information Section */}
+        <div className="space-y-2 mb-4">
+          {vendor.vendor_email && (
+            <div className="flex items-center bg-zinc-800/70 rounded px-3 py-2 text-sm">
+              <span className="font-semibold text-yellow-400 w-28">Email:</span>
+              <span className="text-gray-200">{vendor.vendor_email}</span>
+            </div>
+          )}
+          {vendor.vendor_phone && (
+            <div className="flex items-center bg-zinc-800/70 rounded px-3 py-2 text-sm">
+              <span className="font-semibold text-yellow-400 w-28">Phone:</span>
+              <span className="text-gray-200">{vendor.vendor_phone}</span>
+            </div>
+          )}
+          {vendor.rep_name && (
+            <div className="flex items-center bg-zinc-800/70 rounded px-3 py-2 text-sm">
+              <span className="font-semibold text-yellow-400 w-28">Rep Name:</span>
+              <span className="text-gray-200">{vendor.rep_name}</span>
+            </div>
+          )}
+          {vendor.support_info && (
+            <div className="flex items-center bg-zinc-800/70 rounded px-3 py-2 text-sm">
+              <span className="font-semibold text-yellow-400 w-28">Support:</span>
+              <span className="text-gray-200">{vendor.support_info}</span>
+            </div>
+          )}
+          {vendor.notes && (
+            <div className="flex items-center bg-zinc-800/70 rounded px-3 py-2 text-sm">
+              <span className="font-semibold text-yellow-400 w-28">Notes:</span>
+              <span className="text-gray-200">{vendor.notes}</span>
+            </div>
+          )}
+        </div>
+
+        <div className="bg-yellow-400/10 rounded-lg p-4 mt-4">
+          <h3 className="text-lg font-semibold text-yellow-400 mb-2 text-center">Important Information</h3>
+          <ul className="text-gray-200 space-y-1 text-sm text-center">
+            <li>• Make sure you have your login credentials ready</li>
+            <li>• Keep your session secure and don't share your access</li>
+            <li>• Contact support if you need assistance</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function Logins() {
   const [searchQuery, setSearchQuery] = useState("");
   const [openCategories, setOpenCategories] = useState<Record<string, boolean>>(
@@ -83,6 +181,7 @@ export default function Logins() {
   const fileInputs = useRef<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [editVendorId, setEditVendorId] = useState<number | null>(null);
+  const [selectedVendor, setSelectedVendor] = useState<VendorTemplate | null>(null);
 
   useEffect(() => {
     // Fetch vendors for each category
@@ -608,7 +707,11 @@ export default function Logins() {
                               rel="noopener noreferrer"
                               className="text-green-600 hover:text-green-800"
                               title="Open Login URL"
-                              onClick={e => e.stopPropagation()}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setSelectedVendor(vendor);
+                              }}
                             >
                               <ExternalLink className="h-4 w-4" />
                             </a>
@@ -904,6 +1007,14 @@ export default function Logins() {
             setEditVendorId(null);
             categories.forEach((category) => fetchVendors(category.id));
           }}
+        />
+      )}
+
+      {/* Add modal component */}
+      {selectedVendor && (
+        <VendorLoginModal
+          vendor={selectedVendor}
+          onClose={() => setSelectedVendor(null)}
         />
       )}
     </div>
