@@ -1,4 +1,4 @@
-import { FileText, Folder, File, Loader2, LogOut } from 'lucide-react';
+import { FileText, Folder, File, Loader2, LogOut, HardDrive, Cloud, Database } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
@@ -40,6 +40,30 @@ interface OneDriveFile {
 }
 
 type StorageService = 'google' | 'dropbox' | 'onedrive';
+
+// Google Drive SVG Logo
+const GoogleDriveLogo = ({ size = 28 }: { size?: number }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="48" height="22" viewBox="0 0 512 512">
+  <path fill="#fbbc04" d="M188.8 160 256 48l67.2 112z"/>
+  <path fill="#0f9d58" d="M67.2 352 188.8 160h134.4L201.6 352z"/>
+  <path fill="#4285f4" d="M323.2 352H67.2L0 464h256z"/>
+  <path fill="#34a853" d="M323.2 352 388.8 464H512L388.8 256z"/>
+</svg>
+);
+
+// Dropbox SVG Logo
+const DropboxLogo = ({ size = 28 }: { size?: number }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="48" height="24" viewBox="0 0 512 512">
+    <path fill="#0061FF" d="M137.5 35L256 111 137.5 186.9 19 111zm118.5 76l118.5-76L492.9 111 374.4 186.9zM19 255l118.5 75.9L256 255 137.5 179.1zm355.4 0L256 255l118.5 75.9L492.9 255zM137.5 320.9L256 397l118.5-76.1L256 244z"/>
+  </svg>
+);
+
+// OneDrive SVG Logo
+const OneDriveLogo = ({ size = 28 }: { size?: number }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="24" viewBox="0 0 512 512">
+    <path fill="#0078D4" d="M365.7 205.3c-12.3-36.6-46.5-62.3-86.7-62.3-33.8 0-63.6 19.2-78.6 49-8.7-4.4-18.3-6.6-27.9-6.6-35.2 0-63.9 28.7-63.9 63.9 0 3.2.2 6.3.7 9.5C49.5 266.9 16 303.3 16 346.7 16 398.6 60.4 443 112.3 443h266.7c57.3 0 104-46.7 104-104 0-52.4-39.1-95.6-89.3-100.4z"/>
+    </svg>
+);
 
 export default function DocumentCenter() {
   const { token } = useAuth();
@@ -522,12 +546,13 @@ export default function DocumentCenter() {
             <button
               onClick={handleConnectGoogleDrive}
               disabled={isGoogleLoading}
-              className={`bg-white rounded py-3 px-5 font-semibold uppercase flex items-center justify-center hover:bg-yellow-600 gap-2 text-black mx-auto ${
+              className={`bg-white rounded py-3 px-5 font-semibold uppercase flex items-center justify-center hover:bg-yellow-600 gap-3 text-black mx-auto ${
                 isGoogleLoading ? 'opacity-50 cursor-not-allowed' : ''
               }`}
             >
+              <GoogleDriveLogo size={28} />
               {isGoogleLoading && <Loader2 className="h-5 w-5 animate-spin" />}
-              Connect Google Drive
+              <span className="tracking-wide">Connect Google Drive</span>
             </button>
           </div>
         );
@@ -587,12 +612,13 @@ export default function DocumentCenter() {
             <button
               onClick={handleConnectDropbox}
               disabled={isDropboxLoading}
-              className={`bg-white rounded py-3 px-5 font-semibold uppercase flex items-center justify-center hover:bg-yellow-600 gap-2 text-black mx-auto ${
+              className={`bg-white rounded py-3 px-5 font-semibold uppercase flex items-center justify-center hover:bg-yellow-600 gap-3 text-black mx-auto ${
                 isDropboxLoading ? 'opacity-50 cursor-not-allowed' : ''
               }`}
             >
+              <DropboxLogo size={28} />
               {isDropboxLoading && <Loader2 className="h-5 w-5 animate-spin" />}
-              Connect Dropbox
+              <span className="tracking-wide">Connect Dropbox</span>
             </button>
           </div>
         );
@@ -652,12 +678,13 @@ export default function DocumentCenter() {
             <button
               onClick={handleConnectOnedrive}
               disabled={isOnedriveLoading}
-              className={`bg-white rounded py-3 px-5 font-semibold uppercase flex items-center justify-center hover:bg-yellow-600 gap-2 text-black mx-auto ${
+              className={`bg-white rounded py-3 px-5 font-semibold uppercase flex items-center justify-center hover:bg-yellow-600 gap-3 text-black mx-auto ${
                 isOnedriveLoading ? 'opacity-50 cursor-not-allowed' : ''
               }`}
             >
+              <OneDriveLogo size={28} />
               {isOnedriveLoading && <Loader2 className="h-5 w-5 animate-spin" />}
-              Connect OneDrive
+              <span className="tracking-wide">Connect OneDrive</span>
             </button>
           </div>
         );
@@ -736,8 +763,9 @@ export default function DocumentCenter() {
               activeTab === 'google'
                 ? 'border-blue-500 text-blue-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+            } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2 transition-all duration-200`}
           >
+            <GoogleDriveLogo size={24} />
             Google Drive
           </button>
           
@@ -747,8 +775,9 @@ export default function DocumentCenter() {
               activeTab === 'dropbox'
                 ? 'border-blue-600 text-blue-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+            } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2 transition-all duration-200`}
           >
+            <DropboxLogo size={24} />
             Dropbox
           </button>
           <button
@@ -757,8 +786,9 @@ export default function DocumentCenter() {
               activeTab === 'onedrive'
                 ? 'border-sky-500 text-sky-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+            } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2 transition-all duration-200`}
           >
+            <OneDriveLogo size={24} />
             OneDrive
           </button>
         </nav>
