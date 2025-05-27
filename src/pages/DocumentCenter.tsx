@@ -52,12 +52,7 @@ type StorageService = "google" | "dropbox" | "onedrive";
 
 // Google Drive SVG Logo
 const GoogleDriveLogo = ({ size = 28 }: { size?: number }) => (
-  //   <svg xmlns="http://www.w3.org/2000/svg" width="48" height="22" viewBox="0 0 512 512">
-  //   <path fill="#fbbc04" d="M188.8 160 256 48l67.2 112z"/>
-  //   <path fill="#0f9d58" d="M67.2 352 188.8 160h134.4L201.6 352z"/>
-  //   <path fill="#4285f4" d="M323.2 352H67.2L0 464h256z"/>
-  //   <path fill="#34a853" d="M323.2 352 388.8 464H512L388.8 256z"/>
-  // </svg>
+
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 48 48"
