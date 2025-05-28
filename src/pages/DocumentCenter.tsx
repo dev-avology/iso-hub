@@ -636,16 +636,17 @@ export default function DocumentCenter() {
               Connect to Google Drive to view your files
             </p>
             <button
-              onClick={handleConnectGoogleDrive}
-              disabled={isGoogleLoading}
-              className={`bg-white rounded py-3 px-5 font-semibold uppercase flex items-center justify-center hover:bg-yellow-600 gap-3 text-black mx-auto ${
-                isGoogleLoading ? "opacity-50 cursor-not-allowed" : ""
-              }`}
-            >
-              <GoogleDriveLogo size={28} />
-              {isGoogleLoading && <Loader2 className="h-5 w-5 animate-spin" />}
-              <span className="tracking-wide">Connect Google Drive</span>
-            </button>
+            onClick={handleConnectGoogleDrive}
+            disabled={isGoogleLoading}
+            className={`bg-white rounded py-3 px-5 font-semibold uppercase flex items-center justify-center hover:bg-gray-200 gap-3 text-black mx-auto ${
+              isGoogleLoading ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+          >
+            <GoogleDriveLogo size={28} />
+            {isGoogleLoading && <Loader2 className="h-5 w-5 animate-spin" />}
+            <span className="tracking-wide">Connect Google Drive</span>
+          </button>
+
           </div>
         );
       }
@@ -706,7 +707,7 @@ export default function DocumentCenter() {
             <button
               onClick={handleConnectDropbox}
               disabled={isDropboxLoading}
-              className={`bg-white rounded py-3 px-5 font-semibold uppercase flex items-center justify-center hover:bg-yellow-600 gap-3 text-black mx-auto ${
+              className={`bg-white rounded py-3 px-5 font-semibold uppercase flex items-center justify-center hover:bg-gray-200 gap-3 text-black mx-auto ${
                 isDropboxLoading ? "opacity-50 cursor-not-allowed" : ""
               }`}
             >
@@ -774,7 +775,7 @@ export default function DocumentCenter() {
             <button
               onClick={handleConnectOnedrive}
               disabled={isOnedriveLoading}
-              className={`bg-white rounded py-3 px-5 font-semibold uppercase flex items-center justify-center hover:bg-yellow-600 gap-3 text-black mx-auto ${
+              className={`bg-white rounded py-3 px-5 font-semibold uppercase flex items-center justify-center hover:bg-gray-200 gap-3 text-black mx-auto ${
                 isOnedriveLoading ? "opacity-50 cursor-not-allowed" : ""
               }`}
             >

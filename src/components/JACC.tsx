@@ -33,7 +33,7 @@ export default function JACC() {
           } else {
             console.error("Failed to fetch chat hash:", result.message);
           }
-        } catch (error) {
+        } catch (error: any) {
           console.error("Error fetching user hash:", error.message);
         }
       }
@@ -46,6 +46,7 @@ export default function JACC() {
   if (isMinimized) {
     return (
       <button
+        id="jacc-button"
         onClick={() => setIsMinimized(false)}
         className="fixed bottom-4 right-4 p-4 bg-zinc-900 rounded-full shadow-xl border border-yellow-400/20 text-yellow-400 hover:bg-zinc-800 transition-colors duration-200"
       >

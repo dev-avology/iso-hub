@@ -76,11 +76,21 @@ function VendorLoginModal({ vendor, onClose }: VendorLoginModalProps) {
         <div className="flex items-center justify-between mb-6 gap-4">
           {/* Logo */}
           {vendor.logo_url ? (
-            <img
-              src={`${import.meta.env.VITE_IMAGE_URL}${vendor.logo_url}`}
-              alt={vendor.vendor_name}
-              className="w-14 h-14 object-contain rounded-full border-2 border-yellow-400 bg-white shadow"
-            />
+            vendor.login_url ? (
+              <a href={vendor.login_url} target="_blank" rel="noopener noreferrer">
+                <img
+                  src={`${import.meta.env.VITE_IMAGE_URL}${vendor.logo_url}`}
+                  alt={vendor.vendor_name}
+                  className="w-14 h-14 object-contain rounded-full border-2 border-yellow-400 bg-white shadow"
+                />
+              </a>
+            ) : (
+              <img
+                src={`${import.meta.env.VITE_IMAGE_URL}${vendor.logo_url}`}
+                alt={vendor.vendor_name}
+                className="w-14 h-14 object-contain rounded-full border-2 border-yellow-400 bg-white shadow"
+              />
+            )
           ) : (
             <div className="w-14 h-14 bg-zinc-800 rounded-full flex items-center justify-center border-2 border-yellow-400">
               <span className="text-2xl font-bold text-yellow-400">
@@ -726,10 +736,10 @@ export default function Logins() {
                           <div className="flex items-center space-x-3">
                             {vendor.logo_url ? (
                               <img
-                                src={`${import.meta.env.VITE_IMAGE_URL}${vendor.logo_url}`}
-                                alt={vendor.vendor_name}
-                                className="h-12 w-12 object-contain"
-                              />
+                                  src={`${import.meta.env.VITE_IMAGE_URL}${vendor.logo_url}`}
+                                  alt={vendor.vendor_name}
+                                  className="h-12 w-12 object-contain"
+                                />
                             ) : (
                               <div className="h-12 w-12 bg-gray-100 rounded-full flex items-center justify-center">
                                 <span className="text-gray-400 text-lg">
