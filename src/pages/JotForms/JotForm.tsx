@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { FileText, Calendar, Loader2, FastForward } from "lucide-react";
 import SignaturePad from "react-signature-canvas";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useParams } from "react-router-dom";
 import { toast, Toaster } from "react-hot-toast";
 import { AlertCircle } from "lucide-react";
 import OwnerForm from "../../components/OwnerForm";
@@ -194,6 +194,7 @@ export default function JotForm() {
   const [isValidLink, setIsValidLink] = useState<boolean>(false);
   const [isCheckingLink, setIsCheckingLink] = useState<boolean>(true);
   const [searchParams] = useSearchParams();
+  const { full_name } = useParams();
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const data = searchParams.get("data");
   const [errors, setErrors] = useState<{ [key: string]: string[] }>({});

@@ -133,7 +133,7 @@ function VendorLoginModal({ vendor, onClose }: VendorLoginModalProps) {
           )}
           {vendor.rep_name && (
             <div className="flex items-center bg-zinc-800/70 rounded px-3 py-2 text-sm">
-              <span className="font-semibold text-yellow-400 w-28">Rep Name:</span>
+              <span className="font-semibold text-yellow-400 w-28">Contact Name:</span>
               <span className="text-gray-200">{vendor.rep_name}</span>
             </div>
           )}
@@ -486,28 +486,28 @@ export default function Logins() {
   const handleSubmit = async () => {
     try {
       // ✅ Validation: Check all fields in each vendorCard
-      for (let i = 0; i < vendorCards.length; i++) {
-        const card = vendorCards[i];
-        const requiredFields = [
-          "vendor_name",
-          "vendor_email",
-          "vendor_phone",
-          "login_url",
-          "rep_name",
-          "rep_email",
-          "rep_phone",
-          "notes",
-          "support_info",
-          "description",
-        ];
+      // for (let i = 0; i < vendorCards.length; i++) {
+      //   const card = vendorCards[i];
+      //   const requiredFields = [
+      //     "vendor_name",
+      //     "vendor_email",
+      //     "vendor_phone",
+      //     "login_url",
+      //     "rep_name",
+      //     "rep_email",
+      //     "rep_phone",
+      //     "notes",
+      //     "support_info",
+      //     "description",
+      //   ];
 
-        for (const field of requiredFields) {
-          if (!card[field as keyof VendorCard]) {
-            toast.error(`Field "${field}" is required in card ${i + 1}`);
-            return;
-          }
-        }
-      }
+      //   for (const field of requiredFields) {
+      //     if (!card[field as keyof VendorCard]) {
+      //       toast.error(`Field "${field}" is required in card ${i + 1}`);
+      //       return;
+      //     }
+      //   }
+      // }
 
       const parsedUser = JSON.parse(localStorage.getItem("auth_user") || "{}");
 
@@ -864,7 +864,7 @@ export default function Logins() {
                       Vendor Phone
                     </label>
                     <input
-                      type="number"
+                      type="text"
                       className="block w-48 rounded border-gray-300 text-xs py-1 px-2"
                       value={card.vendor_phone}
                       onChange={(e) =>
@@ -911,7 +911,7 @@ export default function Logins() {
                   </div>
                   <div className="flex gap-2 items-center">
                     <label className="block text-xs font-medium text-gray-700 w-24">
-                      Rep Name
+                      Contact name
                     </label>
                     <input
                       type="text"
@@ -924,7 +924,7 @@ export default function Logins() {
                   </div>
                   <div className="flex gap-2 items-center">
                     <label className="block text-xs font-medium text-gray-700 w-24">
-                      Rep Email
+                      Contact email
                     </label>
                     <input
                       type="email"
@@ -940,7 +940,7 @@ export default function Logins() {
                       Rep Phone
                     </label>
                     <input
-                      type="number"
+                      type="text"
                       className="block w-48 rounded border-gray-300 text-xs py-1 px-2"
                       value={card.rep_phone}
                       onChange={(e) =>
