@@ -2180,7 +2180,16 @@ export default function PreApplications() {
   const [formToken, setFormToken] = useState<string>("");
   const [downloadingId, setDownloadingId] = useState<number | null>(null);
 
-  const preAppLink = `${window.location.origin}/iso-forms?data=${formToken}`; // The base URL for your form
+  // const preAppLink = `${window.location.origin}/iso-forms?data=${formToken}`; // The base URL for your form
+  const value = localStorage.getItem("auth_user");
+  const parsedUser = value ? JSON.parse(value) : null;
+  const first_name = parsedUser.first_name;
+  const last_name = parsedUser.last_name;
+  const full_name = `${first_name} ${last_name}`
+  .toLowerCase()                    // Convert to lowercase
+  .replace(/\s+/g, '-');           // Replace spaces with dashesfor URL safety
+  
+  const preAppLink = `${window.location.origin}/iso-forms/${encodeURIComponent(full_name)}?data=${formToken}`;
 
   const copyLink = async () => {
     try {

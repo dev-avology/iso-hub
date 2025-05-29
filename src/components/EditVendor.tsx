@@ -200,7 +200,7 @@ const EditVendor: React.FC<EditVendorProps> = ({ vendorId, onClose, onUpdated })
             </div>
 
             <div>
-              <label className="block text-sm text-gray-700">Rep Name</label>
+              <label className="block text-sm text-gray-700">Contact name</label>
               <input
                 type="text"
                 className="w-full border rounded px-2 py-1 text-sm text-gray-800"
@@ -212,7 +212,7 @@ const EditVendor: React.FC<EditVendorProps> = ({ vendorId, onClose, onUpdated })
               )}
             </div>
             <div>
-              <label className="block text-sm text-gray-700">Rep Email</label>
+              <label className="block text-sm text-gray-700">Contact email</label>
               <input
                 type="email"
                 className="w-full border rounded px-2 py-1 text-sm text-gray-800"

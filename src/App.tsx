@@ -101,7 +101,7 @@ function AppRoutes() {
       <Route path="/" element={isAuthenticated ? <ProtectedLayout><Logins /></ProtectedLayout> : <LandingPage onAuthenticate={() => {}} onNavigate={() => {}} />} />
       <Route path="/login" element={<LogIn />} />
       <Route path="/secure-upload" element={<SecureUpload />} />
-      <Route path="/iso-forms" element={<JotForm />} />
+      <Route path="/iso-forms/:full_name" element={<JotForm />} />
       <Route path="/privacy-policy" element={<PrivacyPolicy />} />
       <Route path="/users" element={<ProtectedLayout><Users /></ProtectedLayout>} />
       <Route path="/documents" element={<ProtectedLayout><DocumentCenter /></ProtectedLayout>} />

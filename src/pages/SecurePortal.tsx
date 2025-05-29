@@ -278,7 +278,10 @@ const SecurePortal: React.FC = () => {
                     >
                       <div className="flex flex-col">
                         <p className='uploaded-file-name'>
-                          <span className='cursor-pointer hover:text-yellow-600'>
+                          <span 
+                            className='cursor-pointer hover:text-yellow-600'
+                            onClick={() => window.open(`${import.meta.env.VITE_IMAGE_URL}${file.file_path}`, '_blank')}
+                          >
                             {file.file_original_name}
                           </span>
                           <span className='total-v pl-5'>
