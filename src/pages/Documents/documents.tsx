@@ -15,14 +15,14 @@ const document = [
 export default function Documents() {
   return (
     <>
-      <div className="user_cont my-10">
+      {/* <div className="user_cont my-10">
         <a
           href="/addusers"
           className="w-fit bg-yellow-500 hover:bg-yellow-600 text-white py-3 px-5 rounded font-medium uppercase transition duration-200 block"
         >
           Add Document
         </a>
-      </div>
+      </div> */}
 
       <div className="user_data_wrap">
         <div className="user_dataHead w-full px-5 py-4 rounded bg-gray-700 text-white flex gap-4">
@@ -46,9 +46,9 @@ export default function Documents() {
 
             <div className="edit-delete-btn absolute right-5 hidden group-hover:block">
               <div className="edit_data flex gap-2 items-center">
-                <a href="/edituser" className="hover:text-yellow-500">
+                {/* <a href="/edituser" className="hover:text-yellow-500">
                   <Edit />
-                </a>
+                </a> */}
                 <a href="javascript:void(0)" className="hover:text-red-500">
                   <Trash />
                 </a>

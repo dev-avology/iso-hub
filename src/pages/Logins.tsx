@@ -13,12 +13,30 @@ import {
 } from "lucide-react";
 import axios from "axios";
 import EditVendor from '../components/EditVendor';
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+  rectSortingStrategy
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import type { UniqueIdentifier, DragEndEvent } from '@dnd-kit/core';
 
 const categories = [
   { id: "processors", name: "Processors", icon: CreditCard },
   { id: "gateways", name: "Gateways", icon: Router },
   { id: "hardware", name: "Hardware/Equipment", icon: HardDrive },
 ];
+
+const categoryIds = ['processors', 'gateways', 'hardware'];
 
 interface VendorTemplate {
   id: number;
@@ -164,6 +182,104 @@ function VendorLoginModal({ vendor, onClose }: VendorLoginModalProps) {
   );
 }
 
+// Utility: line-clamp fallback if Tailwind plugin is not available
+const clampClass = 'overflow-hidden text-ellipsis whitespace-normal';
+
+interface SortableVendorCardProps {
+  vendor: VendorTemplate;
+  index: number;
+  onEdit: (id: number) => void;
+  onDelete: (id: number) => void;
+  onShow: (vendor: VendorTemplate) => void;
+  id: UniqueIdentifier;
+}
+
+function SortableVendorCard({ vendor, index, onEdit, onDelete, onShow, id }: SortableVendorCardProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging
+  } = useSortable({ id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    zIndex: isDragging ? 100 : 'auto',
+    background: 'white',
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      className={`border rounded-lg p-4 hover:shadow-md transition-shadow relative flex flex-col justify-between min-h-[128px] max-h-[160px] h-[120px] ${isDragging ? 'shadow-lg' : ''}`}
+    >
+      <div className="absolute top-2 right-2 flex items-center space-x-2">
+        <button
+          className="text-blue-500 hover:text-blue-700"
+          title="Edit Vendor"
+          onClick={() => onEdit(vendor.id)}
+        >
+          <Pencil className="h-4 w-4" />
+        </button>
+        <a
+          href={vendor.login_url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-green-600 hover:text-green-800"
+          title="Open Login URL"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            onShow(vendor);
+          }}
+        >
+          <ExternalLink className="h-4 w-4" />
+        </a>
+        <button
+          className="text-red-500 hover:text-red-700"
+          title="Delete Vendor"
+          onClick={() => onDelete(vendor.id)}
+        >
+          <Trash2 className="h-4 w-4" />
+        </button>
+      </div>
+      <div className="flex items-center space-x-3 mb-2">
+        {vendor.logo_url ? (
+          <img
+            src={`${import.meta.env.VITE_IMAGE_URL}${vendor.logo_url}`}
+            alt={vendor.vendor_name}
+            className="h-12 w-12 object-contain"
+          />
+        ) : (
+          <div className="h-12 w-12 bg-gray-100 rounded-full flex items-center justify-center">
+            <span className="text-gray-400 text-lg">
+              {vendor.vendor_name.charAt(0)}
+            </span>
+          </div>
+        )}
+        <div className="flex-1 min-w-0">
+          <h3 className="font-medium text-gray-900 truncate">
+            {vendor.vendor_name}
+          </h3>
+          <p
+            className={`text-sm text-gray-500 overflow-hidden ${'line-clamp-2' in document.body.style ? 'line-clamp-2' : clampClass}`}
+            style={{ maxWidth: '180px' }}
+            title={vendor.description || "No description available"}
+          >
+            {vendor.description || "No description available"}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function Logins() {
   const [searchQuery, setSearchQuery] = useState("");
   const [openCategories, setOpenCategories] = useState<Record<string, boolean>>(
@@ -192,6 +308,14 @@ export default function Logins() {
   const [isLoading, setIsLoading] = useState(false);
   const [editVendorId, setEditVendorId] = useState<number | null>(null);
   const [selectedVendor, setSelectedVendor] = useState<VendorTemplate | null>(null);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 5,
+      },
+    })
+  );
 
   useEffect(() => {
     // Fetch vendors for each category
@@ -231,16 +355,22 @@ export default function Logins() {
       console.log("Vendor response:", responseData);
 
       if (responseData.status === "success") {
-        // The data is already categorized by vendor type
+        // Sort vendors by card_order
         const vendorsByType = responseData.data;
+        const sortedVendors = {
+          processors: (vendorsByType.processors || []).sort((a: any, b: any) => 
+            (a.card_order ?? Infinity) - (b.card_order ?? Infinity)
+          ),
+          gateways: (vendorsByType.gateways || []).sort((a: any, b: any) => 
+            (a.card_order ?? Infinity) - (b.card_order ?? Infinity)
+          ),
+          hardware: (vendorsByType.hardware || []).sort((a: any, b: any) => 
+            (a.card_order ?? Infinity) - (b.card_order ?? Infinity)
+          ),
+        };
 
-        // Update the vendors state with the categorized data
-        setVendors((prev) => ({
-          ...prev,
-          processors: vendorsByType.processors || [],
-          gateways: vendorsByType.gateways || [],
-          hardware: vendorsByType.hardware || [],
-        }));
+        // Update the vendors state with the sorted data
+        setVendors(sortedVendors);
       }
     } catch (error) {
       console.error(`Error fetching ${vendorType} vendors:`, error);
@@ -333,12 +463,6 @@ export default function Logins() {
     }));
   };
 
-  // const filterItems = (items: VendorTemplate[]) => {
-  //   return items.filter((item) =>
-  //     item.vendor_name.toLowerCase().includes(searchQuery.toLowerCase())
-  //   );
-  // };
-
   const filterItems = (items: VendorTemplate[]) => {
     if (!searchQuery.trim()) return items;
 
@@ -379,7 +503,7 @@ export default function Logins() {
   const handleLogoUpload = (idx: number, file: File) => {
     const reader = new FileReader();
     reader.onload = (e) => {
-      const result = e.target?.result;
+      const result = e.target?.result;  
       if (typeof result === "string") {
         setVendorCards((cards) =>
           cards.map((c, i) =>
@@ -485,30 +609,6 @@ export default function Logins() {
 
   const handleSubmit = async () => {
     try {
-      // ✅ Validation: Check all fields in each vendorCard
-      // for (let i = 0; i < vendorCards.length; i++) {
-      //   const card = vendorCards[i];
-      //   const requiredFields = [
-      //     "vendor_name",
-      //     "vendor_email",
-      //     "vendor_phone",
-      //     "login_url",
-      //     "rep_name",
-      //     "rep_email",
-      //     "rep_phone",
-      //     "notes",
-      //     "support_info",
-      //     "description",
-      //   ];
-
-      //   for (const field of requiredFields) {
-      //     if (!card[field as keyof VendorCard]) {
-      //       toast.error(`Field "${field}" is required in card ${i + 1}`);
-      //       return;
-      //     }
-      //   }
-      // }
-
       const parsedUser = JSON.parse(localStorage.getItem("auth_user") || "{}");
 
       const formData = new FormData();
@@ -545,7 +645,6 @@ export default function Logins() {
           method: "POST",
           headers: {
             Authorization: `Bearer ${accessToken}`,
-            // Do NOT manually set Content-Type with FormData
           },
           body: formData,
         }
@@ -554,10 +653,8 @@ export default function Logins() {
       const data = await response.json();
       console.log("data", data);
 
-      // ✅ Handle API response (including non-ok)
       if (response.ok && data?.status === "success") {
         toast.success("Vendor template saved successfully.");
-        // Uncomment below if needed
         setShowAddVendorModal(false);
         categories.forEach((category) => fetchVendors(category.id));
       } else {
@@ -570,7 +667,6 @@ export default function Logins() {
     } catch (error: any) {
       console.error("Error creating vendors:", error);
 
-      // ✅ Try to extract Laravel error details if available
       if (error?.response?.json) {
         try {
           const errorData = await error.response.json();
@@ -611,6 +707,53 @@ export default function Logins() {
     }
   };
 
+  const handleDndKitDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    // Find which category this drag happened in
+    let draggedCategory: string | null = null;
+    for (const cat of categoryIds) {
+      if (vendors[cat].some((v) => v.id === active.id)) {
+        draggedCategory = cat;
+        break;
+      }
+    }
+    if (!draggedCategory) return;
+
+    const items = vendors[draggedCategory];
+    const oldIndex = items.findIndex((v) => v.id === active.id);
+    const newIndex = items.findIndex((v) => v.id === over.id);
+    if (oldIndex === -1 || newIndex === -1) return;
+
+    const newItems = arrayMove(items, oldIndex, newIndex);
+    setVendors((prev) => ({ ...prev, [draggedCategory!]: newItems }));
+
+    // Save order to API
+    try {
+      const accessToken = localStorage.getItem("auth_token");
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/vendor/update-card-order`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            vendor_ids: newItems.map((v) => v.id),
+          }),
+        }
+      );
+      const data = await response.json();
+      if (data.status !== "success") {
+        toast.error("Failed to save card order");
+      }
+    } catch (error) {
+      toast.error("Failed to save card order");
+    }
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <Toaster position="top-right" reverseOrder={false} />
@@ -646,130 +789,79 @@ export default function Logins() {
         </div>
       </div>
 
-      {/* Accordion Categories */}
-      <div className="space-y-4">
-        {categories.map((category) => {
-          const CategoryIcon = category.icon;
-          const items = filterItems(vendors[category.id] || []);
-          const isOpen = openCategories[category.id];
-
-          return (
-            <div
-              key={category.id}
-              className="bg-white rounded-lg shadow-sm overflow-hidden"
-            >
-              <div className="px-6 py-4 flex items-center justify-between">
-                <button
-                  className="flex items-center space-x-3 text-left focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-inset"
-                  onClick={() => toggleCategory(category.id)}
-                >
-                  <CategoryIcon className="h-6 w-6 text-gray-400" />
-                  <span className="text-lg font-medium text-gray-900">
-                    {category.name}
-                    <span className="ml-2 text-sm text-gray-500">
-                      ({items.length})
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDndKitDragEnd}>
+        <div className="space-y-4">
+          {categories.map((category) => {
+            const CategoryIcon = category.icon;
+            const items = filterItems(vendors[category.id] || []);
+            const isOpen = openCategories[category.id];
+            return (
+              <div key={category.id} className="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div className="px-6 py-4 flex items-center justify-between">
+                  <button
+                    className="flex items-center space-x-3 text-left focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-inset"
+                    onClick={() => toggleCategory(category.id)}
+                  >
+                    <CategoryIcon className="h-6 w-6 text-gray-400" />
+                    <span className="text-lg font-medium text-gray-900">
+                      {category.name}
+                      <span className="ml-2 text-sm text-gray-500">
+                        ({items.length})
+                      </span>
                     </span>
-                  </span>
-                </button>
-                <button
-                  onClick={() => openAddVendorModal(category.id)}
-                  disabled={isLoading}
-                  className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isLoading ? (
-                    <span className="flex items-center">
-                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      Loading...
-                    </span>
-                  ) : (
-                    `Add ${category.name}`
-                  )}
-                </button>
-              </div>
-
-              {isOpen && (
-                <div className="border-t border-gray-200">
-                  {isLoading ? (
-                    <div className="p-4 text-center text-gray-500">
-                      Loading vendors...
-                    </div>
-                  ) : items.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
-                      {items.map((vendor) => (
-                        <div
-                          key={vendor.id}
-                          className="bg-white border rounded-lg p-4 hover:shadow-md transition-shadow relative"
-                        >
-                          <div className="absolute top-2 right-2 flex items-center space-x-2">
-                            <button
-                              className="text-blue-500 hover:text-blue-700"
-                              title="Edit Vendor"
-                              onClick={() => setEditVendorId(vendor.id)}
-                            >
-                              <Pencil className="h-4 w-4" />
-                            </button>
-                            <a
-                              href={vendor.login_url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-green-600 hover:text-green-800"
-                              title="Open Login URL"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                setSelectedVendor(vendor);
-                              }}
-                            >
-                              <ExternalLink className="h-4 w-4" />
-                            </a>
-                            <button
-                              className="text-red-500 hover:text-red-700"
-                              title="Delete Vendor"
-                              onClick={() => handleDeleteVendor(vendor.id)}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </button>
-                          </div>
-                          <div className="flex items-center space-x-3">
-                            {vendor.logo_url ? (
-                              <img
-                                  src={`${import.meta.env.VITE_IMAGE_URL}${vendor.logo_url}`}
-                                  alt={vendor.vendor_name}
-                                  className="h-12 w-12 object-contain"
-                                />
-                            ) : (
-                              <div className="h-12 w-12 bg-gray-100 rounded-full flex items-center justify-center">
-                                <span className="text-gray-400 text-lg">
-                                  {vendor.vendor_name.charAt(0)}
-                                </span>
-                              </div>
-                            )}
-                            <div>
-                              <h3 className="font-medium text-gray-900">
-                                {vendor.vendor_name}
-                              </h3>
-                              <p className="text-sm text-gray-500">
-                                {vendor.description || "No description available"}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="p-4 text-center text-gray-500">
-                      No vendors found in this category. Add a new vendor to get started.
-                    </div>
-                  )}
+                  </button>
+                  <button
+                    onClick={() => openAddVendorModal(category.id)}
+                    disabled={isLoading}
+                    className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isLoading ? (
+                      <span className="flex items-center">
+                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Loading...
+                      </span>
+                    ) : (
+                      `Add ${category.name}`
+                    )}
+                  </button>
                 </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
+                {isOpen && (
+                  <div className="border-t border-gray-200">
+                    {isLoading ? (
+                      <div className="p-4 text-center text-gray-500">
+                        Loading vendors...
+                      </div>
+                    ) : items.length > 0 ? (
+                      <SortableContext items={items.map((v) => v.id)} strategy={rectSortingStrategy}>
+                        <div className="flex flex-wrap gap-4 p-4" style={{ minHeight: 120 }}>
+                          {items.map((vendor, index) => (
+                            <SortableVendorCard
+                              key={vendor.id}
+                              vendor={vendor}
+                              index={index}
+                              id={vendor.id}
+                              onEdit={setEditVendorId}
+                              onDelete={handleDeleteVendor}
+                              onShow={setSelectedVendor}
+                            />
+                          ))}
+                        </div>
+                      </SortableContext>
+                    ) : (
+                      <div className="p-4 text-center text-gray-500">
+                        No vendors found in this category. Add a new vendor to get started.
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </DndContext>
 
       {/* Add Vendor Modal */}
       {showAddVendorModal && (

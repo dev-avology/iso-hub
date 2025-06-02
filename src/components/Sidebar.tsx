@@ -28,10 +28,11 @@ const nonAdminCategories: Category[] = [
 
 const adminCategories = [
   ...nonAdminCategories,
-  { name: 'Admin', icon: User, href: '/admin' },
+  { name: 'Admin', icon: User, href: '#' },
 ];
 
 const adminSubMenu = [
+  { name: 'Home', icon: User, path: '/admin' },
   { name: 'Team Member', icon: User, path: '/teammember' },
   // { name: 'Vendor', icon: User, path: '/vendor' },
   { name: 'Documents', icon: File, path: '/master_database_documents' },
@@ -180,7 +181,8 @@ export default function Sidebar({
                   <Users className="h-5 w-5 mr-3 text-gray-400 group-hover:text-yellow-400" />
                   Users
                 </div> */}
-                <div className="sub_menu w-full px-2 z-[9] py-1 rounded">
+                
+                {/* <div className="sub_menu w-full px-2 z-[9] py-1 rounded">
                   <ul>
                     {userSubMenu.map((item) => (
                       <li key={item.path} className="text-white mt-2 first:mt-0">
@@ -198,7 +200,7 @@ export default function Sidebar({
 
                     ))}
                   </ul>
-                </div>
+                </div> */}
                 
               </div>
             )}
