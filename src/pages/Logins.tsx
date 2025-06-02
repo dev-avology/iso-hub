@@ -217,7 +217,7 @@ function SortableVendorCard({ vendor, index, onEdit, onDelete, onShow, id }: Sor
       style={style}
       {...attributes}
       {...listeners}
-      className={`border rounded-lg p-4 hover:shadow-md transition-shadow relative flex flex-col justify-between min-h-[128px] max-h-[160px] h-[120px] ${isDragging ? 'shadow-lg' : ''}`}
+      className={`border pt-10 rounded-lg bg-white hover:shadow-md transition-shadow relative flex flex-col justify-between h-40 w-full min-w-0 ${isDragging ? 'shadow-lg' : ''}`}
     >
       <div className="absolute top-2 right-2 flex items-center space-x-2">
         <button
@@ -268,8 +268,7 @@ function SortableVendorCard({ vendor, index, onEdit, onDelete, onShow, id }: Sor
             {vendor.vendor_name}
           </h3>
           <p
-            className={`text-sm text-gray-500 overflow-hidden ${'line-clamp-2' in document.body.style ? 'line-clamp-2' : clampClass}`}
-            style={{ maxWidth: '180px' }}
+            className="text-sm text-gray-500 line-clamp-2"
             title={vendor.description || "No description available"}
           >
             {vendor.description || "No description available"}
@@ -836,7 +835,7 @@ export default function Logins() {
                       </div>
                     ) : items.length > 0 ? (
                       <SortableContext items={items.map((v) => v.id)} strategy={rectSortingStrategy}>
-                        <div className="flex flex-wrap gap-4 p-4" style={{ minHeight: 120 }}>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
                           {items.map((vendor, index) => (
                             <SortableVendorCard
                               key={vendor.id}
