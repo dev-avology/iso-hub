@@ -194,7 +194,7 @@ export default function JotForm() {
   const [isValidLink, setIsValidLink] = useState<boolean>(false);
   const [isCheckingLink, setIsCheckingLink] = useState<boolean>(true);
   const [searchParams] = useSearchParams();
-  const { full_name } = useParams();
+  const { user_id } = useParams<{ user_id: string }>();
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const data = searchParams.get("data");
   const [errors, setErrors] = useState<{ [key: string]: string[] }>({});
@@ -202,27 +202,24 @@ export default function JotForm() {
     readOnly?: boolean;
     disabled?: boolean;
   }>({});
-  // console.log(isReadOnly,'read only');
 
   useEffect(() => {
     const checkUniqueString = async () => {
-      if (!data) {
-        setIsValidLink(true);
-        setIsCheckingLink(false);
-        setIsReadOnly({}); // No readonly/disabled when no URL data
-        setFormData({ ...blankFormData });
-        return;
-      }
+      // if (!data) {
+      //   setIsValidLink(true);
+      //   setIsCheckingLink(false);
+      //   setIsReadOnly({}); // No readonly/disabled when no URL data
+      //   setFormData({ ...blankFormData });
+      //   return;
+      // }
 
       try {
         const response = await fetch(
           `${
             import.meta.env.VITE_API_BASE_URL
-          }/jotform-check-unique-string/${data}`
+          }/jotform-check-unique-string/${user_id}`
         );
         const responseData = await response.json();
-        console.log("hello");
-        console.log(responseData, "responsedata");
 
         if (response.ok) {
           setIsValidLink(true);
@@ -337,10 +334,11 @@ export default function JotForm() {
     }
   };
 
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isSubmitting) return;
-
+    
     const signaturePad = signatureRef.current;
     const signatureData =
       signaturePad && !signaturePad.isEmpty() ? signaturePad.toDataURL() : "";
@@ -352,7 +350,7 @@ export default function JotForm() {
       return;
     }
 
-    if (!data) {
+    if (!user_id) {
       toast.error("Invalid form link");
       return;
     }
@@ -367,8 +365,9 @@ export default function JotForm() {
         formDataToSend.append(key, value);
       }
     });
+
     formDataToSend.append("signature", signatureData);
-    formDataToSend.append("unique_string", data);
+    formDataToSend.append("user_id", user_id);
 
     // Append owner data and files
     ownerFormData.forEach((owner, ownerIdx) => {
@@ -462,7 +461,7 @@ export default function JotForm() {
         <Toaster position="top-right" />
         <div className="bg-zinc-900 rounded-lg shadow-xl p-8 border border-yellow-400/20 text-center max-w-md w-full">
           <div className="w-8 h-8 border-2 border-yellow-400 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-400">Validating Jotfrom link...</p>
+          <p className="text-gray-400">Validating ISO Form link...</p>
         </div>
       </div>
     );
@@ -475,11 +474,11 @@ export default function JotForm() {
         <div className="bg-zinc-900 rounded-lg shadow-xl p-8 border border-yellow-400/20 text-center max-w-md w-full">
           <AlertCircle className="h-16 w-16 text-red-500 mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-white mb-4">
-            Invalid Jotform Link
+            Invalid ISO Form Link
           </h1>
           <p className="text-gray-400 mb-6">
-            This Jotform link is invalid or has expired. Please contact your
-            administrator to request a new secure Jotform link.
+            This ISO Form link is invalid or has expired. Please contact your
+            administrator to request a new secure ISO Form link.
           </p>
         </div>
       </div>

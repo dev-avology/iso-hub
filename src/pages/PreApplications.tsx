@@ -2187,9 +2187,10 @@ export default function PreApplications() {
   const last_name = parsedUser.last_name;
   const full_name = `${first_name} ${last_name}`
   .toLowerCase()                    // Convert to lowercase
-  .replace(/\s+/g, '-');           // Replace spaces with dashesfor URL safety
+  .replace(/\s+/g, '-');    
+  const user_id =   parsedUser.id; 
   
-  const preAppLink = `${window.location.origin}/iso-forms/${encodeURIComponent(full_name)}?data=${formToken}`;
+  const preAppLink = `${window.location.origin}/iso-forms/${encodeURIComponent(full_name)}/${user_id}`;
 
   const copyLink = async () => {
     try {
@@ -2205,7 +2206,7 @@ export default function PreApplications() {
 
   useEffect(() => {
     fetchForms();
-    fetchFormToken();
+    // fetchFormToken();
   }, []);
 
   const fetchForms = async (id?: string) => {
