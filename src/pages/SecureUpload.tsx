@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { File as FileIcon, Shield, Clock, Upload, AlertCircle, Calendar } from 'lucide-react';
 import { toast, Toaster } from 'react-hot-toast';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import SignaturePad from 'react-signature-canvas';
+import { useSearchParams, useParams } from "react-router-dom";
 
 const imageTypes = ['jpg', 'jpeg', 'png', 'gif'];
 
@@ -19,17 +20,19 @@ const SecureUpload: React.FC = () => {
   const [signatureType, setSignatureType] = useState("e-signature");
   const data = searchParams.get('data');
   const [hoveredFileIdx, setHoveredFileIdx] = useState<number | null>(null);
+  const { user_id, user_data } = useParams<{ user_id: string,user_data: string }>();
 
+  const user_new_data  = user_id+"&"+user_data;
   useEffect(() => {
     const checkUniqueString = async () => {
-      if (!data) {
-        setIsValidLink(false);
-        setIsCheckingLink(false);
-        return;
-      }
+      // if (!data) {
+      //   setIsValidLink(false);
+      //   setIsCheckingLink(false);
+      //   return;
+      // }
 
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/file/check-unique-string/${data}`);
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/file/check-unique-string/${user_new_data}`);
 
         const responseData = await response.json();
 
@@ -51,7 +54,7 @@ const SecureUpload: React.FC = () => {
     };
 
     checkUniqueString();
-  }, [data]);
+  }, [user_data]);
 
   const handleBrowseClick = (): void => {
     fileInputRef.current?.click();
@@ -93,10 +96,10 @@ const SecureUpload: React.FC = () => {
   };
 
   const handleUpload = async (): Promise<void> => {
-    if (!data) {
-      toast.error('Invalid upload link');
-      return;
-    }
+    // if (!data) {
+    //   toast.error('Invalid upload link');
+    //   return;
+    // }
 
     if (uploadedFiles.length === 0) {
       toast.error('Please select files to upload');
@@ -116,10 +119,10 @@ const SecureUpload: React.FC = () => {
       }
     }
 
-    try {
+    // try {
       setIsUploading(true);
       const formData = new FormData();
-      formData.append('unique_string', data);
+      formData.append('unique_string', user_new_data);
       
       if (signatureType === "e-signature") {
         formData.append('signature_date', signatureDate);
@@ -153,12 +156,12 @@ const SecureUpload: React.FC = () => {
       setUploadedFiles([]);
       setSignatureDate('');
       clearSignature();
-    } catch (error) {
-      console.error('Upload error:', error);
-      toast.error('Failed to upload files');
-    } finally {
-      setIsUploading(false);
-    }
+    // } catch (error) {
+    //   console.error('Upload error:', error);
+    //   toast.error('Failed to upload files');
+    // } finally {
+    //   setIsUploading(false);
+    // }
   };
 
   const formatFileSize = (bytes: number): string => {

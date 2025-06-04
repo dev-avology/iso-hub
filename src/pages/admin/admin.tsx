@@ -32,7 +32,8 @@ interface ApiResponse {
 const ROLE_MAPPING = {
   '3': 'Manager',
   '4': 'Team Leader',
-  '5': 'User'
+  '5': 'User',
+  '6': 'Team Member'
 };
 
 export default function Admin() {
@@ -499,6 +500,7 @@ export default function Admin() {
                   <option value="3">Manager</option>
                   <option value="4">Team Leader</option>
                   <option value="5">User</option>
+                  <option value="6">Team Member</option>
                 </select>
               </div>
 
@@ -639,6 +641,7 @@ export default function Admin() {
                   <option value="3">Manager</option>
                   <option value="4">Team Leader</option>
                   <option value="5">User</option>
+                  <option value="6">Team member</option>
                 </select>
               </div>
 

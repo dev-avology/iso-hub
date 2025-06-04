@@ -3,19 +3,23 @@ import { useState, useEffect } from 'react';
 
 interface TeamMember {
   id: number;
-  name: string;
+  first_name: string;
+  last_name: string;
   email: string;
   phone: string;
-  address: string;
+  role_id: number;
+  email_verified_at: string | null;
   created_at: string;
   updated_at: string;
 }
 
 interface TeamMemberFormData {
-  name: string;
+  first_name: string;
+  last_name: string;
   email: string;
   phone: string;
-  address: string;
+  password: string;
+  role_id: string;
 }
 
 interface ApiResponse {
@@ -31,10 +35,12 @@ export default function TeamMember() {
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [formData, setFormData] = useState<TeamMemberFormData>({
-    name: '',
+    first_name: '',
+    last_name: '',
     email: '',
     phone: '',
-    address: ''
+    password: '',
+    role_id: ''
   });
 
   const fetchTeamMembers = async (id?: string) => {
@@ -81,7 +87,8 @@ export default function TeamMember() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem('auth_token');
+      const token = localStorage.getItem('auth_token'); 
+      formData.role_id = "6";
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/team-member/create`, {
         method: 'POST',
         headers: {
@@ -97,10 +104,12 @@ export default function TeamMember() {
 
       // Reset form and close modal
       setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        address: ''
+       first_name: '',
+       last_name: '',
+       email: '',
+       phone: '',
+       password: '',
+       role_id: ''
       });
       setIsModalOpen(false);
       
@@ -139,10 +148,13 @@ export default function TeamMember() {
   const handleEdit = (member: TeamMember) => {
     setSelectedMember(member);
     setFormData({
-      name: member.name,
+      first_name: member.first_name,
+      last_name: member.last_name,
       email: member.email,
       phone: member.phone,
-      address: member.address
+      password: '',
+      role_id: ''
+      // role_id: member.role_id
     });
     setIsEditModalOpen(true);
   };
@@ -153,6 +165,7 @@ export default function TeamMember() {
 
     try {
       const token = localStorage.getItem('auth_token');
+      formData.role_id = "6";
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/team-member/update`, {
         method: 'PUT',
         headers: {
@@ -171,10 +184,12 @@ export default function TeamMember() {
 
       // Reset form and close modal
       setFormData({
-        name: '',
+        first_name: '',
+        last_name: '',
         email: '',
         phone: '',
-        address: ''
+        password: '',
+        role_id: ''
       });
       setIsEditModalOpen(false);
       setSelectedMember(null);
@@ -199,10 +214,11 @@ export default function TeamMember() {
 
       <div className="user_data_wrap">
         <div className="user_dataHead w-full px-5 py-4 rounded bg-gray-700 text-white flex gap-4">
-          <div className="userData w-[20%] font-bold">Name</div>
+          <div className="userData w-[20%] font-bold">First Name</div>
+          <div className="userData w-[20%] font-bold">Last Name</div>
           <div className="userData w-[20%] font-bold">Email</div>
           <div className="userData w-[20%] font-bold">Phone Number</div>
-          <div className="userData w-[20%] font-bold">Address</div>
+          {/* <div className="userData w-[20%] font-bold">Address</div> */}
         </div>
       </div>
 
@@ -217,10 +233,11 @@ export default function TeamMember() {
               key={member.id}
               className="UserDataRow group px-5 py-3 rounded flex gap-4 border border-gray-700 mt-4 hover:bg-gray-700 cursor-pointer relative"
             >
-              <div className="userdata w-[20%]">{member.name}</div>
+              <div className="userdata w-[20%]">{member.first_name}</div>
+              <div className="userdata w-[20%]">{member.last_name}</div>
               <div className="userdata w-[20%]">{member.email}</div>
               <div className="userdata w-[20%]">{member.phone}</div>
-              <div className="userdata w-[20%]">{member.address}</div>
+              {/* <div className="userdata w-[20%]">{member.address}</div> */}
               <div className="edit-delete-btn absolute right-5 hidden group-hover:block">
                 <div className="edit_data flex gap-2 items-center">
                   <button 
@@ -259,7 +276,7 @@ export default function TeamMember() {
             <h2 className="text-2xl font-bold text-white mb-6">Add New Team Member</h2>
             
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
+              {/* <div>
                 <label className="block text-gray-300 mb-2">Name</label>
                 <input
                   type="text"
@@ -269,7 +286,42 @@ export default function TeamMember() {
                   className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
                   required
                 />
+              </div> */}
+
+              <input type="hidden" name="role_id" value="6"/>
+    
+
+              <div className="flex gap-4">
+                <div className="w-1/2">
+                  <label className="block text-gray-300 mb-2">First Name</label>
+                  <input
+                    type="text"
+                    name="first_name"
+                    value={formData.first_name}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    required
+                  />
+                  {/* {errors.first_name && (
+                    <p className="text-red-500 text-sm mt-1">{errors.first_name[0]}</p>
+                  )} */}
+                </div>
+                <div className="w-1/2">
+                  <label className="block text-gray-300 mb-2">Last Name</label>
+                  <input
+                    type="text"
+                    name="last_name"
+                    value={formData.last_name}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    required
+                  />
+                  {/* {errors.last_name && (
+                    <p className="text-red-500 text-sm mt-1">{errors.last_name[0]}</p>
+                  )} */}
+                </div>
               </div>
+
               
               <div>
                 <label className="block text-gray-300 mb-2">Email</label>
@@ -294,8 +346,23 @@ export default function TeamMember() {
                   required
                 />
               </div>
-              
+
               <div>
+                <label className="block text-gray-300 mb-2">Password</label>
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                  required
+                />
+                {/* {errors.password && (
+                  <p className="text-red-500 text-sm mt-1">{errors.password[0]}</p>
+                )} */}
+              </div>
+              
+              {/* <div>
                 <label className="block text-gray-300 mb-2">Address</label>
                 <input
                   type="text"
@@ -305,7 +372,7 @@ export default function TeamMember() {
                   className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
                   required
                 />
-              </div>
+              </div> */}
 
               <div className="pt-4">
                 <button
@@ -329,10 +396,12 @@ export default function TeamMember() {
                 setIsEditModalOpen(false);
                 setSelectedMember(null);
                 setFormData({
-                  name: '',
+                  first_name: '',
+                  last_name: '',
                   email: '',
                   phone: '',
-                  address: ''
+                  password: '',
+                  role_id: ''
                 });
               }}
               className="absolute top-4 right-4 text-gray-400 hover:text-white"
@@ -343,16 +412,34 @@ export default function TeamMember() {
             <h2 className="text-2xl font-bold text-white mb-6">Edit Team Member</h2>
             
             <form onSubmit={handleUpdate} className="space-y-4">
-              <div>
-                <label className="block text-gray-300 mb-2">Name</label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                  required
-                />
+
+              <div className="flex gap-4">
+                <div className="w-1/2">
+                  <label className="block text-gray-300 mb-2">First Name</label>
+                  <input
+                    type="text"
+                    name="first_name"
+                    value={formData.first_name}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    required
+                  />
+
+                </div>
+
+                <input type="hidden" name="role_id" value="6"/>
+                
+                <div className="w-1/2">
+                  <label className="block text-gray-300 mb-2">Last Name</label>
+                  <input
+                    type="text"
+                    name="last_name"
+                    value={formData.last_name}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    required
+                  />
+                </div>
               </div>
               
               <div>
@@ -380,14 +467,13 @@ export default function TeamMember() {
               </div>
               
               <div>
-                <label className="block text-gray-300 mb-2">Address</label>
+                <label className="block text-gray-300 mb-2">Password (leave blank to keep current)</label>
                 <input
-                  type="text"
-                  name="address"
-                  value={formData.address}
+                  type="password"
+                  name="password"
+                  value={formData.password}
                   onChange={handleInputChange}
                   className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                  required
                 />
               </div>
 
@@ -426,7 +512,7 @@ export default function TeamMember() {
               <h3 className="text-2xl font-bold text-white mb-2">Delete Team Member</h3>
               
               <p className="text-gray-300 mb-6">
-                Are you sure you want to delete <span className="font-semibold">{selectedMember.name}</span>? 
+                Are you sure you want to delete <span className="font-semibold">{selectedMember.first_name}</span>? 
                 This action cannot be undone.
               </p>
               

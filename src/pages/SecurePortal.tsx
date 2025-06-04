@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Download, Trash, Mail } from 'lucide-react';
-import { toast, Toaster } from 'react-hot-toast';
+import React, { useState, useEffect } from "react";
+import { Download, Trash, Mail } from "lucide-react";
+import { toast, Toaster } from "react-hot-toast";
 
 interface FileData {
   id: number;
@@ -23,17 +23,19 @@ interface ApiResponse {
 interface EmailFormData {
   email: string;
   name: string;
+  formId: string;
 }
 
-const imageTypes = ['jpg', 'jpeg', 'png', 'gif'];
+const imageTypes = ["jpg", "jpeg", "png", "gif"];
 
 const SecurePortal: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [fileToDelete, setFileToDelete] = useState<FileData | null>(null);
   const [formData, setFormData] = useState<EmailFormData>({
-    email: '',
-    name: ''
+    email: "",
+    name: "",
+    formId: "",
   });
   const [isLoading, setIsLoading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -41,50 +43,107 @@ const SecurePortal: React.FC = () => {
   const [isLoadingFiles, setIsLoadingFiles] = useState(true);
   const [isDownloading, setIsDownloading] = useState(false);
   const [hoveredFileId, setHoveredFileId] = useState<number | null>(null);
+  const [forms, setForms] = useState<any[]>([]);
 
   useEffect(() => {
     fetchFiles();
+    fetchForms();
   }, []);
+
+  const fetchForms = async () => {
+    try {
+      setIsLoading(true);
+      const token = localStorage.getItem("auth_token");
+      const value = localStorage.getItem("auth_user");
+      const parsedUser = value ? JSON.parse(value) : null;
+
+      let body = undefined;
+
+      // Add user_id to body only if role is NOT 1 or 2
+      if (parsedUser && parsedUser.role_id !== 1 && parsedUser.role_id !== 2) {
+        body = JSON.stringify({ user_id: parsedUser.id });
+      }
+
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/jotform/lists`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: body,
+        }
+      );
+
+      const responseData: ApiResponse = await response.json();
+      console.log('Forms Response:', responseData);
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch files");
+      }
+
+      if (responseData.status === "error") {
+        throw new Error(responseData.message || "Failed to fetch forms");
+      }
+
+      setForms(responseData.data || []);
+    } catch (error) {
+      console.error("Error fetching forms:", error);
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Failed to load pre-applications"
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const fetchFiles = async () => {
     try {
       setIsLoadingFiles(true);
-      const token = localStorage.getItem('auth_token');
-      const userData = localStorage.getItem('auth_user');
-      
+      const token = localStorage.getItem("auth_token");
+      const userData = localStorage.getItem("auth_user");
+
       if (!userData) {
-        throw new Error('User data not found');
+        throw new Error("User data not found");
       }
 
       const user = JSON.parse(userData);
       const userId = user.id;
 
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/file/lists/${userId}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/file/lists/${userId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-      });
+      );
 
       if (!response.ok) {
-        throw new Error('Failed to fetch files');
+        throw new Error("Failed to fetch files");
       }
 
       const data: ApiResponse = await response.json();
       console.log(data);
       setFiles(data.data || []);
     } catch (error) {
-      console.error('Error fetching files:', error);
-      toast.error('Failed to fetch files');
+      console.error("Error fetching files:", error);
+      toast.error("Failed to fetch files");
     } finally {
       setIsLoadingFiles(false);
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -93,40 +152,86 @@ const SecurePortal: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const token = localStorage.getItem('auth_token');
-      const userData = localStorage.getItem('auth_user');
-      
+      const token = localStorage.getItem("auth_token");
+      const userData = localStorage.getItem("auth_user");
+
       if (!userData) {
-        throw new Error('User data not found');
+        throw new Error("User data not found");
       }
 
       const user = JSON.parse(userData);
       const userId = user.id;
 
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/user/send-mail`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          ...formData,
-          user_id: userId.toString()
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to send email');
+      // Email validation
+      const emailRegex = /\S+@\S+\.\S+/;
+      if (!formData.email || !emailRegex.test(formData.email)) {
+        toast.error("Please enter a valid email address.");
+        return;
       }
 
-      const data = await response.json();
-      toast.success(data.message || 'Email sent successfully!');
+      const formDataToSubmit = {
+        user_id: userId.toString(),
+        form_id: formData.formId,
+        personal_guarantee_required: 'yes',
+        clear_signature: 'e-signature',
+        email: formData.email,
+      };
+
+      console.log('Submitting form data:', formDataToSubmit);
+
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/user/clear-signature-mail`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(formDataToSubmit),
+        }
+      );
+
+      const responseData = await response.json();
+      console.log("API Response:", responseData);
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          localStorage.removeItem("auth_token");
+          throw new Error("Session expired. Please login again.");
+        }
+        if (response.status === 404) {
+          throw new Error("API endpoint not found. Please contact support.");
+        }
+        if (response.status === 422 && responseData.errors) {
+          const validationErrors = responseData.errors as {
+            [key: string]: string[];
+          };
+          Object.values(validationErrors).forEach((errors: string[]) => {
+            errors.forEach((error) => toast.error(error));
+          });
+          throw new Error("Validation failed");
+        }
+        throw new Error(responseData.message || "Failed to send email");
+      }
+
+      toast.success("We've sent you an email to clear e-signature!");
       setIsModalOpen(false);
-      setFormData({ email: '', name: '' });
+      setFormData({ email: "", name: "", formId: "" });
       fetchFiles(); // Refresh the file list after sending email
     } catch (error) {
-      console.error('Error sending email:', error);
-      toast.error('Failed to send email');
+      console.error("Error sending email:", error);
+      if (error instanceof Error) {
+        if (error.message.includes("Session expired")) {
+          toast.error("Session expired. Please login again.");
+          // You might want to add navigation to login page here
+        } else if (error.message.includes("API endpoint not found")) {
+          toast.error("API endpoint not found. Please contact support.");
+        } else {
+          toast.error(error.message);
+        }
+      } else {
+        toast.error("An unexpected error occurred. Please try again.");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -142,26 +247,29 @@ const SecurePortal: React.FC = () => {
 
     try {
       setIsDeleting(true);
-      const token = localStorage.getItem('auth_token');
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/file/delete/${fileToDelete.id}`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`
+      const token = localStorage.getItem("auth_token");
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/file/delete/${fileToDelete.id}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-      });
+      );
 
       if (!response.ok) {
-        throw new Error('Failed to delete file');
+        throw new Error("Failed to delete file");
       }
 
       const data = await response.json();
-      toast.success(data.message || 'File deleted successfully');
+      toast.success(data.message || "File deleted successfully");
       fetchFiles(); // Refresh the file list
       setIsDeleteModalOpen(false);
       setFileToDelete(null);
     } catch (error) {
-      console.error('Error deleting file:', error);
-      toast.error('Failed to delete file');
+      console.error("Error deleting file:", error);
+      toast.error("Failed to delete file");
     } finally {
       setIsDeleting(false);
     }
@@ -170,54 +278,57 @@ const SecurePortal: React.FC = () => {
   const handleDownload = async (file: FileData) => {
     try {
       setIsDownloading(true);
-      const token = localStorage.getItem('auth_token');
-      
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/file/download/${file.id}`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`
+      const token = localStorage.getItem("auth_token");
+
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/file/download/${file.id}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-      });
+      );
 
       if (!response.ok) {
-        throw new Error('Failed to download file');
+        throw new Error("Failed to download file");
       }
 
       // Get the blob from the response
       const blob = await response.blob();
-      
+
       // Create a URL for the blob
       const url = window.URL.createObjectURL(blob);
-      
+
       // Create a temporary link element
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = url;
       link.download = file.file_original_name; // Use the original filename
-      
+
       // Append to body, click, and remove
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      
+
       // Clean up the URL
       window.URL.revokeObjectURL(url);
-      
-      toast.success('File downloaded successfully');
+
+      toast.success("File downloaded successfully");
     } catch (error) {
-      console.error('Error downloading file:', error);
-      toast.error('Failed to download file');
+      console.error("Error downloading file:", error);
+      toast.error("Failed to download file");
     } finally {
       setIsDownloading(false);
     }
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
@@ -225,16 +336,16 @@ const SecurePortal: React.FC = () => {
     const uploadDate = new Date(uploadedAt);
     const expiryDate = new Date(uploadDate);
     expiryDate.setDate(uploadDate.getDate() + 180); // Add 180 days
-    
+
     const today = new Date();
     const diffTime = expiryDate.getTime() - today.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
+
     return Math.max(0, diffDays);
   };
 
   return (
-    <div className='bg-black'>
+    <div className="bg-black">
       <Toaster position="top-right" />
       <div className="max-w-[100%] flex justify-center m-auto">
         <div className="sec-wrap w-[100%]">
@@ -262,36 +373,49 @@ const SecurePortal: React.FC = () => {
             ) : (
               <div>
                 {files.map((file) => {
-                  const remainingDays = calculateRemainingDays(file.uploaded_at);
-                  const ext = file.file_path.split('.').pop()?.toLowerCase() || '';
+                  const remainingDays = calculateRemainingDays(
+                    file.uploaded_at
+                  );
+                  const ext =
+                    file.file_path.split(".").pop()?.toLowerCase() || "";
                   const isImage = imageTypes.includes(ext);
-                  const fileUrl = `${import.meta.env.VITE_IMAGE_URL}${file.file_path}`;
+                  const fileUrl = `${import.meta.env.VITE_IMAGE_URL}${
+                    file.file_path
+                  }`;
 
                   console.log(fileUrl);
 
                   return (
                     <div
                       key={file.id}
-                      className='group mt-5 w-full px-5 py-3 rounded bg-zinc-900 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500 relative'
+                      className="group mt-5 w-full px-5 py-3 rounded bg-zinc-900 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500 relative"
                       onMouseEnter={() => setHoveredFileId(file.id)}
                       onMouseLeave={() => setHoveredFileId(null)}
                     >
                       <div className="flex flex-col">
-                        <p className='uploaded-file-name'>
-                          <span 
-                            className='cursor-pointer hover:text-yellow-600'
-                            onClick={() => window.open(`${import.meta.env.VITE_IMAGE_URL}${file.file_path}`, '_blank')}
+                        <p className="uploaded-file-name">
+                          <span
+                            className="cursor-pointer hover:text-yellow-600"
+                            onClick={() =>
+                              window.open(
+                                `${import.meta.env.VITE_IMAGE_URL}${
+                                  file.file_path
+                                }`,
+                                "_blank"
+                              )
+                            }
                           >
                             {file.file_original_name}
                           </span>
-                          <span className='total-v pl-5'>
+                          <span className="total-v pl-5">
                             (Expires in {remainingDays} days)
                           </span>
                         </p>
                         {(file.prospect_name || file.email) && (
                           <p className="text-sm text-gray-400 mt-1">
-                            {file.prospect_name && `Sender: ${file.prospect_name}`}
-                            {file.prospect_name && file.email && ' • '}
+                            {file.prospect_name &&
+                              `Sender: ${file.prospect_name}`}
+                            {file.prospect_name && file.email && " • "}
                             {file.email && `Email: ${file.email}`}
                           </p>
                         )}
@@ -305,21 +429,23 @@ const SecurePortal: React.FC = () => {
                               src={fileUrl}
                               alt={file.file_original_name}
                               className="max-w-[200px] max-h-[160px] rounded shadow border border-zinc-700"
-                              style={{ objectFit: 'contain' }}
+                              style={{ objectFit: "contain" }}
                             />
                           ) : (
                             <div className="flex flex-col items-center justify-center py-4">
                               <Download className="w-10 h-10 text-yellow-400 mb-2" />
-                              <span className="text-xs text-gray-400">Preview not available</span>
+                              <span className="text-xs text-gray-400">
+                                Preview not available
+                              </span>
                             </div>
                           )}
                         </div>
                       )}
 
                       <div className="addedDetail absolute right-[20px] top-[50%] translate-y-[-50%] hidden group-hover:block">
-                        <ul className='flex gap-4 align-center'>
-                          <li 
-                            className='cursor-pointer hover:text-yellow-600'
+                        <ul className="flex gap-4 align-center">
+                          <li
+                            className="cursor-pointer hover:text-yellow-600"
                             onClick={() => handleDownload(file)}
                           >
                             {isDownloading ? (
@@ -328,8 +454,8 @@ const SecurePortal: React.FC = () => {
                               <Download />
                             )}
                           </li>
-                          <li 
-                            className='cursor-pointer hover:text-red-600'
+                          <li
+                            className="cursor-pointer hover:text-red-600"
                             onClick={() => handleDeleteClick(file)}
                           >
                             <Trash />
@@ -349,18 +475,30 @@ const SecurePortal: React.FC = () => {
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-zinc-900 p-8 rounded-lg w-full max-w-md relative">
-            <button 
+            <button
               onClick={() => setIsModalOpen(false)}
               className="absolute top-4 right-4 text-gray-400 hover:text-white"
             >
               <span className="sr-only">Close</span>
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <svg
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
-            
-            <h2 className="text-2xl font-bold text-white mb-6">Send Secure Upload Link</h2>
-            
+
+            <h2 className="text-2xl font-bold text-white mb-6">
+              Send Secure Upload Link
+            </h2>
+
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-gray-300 mb-2">Client Name</label>
@@ -373,7 +511,7 @@ const SecurePortal: React.FC = () => {
                   required
                 />
               </div>
-              
+
               <div>
                 <label className="block text-gray-300 mb-2">Client Email</label>
                 <input
@@ -384,6 +522,24 @@ const SecurePortal: React.FC = () => {
                   className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
                   required
                 />
+              </div>
+
+              <div>
+                <label className="block text-gray-300 mb-2">Select Form</label>
+                <select
+                  name="formId"
+                  value={formData.formId}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                  required
+                >
+                  <option value="">Select From Pre-Application List</option>
+                  {forms.map((form) => (
+                    <option key={form.id} value={form.id}>
+                      {form.business_dba}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div className="pt-4">
@@ -414,7 +570,7 @@ const SecurePortal: React.FC = () => {
       {isDeleteModalOpen && fileToDelete && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-zinc-900 p-8 rounded-lg w-full max-w-md relative">
-            <button 
+            <button
               onClick={() => {
                 setIsDeleteModalOpen(false);
                 setFileToDelete(null);
@@ -422,21 +578,31 @@ const SecurePortal: React.FC = () => {
               className="absolute top-4 right-4 text-gray-400 hover:text-white"
             >
               <span className="sr-only">Close</span>
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <svg
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
-            
+
             <h2 className="text-2xl font-bold text-white mb-6">Delete File</h2>
-            
+
             <div className="space-y-4">
               <p className="text-gray-300">
                 Are you sure you want to delete this file?
               </p>
               <p className="text-yellow-400 font-medium">
-                {fileToDelete.file_path.split('/').pop()}
+                {fileToDelete.file_path.split("/").pop()}
               </p>
-              
+
               <div className="flex gap-4 pt-4">
                 <button
                   onClick={() => {
@@ -458,7 +624,7 @@ const SecurePortal: React.FC = () => {
                       Deleting...
                     </>
                   ) : (
-                    'Delete'
+                    "Delete"
                   )}
                 </button>
               </div>
