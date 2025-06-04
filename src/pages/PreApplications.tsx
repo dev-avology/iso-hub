@@ -2141,6 +2141,7 @@ export default function PreApplications() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [formToken, setFormToken] = useState<string>("");
   const [downloadingId, setDownloadingId] = useState<number | null>(null);
+  const [downloadingPDFId, setDownloadingPDFId] = useState<number | null>(null);
 
   // const preAppLink = `${window.location.origin}/iso-forms?data=${formToken}`; // The base URL for your form
   const value = localStorage.getItem("auth_user");
@@ -2478,81 +2479,86 @@ export default function PreApplications() {
   // };
 
   const handleDownloadDesignPDF = async (form: FormData) => {
-    const containerId = `pdf-design-container-${form.id}`;
-    const container = document.getElementById(containerId);
+    setDownloadingPDFId(form.id);
+    try {
+      const containerId = `pdf-design-container-${form.id}`;
+      const container = document.getElementById(containerId);
 
-    if (!container) return;
+      if (!container) return;
 
-    container.innerHTML = "";
-    ReactDOM.render(<PreAppDetailsPDF form={form} />, container);
+      container.innerHTML = "";
+      ReactDOM.render(<PreAppDetailsPDF form={form} />, container);
 
-    // Wait for all images to load before rendering
-    const images = container.getElementsByTagName("img");
-    await Promise.all(
-      Array.from(images).map(img => {
-        // Ensure image URL is absolute
-        if (img.src.startsWith('/')) {
-          img.src = `${import.meta.env.VITE_IMAGE_URL}${img.src}`;
-        }
-        return img.complete
-          ? Promise.resolve()
-          : new Promise(resolve => {
-              img.onload = img.onerror = resolve;
-            });
-      })
-    );
-
-    // Additional wait to ensure all content is rendered
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
-    const canvas = await html2canvas(container, {
-      scale: 2,
-      useCORS: true,
-      allowTaint: true,
-      imageTimeout: 0,
-      logging: true,
-      onclone: (clonedDoc) => {
-        // Ensure all images in the cloned document have absolute URLs
-        const clonedImages = clonedDoc.getElementsByTagName('img');
-        Array.from(clonedImages).forEach(img => {
+      // Wait for all images to load before rendering
+      const images = container.getElementsByTagName("img");
+      await Promise.all(
+        Array.from(images).map(img => {
+          // Ensure image URL is absolute
           if (img.src.startsWith('/')) {
             img.src = `${import.meta.env.VITE_IMAGE_URL}${img.src}`;
           }
-        });
+          return img.complete
+            ? Promise.resolve()
+            : new Promise(resolve => {
+                img.onload = img.onerror = resolve;
+              });
+        })
+      );
+
+      // Additional wait to ensure all content is rendered
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      const canvas = await html2canvas(container, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        imageTimeout: 0,
+        logging: true,
+        onclone: (clonedDoc) => {
+          // Ensure all images in the cloned document have absolute URLs
+          const clonedImages = clonedDoc.getElementsByTagName('img');
+          Array.from(clonedImages).forEach(img => {
+            if (img.src.startsWith('/')) {
+              img.src = `${import.meta.env.VITE_IMAGE_URL}${img.src}`;
+            }
+          });
+        }
+      });
+
+      const imgHeight = canvas.height;
+      const imgWidth = canvas.width;
+
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF("p", "px", "a4");
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const margin = 20;
+
+      const ratio = (pageWidth - 2 * margin) / imgWidth;
+      const scaledHeight = imgHeight * ratio;
+
+      let position = 0;
+
+      while (position < scaledHeight) {
+        const pageCanvas = document.createElement("canvas");
+        const pageCtx = pageCanvas.getContext("2d")!;
+        const sliceHeight = Math.min(imgHeight, (pageHeight - 2 * margin) / ratio);
+        pageCanvas.width = imgWidth;
+        pageCanvas.height = sliceHeight;
+
+        // Copy portion of full canvas into page canvas
+        pageCtx.drawImage(canvas, 0, position / ratio, imgWidth, sliceHeight, 0, 0, imgWidth, sliceHeight);
+
+        const pageData = pageCanvas.toDataURL("image/png");
+        if (position > 0) pdf.addPage();
+        pdf.addImage(pageData, "PNG", margin, margin, pageWidth - 2 * margin, sliceHeight * ratio);
+        position += sliceHeight * ratio;
       }
-    });
 
-    const imgHeight = canvas.height;
-    const imgWidth = canvas.width;
-
-    const imgData = canvas.toDataURL("image/png");
-    const pdf = new jsPDF("p", "px", "a4");
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const pageHeight = pdf.internal.pageSize.getHeight();
-    const margin = 20;
-
-    const ratio = (pageWidth - 2 * margin) / imgWidth;
-    const scaledHeight = imgHeight * ratio;
-
-    let position = 0;
-
-    while (position < scaledHeight) {
-      const pageCanvas = document.createElement("canvas");
-      const pageCtx = pageCanvas.getContext("2d")!;
-      const sliceHeight = Math.min(imgHeight, (pageHeight - 2 * margin) / ratio);
-      pageCanvas.width = imgWidth;
-      pageCanvas.height = sliceHeight;
-
-      // Copy portion of full canvas into page canvas
-      pageCtx.drawImage(canvas, 0, position / ratio, imgWidth, sliceHeight, 0, 0, imgWidth, sliceHeight);
-
-      const pageData = pageCanvas.toDataURL("image/png");
-      if (position > 0) pdf.addPage();
-      pdf.addImage(pageData, "PNG", margin, margin, pageWidth - 2 * margin, sliceHeight * ratio);
-      position += sliceHeight * ratio;
+      pdf.save(`pre-application-design-${form.id}.pdf`);
+    } finally {
+      setDownloadingPDFId(null);
     }
-
-    pdf.save(`pre-application-design-${form.id}.pdf`);
   };
 
 
@@ -2772,8 +2778,16 @@ export default function PreApplications() {
                           onClick={() => handleDownloadDesignPDF(form)}
                           className="text-yellow-400 hover:text-yellow-500 flex items-center gap-1"
                           title="Download Design PDF"
+                          disabled={downloadingPDFId === form.id}
                         >
-                          <FileText className="h-4 w-4" />
+                          {downloadingPDFId === form.id ? (
+                            <svg className="animate-spin h-4 w-4 text-yellow-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                          ) : (
+                            <FileText className="h-4 w-4" />
+                          )}
                           PDF
                         </button>
                         {/* ...existing buttons... */}
