@@ -2489,16 +2489,39 @@ export default function PreApplications() {
     // Wait for all images to load before rendering
     const images = container.getElementsByTagName("img");
     await Promise.all(
-      Array.from(images).map(img =>
-        img.complete
+      Array.from(images).map(img => {
+        // Ensure image URL is absolute
+        if (img.src.startsWith('/')) {
+          img.src = `${import.meta.env.VITE_IMAGE_URL}${img.src}`;
+        }
+        return img.complete
           ? Promise.resolve()
           : new Promise(resolve => {
               img.onload = img.onerror = resolve;
-            })
-      )
+            });
+      })
     );
 
-    const canvas = await html2canvas(container, { scale: 2 });
+    // Additional wait to ensure all content is rendered
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    const canvas = await html2canvas(container, {
+      scale: 2,
+      useCORS: true,
+      allowTaint: true,
+      imageTimeout: 0,
+      logging: true,
+      onclone: (clonedDoc) => {
+        // Ensure all images in the cloned document have absolute URLs
+        const clonedImages = clonedDoc.getElementsByTagName('img');
+        Array.from(clonedImages).forEach(img => {
+          if (img.src.startsWith('/')) {
+            img.src = `${import.meta.env.VITE_IMAGE_URL}${img.src}`;
+          }
+        });
+      }
+    });
+
     const imgHeight = canvas.height;
     const imgWidth = canvas.width;
 

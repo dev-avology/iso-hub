@@ -93,12 +93,12 @@ export default function Sidebar({
         {/* Logo */}
         <div className="p-6 border-b border-yellow-400/20">
           <div className="flex items-center justify-center space-x-2">
-            <Shield className="h-8 w-8 text-yellow-400" />
+            {/* <Shield className="h-8 w-8 text-yellow-400" /> */}
             <div className="text-xl font-bold text-white tracking-tight">
-              ISO<span className="text-yellow-400">Hub</span>
+              <img src="ISOHubLOGO.png" alt="" style={{ maxWidth: '71%' }} />
             </div>
           </div>
-          <div className="mt-1 text-center text-xs text-yellow-400/60">
+          <div className="mt-1 text-xs text-yellow-400/60">
             Secure Document Management
           </div>
         </div>

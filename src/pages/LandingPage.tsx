@@ -55,10 +55,13 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
           <div className="text-center">
             <div className="flex items-center justify-center mb-6">
-              <Shield className="h-12 w-12 text-yellow-400" />
-              <h1 className="text-4xl font-bold text-white ml-3">
-                ISO<span className="text-yellow-400">Hub</span>
-              </h1>
+              <img src="ISOHubLOGO.png" alt="" style={{ maxWidth: '12%' }} />
+
+              {/* <Shield className="h-12 w-12 text-yellow-400" /> */}
+              {/* <h1 className="text-4xl font-bold text-white ml-3">
+                
+                
+              </h1> */}
             </div>
             <h2 className="text-4xl sm:text-5xl font-bold text-white mb-6">
               Streamline Your ISO Operations
@@ -321,10 +324,11 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-center">
-              <Shield className="h-8 w-8 text-yellow-400" />
+               <img src="ISOHubLOGO.png" alt="" style={{ maxWidth: '12%' }} />
+              {/* <Shield className="h-8 w-8 text-yellow-400" />
               <span className="ml-2 text-xl font-bold text-white">
                 ISO<span className="text-yellow-400">Hub</span>
-              </span>
+              </span> */}
             </div>
             <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm text-gray-400">
               <Link to="/privacy-policy" className="hover:text-white underline">
