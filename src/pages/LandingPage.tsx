@@ -80,7 +80,7 @@ export default function LandingPage() {
                 onClick={handleDashboard}
                 className="inline-flex items-center px-6 py-3 text-lg font-medium text-yellow-400 bg-yellow-400/10 rounded-lg hover:bg-yellow-400/20 transition-colors duration-200 border border-yellow-400/20"
               >
-                View Dashboard
+                Login
               </button>
             </div>
           </div>

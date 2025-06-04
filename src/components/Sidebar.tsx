@@ -174,7 +174,7 @@ export default function Sidebar({
 
             {isUserNotification && (
               <div className="relative group mt-4">
-                {isUser && <UserRep />}
+                {/* {isUser && <UserRep />} */}
                 {/* <div
                   className={`group flex items-center px-3 py-2 text-sm font-medium rounded-md hover:text-yellow-400 transition-all text-gray-300 hover:border-l-4 hover:border-yellow-400`}
                 >

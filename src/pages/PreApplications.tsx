@@ -19,6 +19,10 @@ import {
 import { toast, Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
+import PreAppDetailsPDF from "../components/PreAppDetailsPDF";
+import ReactDOM from "react-dom";
 
 interface FormData {
   id: number;
@@ -119,6 +123,7 @@ interface FormData {
     ownership_social_security_number: string;
     ownership_driver_licence_number: string;
   }>;
+  created_at?: string;
 }
 
 interface ApiResponse {
@@ -174,13 +179,17 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
     }
   };
 
+  const localStoregeAuth = localStorage.getItem("auth_user");
+  const localStoregeAuthParsedUser = localStoregeAuth ? JSON.parse(localStoregeAuth) : null;
+  const localStoregeUserRole = localStoregeAuthParsedUser.role_id;
+
   // Helper function to check if file is an image
   const isImageFile = (fileName: string) => {
     const ext = fileName.split(".").pop()?.toLowerCase();
     return ["jpg", "jpeg", "png", "gif"].includes(ext || "");
   };
 
-  const handleDownload = async (file: string) => {
+  const handleDownload = async (file: { id: number; file_original_name: string; file_path: string; uploaded_at: string }) => {
     try {
       setIsDownloading(true);
       const token = localStorage.getItem("auth_token");
@@ -227,7 +236,7 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
     }
   };
 
-  const handleEmailSend = async (e) => {
+  const handleEmailSend = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const emailRegex = /\S+@\S+\.\S+/;
@@ -319,7 +328,23 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
 
   const isChecked = (array: string | string[] | undefined, value: string) => {
     if (!array) return false;
-    const parsedArray = typeof array === "string" ? JSON.parse(array) : array;
+    let parsedArray: string[] = [];
+    if (typeof array === "string") {
+      try {
+        const parsed = JSON.parse(array);
+        if (Array.isArray(parsed)) {
+          parsedArray = parsed;
+        } else {
+          return false;
+        }
+      } catch {
+        return false;
+      }
+    } else if (Array.isArray(array)) {
+      parsedArray = array;
+    } else {
+      return false;
+    }
     return parsedArray.includes(value);
   };
 
@@ -350,7 +375,7 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
                   DBA(Doing Business As)
                 </label>
                 <p className="mt-1 text-white font-medium">
-                  {form.business_dba}
+                  {form.business_dba || "-"}
                 </p>
               </div>
 
@@ -359,7 +384,7 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
                   Street Address
                 </label>
                 <p className="mt-1 text-white font-medium">
-                  {form.get_jotform_details?.[0]?.dba_street_address}
+                  {form.get_jotform_details?.[0]?.dba_street_address || "-"}
                 </p>
               </div>
 
@@ -367,11 +392,9 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
                 <label className="block text-sm font-medium text-gray-400">
                   Street Address Line 2
                 </label>
-                {form.get_jotform_details?.[0]?.dba_street_address2 && (
-                  <p className="mt-1 text-white font-medium">
-                    {form.get_jotform_details[0].dba_street_address2}
-                  </p>
-                )}
+                <p className="mt-1 text-white font-medium">
+                  {form.get_jotform_details?.[0]?.dba_street_address2 || "-"}
+                </p>
               </div>
 
               <div className="grid grid-cols-3 gap-4">
@@ -380,7 +403,7 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
                     City
                   </label>
                   <p className="mt-1 text-white font-medium">
-                    {form.business_city}
+                    {form.business_city || "-"}
                   </p>
                 </div>
                 <div>
@@ -388,7 +411,7 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
                     State
                   </label>
                   <p className="mt-1 text-white font-medium">
-                    {form.business_state}
+                    {form.business_state || "-"}
                   </p>
                 </div>
                 <div>
@@ -396,7 +419,7 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
                     ZIP
                   </label>
                   <p className="mt-1 text-white font-medium">
-                    {form.business_zip}
+                    {form.business_zip || "-"}
                   </p>
                 </div>
               </div>
@@ -451,7 +474,7 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
                       />
                       <span className="ml-2 text-white">
                         Shipping Address (
-                        {form.is_same_shipping_address === "1" ? "Yes" : "No"})
+                        {form.is_same_shipping_address === "1" ? "Yes" : form.is_same_shipping_address === "0" ? "No" : "-"})
                       </span>
                     </label>
                   </div>
@@ -469,33 +492,27 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
                 <label className="block text-sm font-medium text-gray-400">
                   Street Address
                 </label>
-                {form.get_jotform_details?.[0]?.corporate_street_address1 && (
-                  <p className="mt-1 text-white font-medium">
-                    {form.get_jotform_details[0].corporate_street_address1}
-                  </p>
-                )}
+                <p className="mt-1 text-white font-medium">
+                  {form.get_jotform_details?.[0]?.corporate_street_address1 || "-"}
+                </p>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-400">
                   Street Address Line 2
                 </label>
-                {form.get_jotform_details?.[0]?.corporate_street_address2 && (
-                  <p className="mt-1 text-white font-medium">
-                    {form.get_jotform_details[0].corporate_street_address2}
-                  </p>
-                )}
+                <p className="mt-1 text-white font-medium">
+                  {form.get_jotform_details?.[0]?.corporate_street_address2 || "-"}
+                </p>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-400">
                   Street Address Line 2
                 </label>
-                {form.get_jotform_details?.[0]?.dba_street_address2 && (
-                  <p className="mt-1 text-white font-medium">
-                    {form.get_jotform_details[0].dba_street_address2}
-                  </p>
-                )}
+                <p className="mt-1 text-white font-medium">
+                  {form.get_jotform_details?.[0]?.dba_street_address2 || "-"}
+                </p>
               </div>
 
               <div className="grid grid-cols-3 gap-4">
@@ -503,31 +520,25 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
                   <label className="block text-sm font-medium text-gray-400">
                     City
                   </label>
-                  {form.get_jotform_details?.[0]?.corporate_city && (
-                    <p className="mt-1 text-white font-medium">
-                      {form.get_jotform_details[0].corporate_city}
-                    </p>
-                  )}
+                  <p className="mt-1 text-white font-medium">
+                    {form.get_jotform_details?.[0]?.corporate_city || "-"}
+                  </p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-400">
                     State
                   </label>
-                  {form.get_jotform_details?.[0]?.corporate_state && (
-                    <p className="mt-1 text-white font-medium">
-                      {form.get_jotform_details[0].corporate_state}
-                    </p>
-                  )}
+                  <p className="mt-1 text-white font-medium">
+                    {form.get_jotform_details?.[0]?.corporate_state || "-"}
+                  </p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-400">
                     ZIP
                   </label>
-                  {form.get_jotform_details?.[0]?.corporate_zip && (
-                    <p className="mt-1 text-white font-medium">
-                      {form.get_jotform_details[0].corporate_zip}
-                    </p>
-                  )}
+                  <p className="mt-1 text-white font-medium">
+                    {form.get_jotform_details?.[0]?.corporate_zip || "-"}
+                  </p>
                 </div>
               </div>
 
@@ -536,7 +547,7 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
                   Contact Name
                 </label>
                 <p className="mt-1 text-white font-medium">
-                  {form.business_contact_name}
+                  {form.business_contact_name || "-"}
                 </p>
               </div>
 
@@ -544,23 +555,18 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
                 <label className="block text-sm font-medium text-gray-400">
                   Contact Email
                 </label>
-                {form.get_jotform_details?.[0]?.business_contact_mail && (
-                  <p className="mt-1 text-white font-medium">
-                    {form.get_jotform_details[0].business_contact_mail}
-                  </p>
-                )}
+                <p className="mt-1 text-white font-medium">
+                  {form.get_jotform_details?.[0]?.business_contact_mail || "-"}
+                </p>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-400">
                   Location Phone Number
                 </label>
-                {form.get_jotform_details?.[0]
-                  ?.business_location_phone_number && (
-                  <p className="mt-1 text-white font-medium">
-                    {form.get_jotform_details[0].business_location_phone_number}
-                  </p>
-                )}
+                <p className="mt-1 text-white font-medium">
+                  {form.get_jotform_details?.[0]?.business_location_phone_number || "-"}
+                </p>
               </div>
 
               <div>
@@ -568,7 +574,7 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
                   Date Business Started
                 </label>
                 <p className="mt-1 text-white font-medium">
-                  {form.business_start_date}
+                  {form.business_start_date || "-"}
                 </p>
               </div>
 
@@ -576,22 +582,18 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
                 <label className="block text-sm font-medium text-gray-400">
                   Business Website
                 </label>
-                {form.get_jotform_details?.[0]?.business_website && (
-                  <p className="mt-1 text-white font-medium">
-                    {form.get_jotform_details[0].business_website}
-                  </p>
-                )}
+                <p className="mt-1 text-white font-medium">
+                  {form.get_jotform_details?.[0]?.business_website || "-"}
+                </p>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-400">
                   Business Legal Name as appears on tax return
                 </label>
-                {form.get_jotform_details?.[0]?.business_legal_name && (
-                  <p className="mt-1 text-white font-medium">
-                    {form.get_jotform_details[0].business_legal_name}
-                  </p>
-                )}
+                <p className="mt-1 text-white font-medium">
+                  {form.get_jotform_details?.[0]?.business_legal_name || "-"}
+                </p>
               </div>
 
               <div>
@@ -599,7 +601,7 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
                   Federal Tax ID
                 </label>
                 <p className="mt-1 text-white font-medium">
-                  {form.business_tax_id}
+                  {form.business_tax_id || "-"}
                 </p>
               </div>
 
@@ -607,22 +609,18 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
                 <label className="block text-sm font-medium text-gray-400">
                   Products Sold or Services Provided
                 </label>
-                {form.get_jotform_details?.[0]?.business_products_sold && (
-                  <p className="mt-1 text-white font-medium">
-                    {form.get_jotform_details[0].business_products_sold}
-                  </p>
-                )}
+                <p className="mt-1 text-white font-medium">
+                  {form.get_jotform_details?.[0]?.business_products_sold || "-"}
+                </p>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-400">
                   Return Policy
                 </label>
-                {form.get_jotform_details?.[0]?.business_return_policy && (
-                  <p className="mt-1 text-white font-medium">
-                    {form.get_jotform_details[0].business_return_policy}
-                  </p>
-                )}
+                <p className="mt-1 text-white font-medium">
+                  {form.get_jotform_details?.[0]?.business_return_policy || "-"}
+                </p>
               </div>
             </div>
           </div>
@@ -683,39 +681,6 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
                     </div>
                   )}
 
-                  {owner.ownership_city && (
-                    <div>
-                      <label className="block text-sm font-medium text-gray-400">
-                        City
-                      </label>
-                      <p className="mt-1 text-white font-medium">
-                        {owner.ownership_city}
-                      </p>
-                    </div>
-                  )}
-
-                  {owner.ownership_state && (
-                    <div>
-                      <label className="block text-sm font-medium text-gray-400">
-                        State
-                      </label>
-                      <p className="mt-1 text-white font-medium">
-                        {owner.ownership_state}
-                      </p>
-                    </div>
-                  )}
-
-                  {owner.ownership_zip && (
-                    <div>
-                      <label className="block text-sm font-medium text-gray-400">
-                        ZIP
-                      </label>
-                      <p className="mt-1 text-white font-medium">
-                        {owner.ownership_zip}
-                      </p>
-                    </div>
-                  )}
-
                   {owner.ownership_email && (
                     <div>
                       <label className="block text-sm font-medium text-gray-400">
@@ -756,28 +721,6 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
                       </label>
                       <p className="mt-1 text-white font-medium">
                         {owner.ownership_driver_licence_number}
-                      </p>
-                    </div>
-                  )}
-
-                  {owner.owner_street_address && (
-                    <div>
-                      <label className="block text-sm font-medium text-gray-400">
-                        Street Address
-                      </label>
-                      <p className="mt-1 text-white font-medium">
-                        {owner.owner_street_address}
-                      </p>
-                    </div>
-                  )}
-
-                  {owner.owner_street_address2 && (
-                    <div>
-                      <label className="block text-sm font-medium text-gray-400">
-                        Street Address Line 2
-                      </label>
-                      <p className="mt-1 text-white font-medium">
-                        {owner.owner_street_address2}
                       </p>
                     </div>
                   )}
@@ -947,12 +890,12 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
                 </p>
               </div>
 
-              <div>
+              {/* <div>
                 <label className="block text-sm font-medium text-gray-400">
                   Terminal
                 </label>
                 <p className="mt-1 text-white font-medium">{form.terminal}</p>
-              </div>
+              </div> */}
 
               <div>
                 <label className="block text-sm font-medium text-gray-400">
@@ -961,13 +904,13 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
                 <p className="mt-1 text-white font-medium">{form.terminal}</p>
               </div>
 
-              {form.terminal_other && (
+              {form.terminal_special_features && (
                 <div>
                   <label className="block text-sm font-medium text-gray-400">
                     Terminal Other
                   </label>
                   <p className="mt-1 text-white font-medium">
-                    {form.terminal_other}
+                    {form.terminal_special_features}
                   </p>
                 </div>
               )}
@@ -1175,7 +1118,8 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
             </div>
           </div>
 
-          {/* Clear E-Signature Form */}
+          {(localStoregeUserRole === 1 || localStoregeUserRole === 2) && (
+          
           <form onSubmit={handleEmailSend}>
             <div className="bg-zinc-800/50 rounded-lg p-6 border border-zinc-700">
               <h3 className="text-yellow-400 mb-4">Clear E-Signature</h3>
@@ -1237,6 +1181,10 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
               </button>
             </div>
           </form>
+
+            
+          )}
+
         </div>
       </div>
     </div>
@@ -1260,8 +1208,23 @@ function DuplicateFormModal({ form, onClose }: DuplicateFormModalProps) {
 
   const isChecked = (array: string | string[] | undefined, value: string) => {
     if (!array) return false;
-    const parsedArray =
-      typeof array === "string" ? parseArrayField(array) : array;
+    let parsedArray: string[] = [];
+    if (typeof array === "string") {
+      try {
+        const parsed = JSON.parse(array);
+        if (Array.isArray(parsed)) {
+          parsedArray = parsed;
+        } else {
+          return false;
+        }
+      } catch {
+        return false;
+      }
+    } else if (Array.isArray(array)) {
+      parsedArray = array;
+    } else {
+      return false;
+    }
     return parsedArray.includes(value);
   };
 
@@ -1289,9 +1252,8 @@ function DuplicateFormModal({ form, onClose }: DuplicateFormModalProps) {
       pos_point_of_sale: parseArrayField(form?.pos_point_of_sale),
       virtual_terminal: parseArrayField(form?.virtual_terminal),
       business_dba: form?.business_dba || "",
-      business_corporate_legal_name: form?.business_corporate_legal_name || "",
-      business_location_address: form?.business_location_address || "",
       business_corporate_address: form?.business_corporate_address || "",
+      business_location_address: form?.business_location_address || "",
       business_city: form?.business_city || "",
       business_state: form?.business_state || "",
       business_zip: form?.business_zip || "",
@@ -2175,7 +2137,7 @@ export default function PreApplications() {
   const [user, setUser] = useState(null);
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [selectedDeleteRep, setSelectedDeleteRep] = useState(null);
+  const [selectedDeleteRep, setSelectedDeleteRep] = useState<{ id: number; name: string } | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [formToken, setFormToken] = useState<string>("");
   const [downloadingId, setDownloadingId] = useState<number | null>(null);
@@ -2322,7 +2284,7 @@ export default function PreApplications() {
       if (responseData.status === "error") {
         throw new Error(responseData.message || "Failed to fetch forms");
       }
-      setFormToken(responseData.data);
+      // setFormToken(responseData.data);
     } catch (error) {
       console.error("Error fetching forms:", error);
       toast.error(
@@ -2392,7 +2354,7 @@ export default function PreApplications() {
   // const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   // const token = localStorage.getItem("auth_token");
 
-  const confirmAndDeleteItem = (item, title) => {
+  const confirmAndDeleteItem = (item: number, title: string) => {
     setSelectedDeleteRep({ id: item, name: title });
     setShowDeleteModal(true);
   };
@@ -2435,6 +2397,141 @@ export default function PreApplications() {
       setDownloadingId(null); // stop loader
     }
   };
+
+  // // Add this function inside the PreApplications component
+  // const handleDownloadPDF = async (form: FormData) => {
+  //   // Create a hidden div with the details you want to export
+  //   const containerId = `pdf-details-container-${form.id}`;
+  //   let container = document.getElementById(containerId);
+  //   if (!container) {
+  //     // Create the container if it doesn't exist
+  //     container = document.createElement("div");
+  //     container.id = containerId;
+  //     container.style.position = "fixed";
+  //     container.style.left = "-9999px";
+  //     container.style.top = "0";
+  //     container.style.width = "800px";
+  //     container.style.background = "white";
+  //     container.style.color = "black";
+  //     container.style.padding = "24px";
+  //     container.innerHTML = `
+  //       <h2 style='font-size: 24px; font-weight: bold; color: #eab308;'>Pre-Application Details</h2>
+  //       <hr style='margin: 12px 0;' />
+  //       <div><b>DBA:</b> ${form.business_dba || "-"}</div>
+  //       <div><b>Business Contact Name:</b> ${form.business_contact_name || "-"}</div>
+  //       <div><b>Bank Name:</b> ${form.bank_name || "-"}</div>
+  //       <div><b>Date:</b> ${form.created_at ? dayjs(form.created_at).format("DD-MM-YYYY") : "-"}</div>
+  //       <div><b>Status:</b> ${form.status}</div>
+  //       <div><b>Business City:</b> ${form.business_city || "-"}</div>
+  //       <div><b>Business State:</b> ${form.business_state || "-"}</div>
+  //       <div><b>Business Zip:</b> ${form.business_zip || "-"}</div>
+  //       <div><b>Business Phone Number:</b> ${form.business_phone_number || "-"}</div>
+  //       <div><b>Contact Number:</b> ${form.business_contact_number || "-"}</div>
+  //       <div><b>Business Start Date:</b> ${form.business_start_date || "-"}</div>
+  //       <div><b>Federal Tax ID:</b> ${form.business_tax_id || "-"}</div>
+  //       <!-- Add more fields as needed -->
+  //     `;
+  //     document.body.appendChild(container);
+  //   }
+  //   // Use html2canvas to render the container
+  //   const canvas = await html2canvas(container, { scale: 2 });
+  //   const imgData = canvas.toDataURL("image/png");
+  //   const pdf = new jsPDF({ orientation: "portrait", unit: "px", format: "a4" });
+  //   const pageWidth = pdf.internal.pageSize.getWidth();
+  //   const pageHeight = pdf.internal.pageSize.getHeight();
+  //   const imgProps = pdf.getImageProperties(imgData);
+  //   const pdfWidth = pageWidth - 40;
+  //   const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+  //   pdf.addImage(imgData, "PNG", 20, 20, pdfWidth, pdfHeight);
+  //   pdf.save(`pre-application-details-${form.id}.pdf`);
+  //   // Optionally remove the container after export
+  //   document.body.removeChild(container);
+  // };
+
+  // Add this function inside the PreApplications component
+  // const handleDownloadDesignPDF = async (form: FormData) => {
+  //   const containerId = `pdf-design-container-${form.id}`;
+  //   let container = document.getElementById(containerId);
+  //   // Always re-render the PreAppDetailsPDF content to ensure latest data
+  //   if (container) {
+  //     container.innerHTML = "";
+  //     ReactDOM.render(<PreAppDetailsPDF form={form} />, container);
+  //   }
+  //   // Wait for images to load
+  //   if (!container) return;
+  //   const images = container.getElementsByTagName("img");
+  //   await Promise.all(Array.from(images).map(img => {
+  //     if (img.complete) return Promise.resolve();
+  //     return new Promise(resolve => {
+  //       img.onload = img.onerror = resolve;
+  //     });
+  //   }));
+  //   const canvas = await html2canvas(container, { scale: 2 });
+  //   const imgData = canvas.toDataURL("image/png");
+  //   const pdf = new jsPDF({ orientation: "portrait", unit: "px", format: "a4" });
+  //   const pageWidth = pdf.internal.pageSize.getWidth();
+  //   const imgProps = pdf.getImageProperties(imgData);
+  //   const pdfWidth = pageWidth - 40;
+  //   const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+  //   pdf.addImage(imgData, "PNG", 20, 20, pdfWidth, pdfHeight);
+  //   pdf.save(`pre-application-design-${form.id}.pdf`);
+  // };
+
+  const handleDownloadDesignPDF = async (form: FormData) => {
+    const containerId = `pdf-design-container-${form.id}`;
+    const container = document.getElementById(containerId);
+
+    if (!container) return;
+
+    container.innerHTML = "";
+    ReactDOM.render(<PreAppDetailsPDF form={form} />, container);
+
+    // Wait for all images to load before rendering
+    const images = container.getElementsByTagName("img");
+    await Promise.all(
+      Array.from(images).map(img =>
+        img.complete
+          ? Promise.resolve()
+          : new Promise(resolve => {
+              img.onload = img.onerror = resolve;
+            })
+      )
+    );
+
+    const canvas = await html2canvas(container, { scale: 2 });
+    const imgHeight = canvas.height;
+    const imgWidth = canvas.width;
+
+    const imgData = canvas.toDataURL("image/png");
+    const pdf = new jsPDF("p", "px", "a4");
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    const margin = 20;
+
+    const ratio = (pageWidth - 2 * margin) / imgWidth;
+    const scaledHeight = imgHeight * ratio;
+
+    let position = 0;
+
+    while (position < scaledHeight) {
+      const pageCanvas = document.createElement("canvas");
+      const pageCtx = pageCanvas.getContext("2d")!;
+      const sliceHeight = Math.min(imgHeight, (pageHeight - 2 * margin) / ratio);
+      pageCanvas.width = imgWidth;
+      pageCanvas.height = sliceHeight;
+
+      // Copy portion of full canvas into page canvas
+      pageCtx.drawImage(canvas, 0, position / ratio, imgWidth, sliceHeight, 0, 0, imgWidth, sliceHeight);
+
+      const pageData = pageCanvas.toDataURL("image/png");
+      if (position > 0) pdf.addPage();
+      pdf.addImage(pageData, "PNG", margin, margin, pageWidth - 2 * margin, sliceHeight * ratio);
+      position += sliceHeight * ratio;
+    }
+
+    pdf.save(`pre-application-design-${form.id}.pdf`);
+  };
+
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -2539,13 +2636,13 @@ export default function PreApplications() {
                 {forms.map((form) => (
                   <tr key={form.id} className="hover:bg-zinc-800">
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                      {form.business_dba}
+                      {form.business_dba || "-"}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                      {form.business_contact_name}
+                      {form.business_contact_name || "-"}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                      {form.bank_name}
+                      {form.bank_name || "-"}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                       {dayjs(form.created_at).format("DD-MM-YYYY")}
@@ -2640,6 +2737,27 @@ export default function PreApplications() {
                             )}
                           </button>
                         {/* )} */}
+                        {/* <button
+                          onClick={() => handleDownloadPDF(form)}
+                          className="text-yellow-400 hover:text-yellow-500 flex items-center gap-1"
+                          title="Download Details as PDF"
+                        >
+                          <FileText className="h-4 w-4" />
+                          PDF
+                        </button> */}
+                        <button
+                          onClick={() => handleDownloadDesignPDF(form)}
+                          className="text-yellow-400 hover:text-yellow-500 flex items-center gap-1"
+                          title="Download Design PDF"
+                        >
+                          <FileText className="h-4 w-4" />
+                          PDF
+                        </button>
+                        {/* ...existing buttons... */}
+                        {/* Hidden container for PDF rendering */}
+                        <div id={`pdf-design-container-${form.id}`} style={{ position: "fixed", left: "-9999px", top: 0 }}>
+                          <PreAppDetailsPDF form={form} />
+                        </div>
                       </div>
                     </td>
 

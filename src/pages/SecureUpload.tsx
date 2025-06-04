@@ -387,7 +387,7 @@ const SecureUpload: React.FC = () => {
             )}
 
             {/* Personal Guarantee Section */}
-            <div className="mb-6 border border-yellow-400/20 rounded-lg p-4 mb-6">
+            {/* <div className="mb-6 border border-yellow-400/20 rounded-lg p-4 mb-6">
               <h3 className="text-sm font-medium text-yellow-400 mb-2">Is Personal Guarantee Required?</h3>
               <div className="flex gap-6 text-sm text-gray-300">
                 <label className="flex items-center space-x-2">
@@ -402,7 +402,7 @@ const SecureUpload: React.FC = () => {
 
                 </label>
               </div>
-            </div>
+            </div> */}
 
 
 

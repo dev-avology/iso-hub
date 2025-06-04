@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Calendar } from "lucide-react"; // Replace or remove if not using this icon
 
 const OwnerForm = ({ formData, setFormData }) => {
-  const [ownerCount, setOwnerCount] = useState(1);
+  const [ownerCount, setOwnerCount] = useState("");
 
   const handleOwnerChange = (e) => {
     const count = parseInt(e.target.value, 10);
@@ -149,10 +149,10 @@ const OwnerForm = ({ formData, setFormData }) => {
                   </label>
                   <input
                     type="text"
+                    required
                     name="ownership_first_name"
                     value={owner.ownership_first_name}
                     onChange={(e) => handleInputChange(index, e)}
-                    required
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
                   />
                 </div>
@@ -162,10 +162,10 @@ const OwnerForm = ({ formData, setFormData }) => {
                   </label>
                   <input
                     type="text"
+                    required
                     name="ownership_last_name"
                     value={owner.ownership_last_name}
                     onChange={(e) => handleInputChange(index, e)}
-                    required
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
                   />
                 </div>
@@ -182,7 +182,6 @@ const OwnerForm = ({ formData, setFormData }) => {
                     name="owner_street_address"
                     value={owner.owner_street_address}
                     onChange={(e) => handleInputChange(index, e)}
-                    required
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
                   />
                 </div>
@@ -195,7 +194,6 @@ const OwnerForm = ({ formData, setFormData }) => {
                     name="owner_street_address2"
                     value={owner.owner_street_address2}
                     onChange={(e) => handleInputChange(index, e)}
-                    required
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
                   />
                 </div>
@@ -209,7 +207,6 @@ const OwnerForm = ({ formData, setFormData }) => {
                     name="ownership_phone_number"
                     value={owner.ownership_phone_number}
                     onChange={(e) => handleInputChange(index, e)}
-                    required
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
                   />
                 </div>
@@ -225,7 +222,6 @@ const OwnerForm = ({ formData, setFormData }) => {
                     name="ownership_city"
                     value={owner.ownership_city}
                     onChange={(e) => handleInputChange(index, e)}
-                    required
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
                   />
                 </div>
@@ -238,7 +234,6 @@ const OwnerForm = ({ formData, setFormData }) => {
                     name="ownership_state"
                     value={owner.ownership_state}
                     onChange={(e) => handleInputChange(index, e)}
-                    required
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
                   />
                 </div>
@@ -251,7 +246,6 @@ const OwnerForm = ({ formData, setFormData }) => {
                     name="ownership_zip"
                     value={owner.ownership_zip}
                     onChange={(e) => handleInputChange(index, e)}
-                    required
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
                   />
                 </div>
@@ -266,7 +260,6 @@ const OwnerForm = ({ formData, setFormData }) => {
                     type="text"
                     name="ownership_percent"
                     onChange={(e) => handleInputChange(index, e)}
-                    required
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
                   />
                 </div>
@@ -279,7 +272,6 @@ const OwnerForm = ({ formData, setFormData }) => {
                     name="ownership_title"
                     value={owner.ownership_title}
                     onChange={(e) => handleInputChange(index, e)}
-                    required
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
                   />
                 </div>
@@ -293,7 +285,6 @@ const OwnerForm = ({ formData, setFormData }) => {
                     name="ownership_email"
                     value={owner.ownership_email}
                     onChange={(e) => handleInputChange(index, e)}
-                    required
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
                   />
                 </div>
@@ -310,7 +301,6 @@ const OwnerForm = ({ formData, setFormData }) => {
                       name="ownership_dob"
                       value={owner.ownership_dob}
                       onChange={(e) => handleInputChange(index, e)}
-                      required
                       className="mt-1 block w-full rounded bg-gray-700 text-white border border-gray-600 px-3 py-2"
                     />
                     <Calendar className="absolute right-3 top-2.5 h-5 w-5 text-gray-400 pointer-events-none" />
@@ -325,7 +315,6 @@ const OwnerForm = ({ formData, setFormData }) => {
                     name="ownership_social_security_number"
                     value={owner.ownership_social_security_number}
                     onChange={(e) => handleInputChange(index, e)}
-                    required
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
                   />
                 </div>
@@ -339,7 +328,6 @@ const OwnerForm = ({ formData, setFormData }) => {
                     name="ownership_driver_licence_number"
                     value={owner.ownership_driver_licence_number}
                     onChange={(e) => handleInputChange(index, e)}
-                    required
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
                   />
                 </div>

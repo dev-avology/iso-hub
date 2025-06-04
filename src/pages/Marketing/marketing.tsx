@@ -117,7 +117,7 @@ export default function Marketing() {
           title: data.data.title, // assuming response format { data: { title: "..." } }
           description: data.data.description
         });
-        setShowEditModal(true);
+        setShowEditModal(false);
       } else {
         throw new Error(data.message || "Item not found.");
       }
@@ -145,7 +145,7 @@ export default function Marketing() {
           id: itemId,
           name: data.data.name, // assuming response format { data: { title: "..." } }
         });
-        setShowCatEditModal(true);
+        setShowCatEditModal(false);
       } else {
         throw new Error(data.message || "Item not found.");
       }
@@ -254,107 +254,115 @@ export default function Marketing() {
   const confirmAndDeleteItem = (item, title) => {
     setSelectedRep({ id: item, name: title });
     setDeleteType("item");
-    setShowDeleteModal(true);
+    setShowDeleteModal(false);
   };
 
   const confirmAndDeleteCat = (catId, catName) => {
     setSelectedRep({ id: catId, name: catName });
     setDeleteType("category");
-    setShowDeleteModal(true);
+    setShowDeleteModal(false);
   };
 
   return (
     <>
-      {/* Header */}
-      <div className="mb-8 bg-yellow-400 rounded-lg p-6 shadow-lg">
-        <div className="flex items-center space-x-3">
-          <Megaphone className="h-10 w-10 text-black" />
-          <div>
-            <h1 className="text-3xl font-bold text-black">Marketing</h1>
-            <p className="text-black/80 mt-1">
-              Access and customize your marketing materials below:
-            </p>
+      <div className="relative">
+        {/* Blur overlay and Coming Soon watermark - fixed to main content area only */}
+        <div className="fixed top-16 left-[16rem] w-[calc(100vw-16rem)] h-full bg-black/10 backdrop-blur-[2px] z-50 flex items-center justify-center pointer-events-none">
+          <div className="text-4xl font-bold text-yellow-500/80 transform -rotate-12">
+            Coming Soon
           </div>
         </div>
-      </div>
 
-      {/* Add Category Button */}
-      <div>
-        <button
-          onClick={() => setShowModal(true)}
-          className="w-fit bg-yellow-400 rounded py-2 px-5 font-semibold uppercase flex items-center justify-center hover:bg-yellow-600 gap-2 text-black"
-        >
-          Add New Category
-        </button>
-      </div>
-
-      {loading ? (
-        <p className="text-white mt-4 text-center text-sm">Loading...</p>
-      ) : categories.length === 0 ? (
-        <div className="flex justify-center items-center mt-8">
-          <p className="text-white text-center text-sm">No marketing categories found.</p>
-        </div>
-      ) : (
-        categories.map((category) => (
-          <div key={category.id} className="markiting-wrap mt-8">
-            <div className="marketing-heading flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <h3 className="text-white text-base font-semibold">{category.name}</h3>
-                <button
-                  onClick={() => confirmAndDeleteCat(category.id, category.name)}
-                  className="text-red-500 hover:text-red-700"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-
-                <button
-                  onClick={() => handleEditCatClick(category.id)}
-                  className="text-white hover:text-gray-300"
-                >
-                  <Edit className="w-4 h-4" />
-                </button>
-
-
-              </div>
-              <button
-                onClick={() => {
-                  setSelectedCategoryId(category.id);
-                  setItems([{ title: "", description: "" }]);
-                  setShowItemModal(true);
-                }}
-                className="w-fit bg-yellow-400 rounded py-1 px-3 text-xs font-semibold uppercase flex items-center justify-center hover:bg-yellow-600 gap-1 text-black"
-              >
-                Add item
-              </button>
+        {/* Header */}
+        <div className="mb-8 bg-yellow-400 rounded-lg p-6 shadow-lg">
+          <div className="flex items-center space-x-3">
+            <Megaphone className="h-10 w-10 text-black" />
+            <div>
+              <h1 className="text-3xl font-bold text-black">Marketing</h1>
+              <p className="text-black/80 mt-1">
+                Access and customize your marketing materials below:
+              </p>
             </div>
-            {category.items.map((item, index) => (
-              <div key={index} className="markiting-list-wrap">
-                <div className="markiting-list group px-4 py-3 rounded border border-gray-700 mt-3 bg-gray-700 cursor-pointer relative text-white">
-                  <h4 className="font-medium text-sm">{item.title}</h4>
-                  <p className="text-xs text-gray-300 mt-0.5">
-                    {item.description}
-                  </p>
-                  <div className="edit-delete-btn absolute right-4 top-3 hidden group-hover:block">
-                    <div className="edit_data flex gap-2 items-center">
-                      <button onClick={() => handleEditItemClick(item.id)} className="hover:text-yellow-500">
-                        <Edit className="w-4 h-4" />
-                      </button>
-                      <button onClick={() => confirmAndDeleteItem(item.id, item.title)} className="hover:text-red-500">
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                      {/* <a href="#" className="hover:text-yellow-500">
-                        <Download className="w-4 h-4" />
-                      </a> */}
+          </div>
+        </div>
+
+        {/* Add Category Button */}
+        <div>
+           {/* onClick={() => setShowModal(true)} make true if working */}
+          <button
+            onClick={() => setShowModal(false)}
+            className="w-fit bg-yellow-400 rounded py-2 px-5 font-semibold uppercase flex items-center justify-center hover:bg-yellow-600 gap-2 text-black"
+          >
+            Add New Category
+          </button>
+        </div>
+
+        {loading ? (
+          <p className="text-white mt-4 text-center text-sm">Loading...</p>
+        ) : categories.length === 0 ? (
+          <div className="flex justify-center items-center mt-8">
+            <p className="text-white text-center text-sm">No marketing categories found.</p>
+          </div>
+        ) : (
+          categories.map((category) => (
+            <div key={category.id} className="markiting-wrap mt-8">
+              <div className="marketing-heading flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <h3 className="text-white text-base font-semibold">{category.name}</h3>
+                  <button
+                    onClick={() => confirmAndDeleteCat(category.id, category.name)}
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+
+                  <button
+                    onClick={() => handleEditCatClick(category.id)}
+                    className="text-white hover:text-gray-300"
+                  >
+                    <Edit className="w-4 h-4" />
+                  </button>
+
+
+                </div>
+                <button
+                  onClick={() => {
+                    setSelectedCategoryId(category.id);
+                    setItems([{ title: "", description: "" }]);
+                    setShowItemModal(false);
+                  }}
+                  className="w-fit bg-yellow-400 rounded py-1 px-3 text-xs font-semibold uppercase flex items-center justify-center hover:bg-yellow-600 gap-1 text-black"
+                >
+                  Add item
+                </button>
+              </div>
+              {category.items.map((item, index) => (
+                <div key={index} className="markiting-list-wrap">
+                  <div className="markiting-list group px-4 py-3 rounded border border-gray-700 mt-3 bg-gray-700 cursor-pointer relative text-white">
+                    <h4 className="font-medium text-sm">{item.title}</h4>
+                    <p className="text-xs text-gray-300 mt-0.5">
+                      {item.description}
+                    </p>
+                    <div className="edit-delete-btn absolute right-4 top-3 hidden group-hover:block">
+                      <div className="edit_data flex gap-2 items-center">
+                        <button onClick={() => handleEditItemClick(item.id)} className="hover:text-yellow-500">
+                          <Edit className="w-4 h-4" />
+                        </button>
+                        <button onClick={() => confirmAndDeleteItem(item.id, item.title)} className="hover:text-red-500">
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                        {/* <a href="#" className="hover:text-yellow-500">
+                          <Download className="w-4 h-4" />
+                        </a> */}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        ))
-      )}
-
-
+              ))}
+            </div>
+          ))
+        )}
+      </div>
 
       {/* Add Category Modal */}
       {showModal && (

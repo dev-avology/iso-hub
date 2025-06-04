@@ -204,6 +204,10 @@ function SortableVendorCard({ vendor, index, onEdit, onDelete, onShow, id }: Sor
     isDragging
   } = useSortable({ id });
 
+  const value = localStorage.getItem("auth_user");
+  const parsedUser = value ? JSON.parse(value) : null;
+  const roleId = parsedUser.role_id;
+
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
@@ -220,13 +224,17 @@ function SortableVendorCard({ vendor, index, onEdit, onDelete, onShow, id }: Sor
       className={`border pt-10 rounded-lg bg-white hover:shadow-md transition-shadow relative flex flex-col justify-between h-40 w-full min-w-0 ${isDragging ? 'shadow-lg' : ''}`}
     >
       <div className="absolute top-2 right-2 flex items-center space-x-2">
-        <button
-          className="text-blue-500 hover:text-blue-700"
-          title="Edit Vendor"
-          onClick={() => onEdit(vendor.id)}
-        >
-          <Pencil className="h-4 w-4" />
-        </button>
+
+        {(roleId === 1 || roleId === 2) && (
+          <button
+            className="text-blue-500 hover:text-blue-700"
+            title="Edit Vendor"
+            onClick={() => onEdit(vendor.id)}
+          >
+            <Pencil className="h-4 w-4" />
+          </button>
+        )}
+
         <a
           href={vendor.login_url}
           target="_blank"
