@@ -39,12 +39,12 @@ export default function LandingPage() {
     <div className="min-h-screen bg-black">
       {/* Version Toggle - for demo purposes */}
       <div className="fixed top-4 right-4 flex space-x-2 z-50">
-        <button
+        {/* <button
           onClick={() => setShowPitchDeck(true)}
           className="px-4 py-2 bg-yellow-400 text-black rounded-lg hover:bg-yellow-500 transition-colors"
         >
           <Presentation className="h-5 w-5" />
-        </button>
+        </button> */}
       </div>
 
       {showPitchDeck && <PitchDeck onClose={() => setShowPitchDeck(false)} />}
@@ -55,7 +55,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
           <div className="text-center">
             <div className="flex items-center justify-center mb-6">
-              <img src="ISOHubLOGO.png" alt="" style={{ maxWidth: '12%' }} />
+              <img src="ISOHubLOGO.png" alt="" style={{ maxWidth: '15%' }} />
 
               {/* <Shield className="h-12 w-12 text-yellow-400" /> */}
               {/* <h1 className="text-4xl font-bold text-white ml-3">
@@ -91,7 +91,7 @@ export default function LandingPage() {
       </div>
 
       {/* Video Section */}
-      <div className="py-24 bg-zinc-900/50">
+      {/* <div className="py-24 bg-zinc-900/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-white mb-4">
@@ -106,7 +106,6 @@ export default function LandingPage() {
           <div className="relative w-full max-w-4xl mx-auto bg-zinc-800 rounded-xl overflow-hidden shadow-2xl">
             <div className="w-full h-[500px] bg-zinc-800 flex items-center justify-center">
               {" "}
-              {/* height can be adjusted */}
               <iframe
                 width="100%"
                 height="100%"
@@ -119,7 +118,7 @@ export default function LandingPage() {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Features Grid */}
       <div className="py-24 bg-zinc-900">

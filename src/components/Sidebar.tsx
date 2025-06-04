@@ -20,7 +20,7 @@ const nonAdminCategories: Category[] = [
   // { name: 'Internal', icon: Briefcase },
   // { name: 'Misc', icon: MoreHorizontal },
   { name: 'ISO-Residuals', icon: FileText, href: 'https://dev.tracerpos.com/', external: true },
-  { name: 'ISO-AI', icon: Cpu, href: '#', onClick: () => (document.querySelector('#jacc-button') as HTMLElement)?.click() },
+  { name: 'ISO-AI', icon: Cpu, href: 'https://02aa0592-869c-416a-869f-4cb3baafbabd-00-17ngv8bepjtga.picard.replit.dev' , external: true},
   { name: 'Settings', icon: Settings },
   // { name: 'Users', icon: User, href: '/users' },
   // { name: 'Residuals', icon: FileText, href: 'https://dev.tracerpos.com/'  },

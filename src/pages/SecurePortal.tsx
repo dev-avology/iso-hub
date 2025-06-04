@@ -23,7 +23,7 @@ interface ApiResponse {
 interface EmailFormData {
   email: string;
   name: string;
-  formId: string;
+  // formId: string;
 }
 
 const imageTypes = ["jpg", "jpeg", "png", "gif"];
@@ -35,8 +35,9 @@ const SecurePortal: React.FC = () => {
   const [formData, setFormData] = useState<EmailFormData>({
     email: "",
     name: "",
-    formId: "",
+    // formId: "",
   });
+
   const [isLoading, setIsLoading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [files, setFiles] = useState<FileData[]>([]);
@@ -147,91 +148,136 @@ const SecurePortal: React.FC = () => {
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // const handleSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   setIsLoading(true);
+
+  //   try {
+  //     const token = localStorage.getItem("auth_token");
+  //     const userData = localStorage.getItem("auth_user");
+
+  //     if (!userData) {
+  //       throw new Error("User data not found");
+  //     }
+
+  //     const user = JSON.parse(userData);
+  //     const userId = user.id;
+
+  //     // Email validation
+  //     const emailRegex = /\S+@\S+\.\S+/;
+  //     if (!formData.email || !emailRegex.test(formData.email)) {
+  //       toast.error("Please enter a valid email address.");
+  //       return;
+  //     }
+
+  //     const formDataToSubmit = {
+  //       user_id: userId.toString(),
+  //       form_id: formData.formId,
+  //       personal_guarantee_required: 'yes',
+  //       clear_signature: 'e-signature',
+  //       email: formData.email,
+  //     };
+
+  //     console.log('Submitting form data:', formDataToSubmit);
+
+  //     const response = await fetch(
+  //       `${import.meta.env.VITE_API_BASE_URL}/user/clear-signature-mail`,
+  //       {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //         body: JSON.stringify(formDataToSubmit),
+  //       }
+  //     );
+
+  //     const responseData = await response.json();
+  //     console.log("API Response:", responseData);
+
+  //     if (!response.ok) {
+  //       if (response.status === 401) {
+  //         localStorage.removeItem("auth_token");
+  //         throw new Error("Session expired. Please login again.");
+  //       }
+  //       if (response.status === 404) {
+  //         throw new Error("API endpoint not found. Please contact support.");
+  //       }
+  //       if (response.status === 422 && responseData.errors) {
+  //         const validationErrors = responseData.errors as {
+  //           [key: string]: string[];
+  //         };
+  //         Object.values(validationErrors).forEach((errors: string[]) => {
+  //           errors.forEach((error) => toast.error(error));
+  //         });
+  //         throw new Error("Validation failed");
+  //       }
+  //       throw new Error(responseData.message || "Failed to send email");
+  //     }
+
+  //     toast.success("We've sent you an email to clear e-signature!");
+  //     setIsModalOpen(false);
+  //     setFormData({ email: "", name: "", formId: "" });
+  //     fetchFiles(); // Refresh the file list after sending email
+  //   } catch (error) {
+  //     console.error("Error sending email:", error);
+  //     if (error instanceof Error) {
+  //       if (error.message.includes("Session expired")) {
+  //         toast.error("Session expired. Please login again.");
+  //         // You might want to add navigation to login page here
+  //       } else if (error.message.includes("API endpoint not found")) {
+  //         toast.error("API endpoint not found. Please contact support.");
+  //       } else {
+  //         toast.error(error.message);
+  //       }
+  //     } else {
+  //       toast.error("An unexpected error occurred. Please try again.");
+  //     }
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
+
+   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
-      const token = localStorage.getItem("auth_token");
-      const userData = localStorage.getItem("auth_user");
-
+      const token = localStorage.getItem('auth_token');
+      const userData = localStorage.getItem('auth_user');
+      
       if (!userData) {
-        throw new Error("User data not found");
+        throw new Error('User data not found');
       }
 
       const user = JSON.parse(userData);
       const userId = user.id;
 
-      // Email validation
-      const emailRegex = /\S+@\S+\.\S+/;
-      if (!formData.email || !emailRegex.test(formData.email)) {
-        toast.error("Please enter a valid email address.");
-        return;
-      }
-
-      const formDataToSubmit = {
-        user_id: userId.toString(),
-        form_id: formData.formId,
-        personal_guarantee_required: 'yes',
-        clear_signature: 'e-signature',
-        email: formData.email,
-      };
-
-      console.log('Submitting form data:', formDataToSubmit);
-
-      const response = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/user/clear-signature-mail`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(formDataToSubmit),
-        }
-      );
-
-      const responseData = await response.json();
-      console.log("API Response:", responseData);
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/user/send-mail`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          ...formData,
+          user_id: userId.toString()
+        }),
+      });
 
       if (!response.ok) {
-        if (response.status === 401) {
-          localStorage.removeItem("auth_token");
-          throw new Error("Session expired. Please login again.");
-        }
-        if (response.status === 404) {
-          throw new Error("API endpoint not found. Please contact support.");
-        }
-        if (response.status === 422 && responseData.errors) {
-          const validationErrors = responseData.errors as {
-            [key: string]: string[];
-          };
-          Object.values(validationErrors).forEach((errors: string[]) => {
-            errors.forEach((error) => toast.error(error));
-          });
-          throw new Error("Validation failed");
-        }
-        throw new Error(responseData.message || "Failed to send email");
+        throw new Error('Failed to send email');
       }
 
-      toast.success("We've sent you an email to clear e-signature!");
+      const data = await response.json();
+      toast.success(data.message || 'Email sent successfully!');
       setIsModalOpen(false);
-      setFormData({ email: "", name: "", formId: "" });
+      setFormData({ email: '', name: '' });
       fetchFiles(); // Refresh the file list after sending email
     } catch (error) {
-      console.error("Error sending email:", error);
-      if (error instanceof Error) {
-        if (error.message.includes("Session expired")) {
-          toast.error("Session expired. Please login again.");
-          // You might want to add navigation to login page here
-        } else if (error.message.includes("API endpoint not found")) {
-          toast.error("API endpoint not found. Please contact support.");
-        } else {
-          toast.error(error.message);
-        }
-      } else {
-        toast.error("An unexpected error occurred. Please try again.");
-      }
+      console.error('Error sending email:', error);
+      toast.error('Failed to send email');
     } finally {
       setIsLoading(false);
     }
@@ -524,7 +570,7 @@ const SecurePortal: React.FC = () => {
                 />
               </div>
 
-              <div>
+              {/* <div>
                 <label className="block text-gray-300 mb-2">Select Form</label>
                 <select
                   name="formId"
@@ -540,7 +586,7 @@ const SecurePortal: React.FC = () => {
                     </option>
                   ))}
                 </select>
-              </div>
+              </div> */}
 
               <div className="pt-4">
                 <button
