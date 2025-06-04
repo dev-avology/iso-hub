@@ -221,10 +221,9 @@ function SortableVendorCard({ vendor, index, onEdit, onDelete, onShow, id }: Sor
       style={style}
       {...attributes}
       {...listeners}
-      className={`border pt-10 rounded-lg bg-white hover:shadow-md transition-shadow relative flex flex-col justify-between h-40 w-full min-w-0 ${isDragging ? 'shadow-lg' : ''}`}
+      className={`border pt-10 rounded-lg bg-white hover:shadow-md transition-shadow relative flex flex-col justify-between h-auto min-h-[160px] w-full min-w-0 p-4 ${isDragging ? 'shadow-lg' : ''}`}
     >
       <div className="absolute top-2 right-2 flex items-center space-x-2">
-
         {(roleId === 1 || roleId === 2) && (
           <button
             className="text-blue-500 hover:text-blue-700"
@@ -257,26 +256,26 @@ function SortableVendorCard({ vendor, index, onEdit, onDelete, onShow, id }: Sor
           <Trash2 className="h-4 w-4" />
         </button>
       </div>
-      <div className="flex items-center space-x-3 mb-2">
+      <div className="flex items-start space-x-4 mb-4">
         {vendor.logo_url ? (
           <img
             src={`${import.meta.env.VITE_IMAGE_URL}${vendor.logo_url}`}
             alt={vendor.vendor_name}
-            className="h-12 w-12 object-contain"
+            className="h-12 w-12 object-contain flex-shrink-0"
           />
         ) : (
-          <div className="h-12 w-12 bg-gray-100 rounded-full flex items-center justify-center">
+          <div className="h-12 w-12 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0">
             <span className="text-gray-400 text-lg">
               {vendor.vendor_name.charAt(0)}
             </span>
           </div>
         )}
         <div className="flex-1 min-w-0">
-          <h3 className="font-medium text-gray-900 truncate">
+          <h3 className="font-medium text-gray-900 mb-2">
             {vendor.vendor_name}
           </h3>
           <p
-            className="text-sm text-gray-500 line-clamp-2"
+            className="text-sm text-gray-500"
             title={vendor.description || "No description available"}
           >
             {vendor.description || "No description available"}
