@@ -8,6 +8,7 @@ import VendorTemplate from './pages/VendorTemplate';
 import PreApplications from './pages/PreApplications';
 import SecurePortal from './pages/SecurePortal';
 import SecureUpload from './pages/SecureUpload';
+import SecureUploadUserFiles from './pages/SecureUploadUserFiles';
 import JACC from './components/JACC';
 import LogIn from './pages/logins/login';
 import Users from './pages/users/users';
@@ -60,7 +61,7 @@ function ProtectedLayout({ children }: { children: React.ReactNode }) {
         <div className="max-w-7xl mx-auto">
           {children}
         </div>
-        <JACC />
+        {/* <JACC /> */}
       </Layout>
     </ProtectedRoute>
   );
@@ -101,6 +102,9 @@ function AppRoutes() {
       <Route path="/" element={isAuthenticated ? <ProtectedLayout><Logins /></ProtectedLayout> : <LandingPage onAuthenticate={() => {}} onNavigate={() => {}} />} />
       <Route path="/login" element={<LogIn />} />
       <Route path="/secure-upload/:user_id/:user_data" element={<SecureUpload />} />
+
+      <Route path="/secure-uploads/:user_data" element={<SecureUploadUserFiles />} />
+
       <Route path="/iso-forms/:full_name/:user_id" element={<JotForm />} />
       <Route path="/privacy-policy" element={<PrivacyPolicy />} />
       <Route path="/users" element={<ProtectedLayout><Users /></ProtectedLayout>} />

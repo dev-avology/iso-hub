@@ -20,7 +20,7 @@ const nonAdminCategories: Category[] = [
   // { name: 'Internal', icon: Briefcase },
   // { name: 'Misc', icon: MoreHorizontal },
   { name: 'ISO-Residuals', icon: FileText, href: 'https://dev.tracerpos.com/', external: true },
-  { name: 'ISO-AI', icon: Cpu, href: '#', onClick: () => (document.querySelector('#jacc-button') as HTMLElement)?.click() },
+  { name: 'ISO-AI', icon: Cpu, href: 'https://02aa0592-869c-416a-869f-4cb3baafbabd-00-17ngv8bepjtga.picard.replit.dev' , external: true},
   { name: 'Settings', icon: Settings },
   // { name: 'Users', icon: User, href: '/users' },
   // { name: 'Residuals', icon: FileText, href: 'https://dev.tracerpos.com/'  },
@@ -93,12 +93,12 @@ export default function Sidebar({
         {/* Logo */}
         <div className="p-6 border-b border-yellow-400/20">
           <div className="flex items-center justify-center space-x-2">
-            <Shield className="h-8 w-8 text-yellow-400" />
+            {/* <Shield className="h-8 w-8 text-yellow-400" /> */}
             <div className="text-xl font-bold text-white tracking-tight">
-              ISO<span className="text-yellow-400">Hub</span>
+              <img src="ISOHubLOGO.png" alt="" style={{ maxWidth: '71%' }} />
             </div>
           </div>
-          <div className="mt-1 text-center text-xs text-yellow-400/60">
+          <div className="mt-1 text-xs text-yellow-400/60">
             Secure Document Management
           </div>
         </div>
@@ -174,7 +174,7 @@ export default function Sidebar({
 
             {isUserNotification && (
               <div className="relative group mt-4">
-                {isUser && <UserRep />}
+                {/* {isUser && <UserRep />} */}
                 {/* <div
                   className={`group flex items-center px-3 py-2 text-sm font-medium rounded-md hover:text-yellow-400 transition-all text-gray-300 hover:border-l-4 hover:border-yellow-400`}
                 >

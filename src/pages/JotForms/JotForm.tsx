@@ -540,7 +540,6 @@ export default function JotForm() {
                 <input
                   type="text"
                   {...isReadOnly}
-                  required
                   onChange={handleInputChange}
                   name="dba_street_address"
                   className={`mt-1 block w-full rounded-md shadow-sm ${
@@ -562,7 +561,6 @@ export default function JotForm() {
                 </label>
                 <input
                   type="text"
-                  required
                   name="dba_street_address2"
                   onChange={handleInputChange}
                   className={`mt-1 block w-full rounded-md shadow-sm ${
@@ -585,7 +583,6 @@ export default function JotForm() {
                   <input
                     type="text"
                     name="business_city"
-                    required
                     onChange={handleInputChange}
                     value={formData.business_city}
                     className={`mt-1 block w-full rounded-md shadow-sm ${
@@ -607,7 +604,6 @@ export default function JotForm() {
                   <input
                     type="text"
                     name="business_state"
-                    required
                     onChange={handleInputChange}
                     value={formData.business_state}
                     className={`mt-1 block w-full rounded-md shadow-sm ${
@@ -629,7 +625,6 @@ export default function JotForm() {
                   <input
                     type="text"
                     name="business_zip"
-                    required
                     onChange={handleInputChange}
                     value={formData.business_zip}
                     className={`mt-1 block w-full rounded-md shadow-sm ${
@@ -687,7 +682,6 @@ export default function JotForm() {
                     <input
                       type="text"
                       placeholder="Please type another option here"
-                      required
                       name="business_profile_business_type_other"
                       onChange={handleInputChange}
                       className={`mt-1 block w-full rounded-md shadow-sm ${
@@ -732,7 +726,6 @@ export default function JotForm() {
                 </label>
                 <input
                   type="text"
-                  required
                   onChange={handleInputChange}
                   name="corporate_street_address1"
                   className={`mt-1 block w-full rounded-md shadow-sm ${
@@ -753,7 +746,6 @@ export default function JotForm() {
                 </label>
                 <input
                   type="text"
-                  required
                   onChange={handleInputChange}
                   name="corporate_street_address2"
                   className={`mt-1 block w-full rounded-md shadow-sm ${
@@ -778,7 +770,6 @@ export default function JotForm() {
                   <input
                     type="text"
                     name="corporate_city"
-                    required
                     onChange={handleInputChange}
                     className={`mt-1 block w-full rounded-md shadow-sm ${
                       errors.corporate_city
@@ -799,7 +790,6 @@ export default function JotForm() {
                   <input
                     type="text"
                     name="corporate_state"
-                    required
                     onChange={handleInputChange}
                     className={`mt-1 block w-full rounded-md shadow-sm ${
                       errors.corporate_state
@@ -820,7 +810,6 @@ export default function JotForm() {
                   <input
                     type="text"
                     name="corporate_zip"
-                    required
                     onChange={handleInputChange}
                     className={`mt-1 block w-full rounded-md shadow-sm ${
                       errors.corporate_zip
@@ -845,7 +834,6 @@ export default function JotForm() {
                     type="text"
                     {...isReadOnly}
                     name="business_contact_name"
-                    required
                     onChange={handleInputChange}
                     value={formData.business_contact_name}
                     className={`mt-1 block w-full rounded-md shadow-sm ${
@@ -869,7 +857,6 @@ export default function JotForm() {
                     type="text"
                     {...isReadOnly}
                     name="business_contact_mail"
-                    required
                     onChange={handleInputChange}
                     className={`mt-1 block w-full rounded-md shadow-sm ${
                       errors.business_contact_mail
@@ -892,7 +879,6 @@ export default function JotForm() {
                   <input
                     type="number"
                     name="business_location_phone_number"
-                    required
                     onChange={handleInputChange}
                     className={`mt-1 block w-full rounded-md shadow-sm ${
                       errors.business_location_phone_number
@@ -918,7 +904,6 @@ export default function JotForm() {
                       type="date"
                       name="business_start_date"
                       onChange={handleInputChange}
-                      required
                       className="mt-1 block w-full rounded bg-gray-700 text-white border border-gray-600 px-3 py-2"
                     />
                     <Calendar className="absolute right-3 top-2.5 h-5 w-5 text-gray-400 pointer-events-none" />
@@ -932,7 +917,6 @@ export default function JotForm() {
                   <input
                     type="text"
                     name="business_website"
-                    required
                     onChange={handleInputChange}
                     className={`mt-1 block w-full rounded-md shadow-sm ${
                       errors.business_website
@@ -955,7 +939,6 @@ export default function JotForm() {
                   <input
                     type="text"
                     name="business_legal_name"
-                    required
                     onChange={handleInputChange}
                     className={`mt-1 block w-full rounded-md shadow-sm ${
                       errors.business_legal_name
@@ -980,7 +963,6 @@ export default function JotForm() {
                     type="text"
                     {...isReadOnly}
                     name="business_tax_id"
-                    required
                     onChange={handleInputChange}
                     className={`mt-1 block w-full rounded-md shadow-sm ${
                       errors.business_tax_id
@@ -1003,7 +985,6 @@ export default function JotForm() {
                     type="text"
                     {...isReadOnly}
                     name="business_products_sold"
-                    required
                     onChange={handleInputChange}
                     className={`mt-1 block w-full rounded-md shadow-sm ${
                       errors.business_products_sold
@@ -1027,7 +1008,6 @@ export default function JotForm() {
                     type="text"
                     {...isReadOnly}
                     name="business_return_policy"
-                    required
                     onChange={handleInputChange}
                     className={`mt-1 block w-full rounded-md shadow-sm ${
                       errors.business_return_policy
@@ -1073,7 +1053,6 @@ export default function JotForm() {
                   </label>
                   <input
                     type="text"
-                    required
                     name="bank_name"
                     onChange={handleInputChange}
                     value={formData.bank_name}
@@ -1093,7 +1072,6 @@ export default function JotForm() {
                   </label>
                   <input
                     type="text"
-                    required
                     name="aba_routing"
                     onChange={handleInputChange}
                     value={formData.aba_routing}
@@ -1114,7 +1092,6 @@ export default function JotForm() {
                   </label>
                   <input
                     type="text"
-                    required
                     name="doa"
                     onChange={handleInputChange}
                     value={formData.doa}
@@ -1236,7 +1213,6 @@ export default function JotForm() {
                           type="radio"
                           name="processing_services"
                           onChange={handleInputChange}
-                          required
                           value={value}
                           checked={formData.processing_services === value}
                           className="mr-2 h-4 w-4 border-gray-300 text-yellow-400 focus:ring-yellow-400"
@@ -1325,7 +1301,6 @@ export default function JotForm() {
                   </label>
                   <input
                     type="text"
-                    required
                     name="terminal_type_or_model"
                     onChange={handleInputChange}
                     value={formData.terminal_type_or_model}
@@ -1359,7 +1334,6 @@ export default function JotForm() {
                       >
                         <input
                           type="radio"
-                          required
                           name="mobile_app"
                           onChange={handleInputChange}
                           value={value}
@@ -1406,7 +1380,6 @@ export default function JotForm() {
                     </label>
                     <input
                       type="text"
-                      required
                       name="mobile_app_cardreader_type_model"
                       onChange={handleInputChange}
                       value={formData.mobile_app_cardreader_type_model}
@@ -1468,7 +1441,6 @@ export default function JotForm() {
                     </label>
                     <input
                       type="text"
-                      required
                       name="pos_special_features"
                       onChange={handleInputChange}
                       value={formData.pos_special_features}
@@ -1490,7 +1462,6 @@ export default function JotForm() {
                     </label>
                     <input
                       type="text"
-                      required
                       name="system_type_model"
                       onChange={handleInputChange}
                       value={formData.system_type_model}
@@ -1512,7 +1483,6 @@ export default function JotForm() {
                     </label>
                     <input
                       type="text"
-                      required
                       name="number_of_stations"
                       onChange={handleInputChange}
                       value={formData.number_of_stations}
@@ -1534,7 +1504,6 @@ export default function JotForm() {
                     </label>
                     <input
                       type="text"
-                      required
                       name="pos_other_items"
                       onChange={handleInputChange}
                       value={formData.pos_other_items}
@@ -1583,7 +1552,6 @@ export default function JotForm() {
                       >
                         <input
                           type="radio"
-                          required
                           name="virtual_terminal"
                           onChange={handleInputChange}
                           value={value}
@@ -1637,7 +1605,6 @@ export default function JotForm() {
                       >
                         <input
                           type="radio"
-                          required
                           name="location_description"
                           onChange={handleInputChange}
                           value={value}
@@ -1656,50 +1623,7 @@ export default function JotForm() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-white">
-                      Estimated Yearly VisaMastercardAMEXDiscover
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      name="estimation_early_master_card"
-                      onChange={handleInputChange}
-                      className={`mt-1 block w-full rounded-md shadow-sm ${
-                        errors.estimation_early_master_card
-                          ? "border-red-500"
-                          : "border-gray-300"
-                      }`}
-                    />
-                    {/* {errors.estimation_early_master_card && (
-                      <p className="text-red-500 text-sm mt-1">
-                        {errors.estimation_early_master_card[0]}
-                      </p>
-                    )} */}
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-white">
-                      Estimated Average Ticket
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      name="estimated_average_ticket"
-                      onChange={handleInputChange}
-                      className={`mt-1 block w-full rounded-md shadow-sm ${
-                        errors.estimated_average_ticket
-                          ? "border-red-500"
-                          : "border-gray-300"
-                      }`}
-                    />
-                    {/* {errors.estimated_average_ticket && (
-                      <p className="text-red-500 text-sm mt-1">
-                        {errors.estimated_average_ticket[0]}
-                      </p>
-                    )} */}
-                  </div>
-                </div>
+              
               </div>
             </div>
           </fieldset>
@@ -1710,6 +1634,54 @@ export default function JotForm() {
               Credit Card Processing Information
             </legend>
             <div className="space-y-6">
+
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-white">
+                    Estimated Yearly VisaMastercardAMEXDiscover
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    name="estimation_early_master_card"
+                    onChange={handleInputChange}
+                    className={`mt-1 block w-full rounded-md shadow-sm ${
+                      errors.estimation_early_master_card
+                        ? "border-red-500"
+                        : "border-gray-300"
+                    }`}
+                  />
+                  {/* {errors.estimation_early_master_card && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.estimation_early_master_card[0]}
+                    </p>
+                  )} */}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-white">
+                    Estimated Average Ticket
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    name="estimated_average_ticket"
+                    onChange={handleInputChange}
+                    className={`mt-1 block w-full rounded-md shadow-sm ${
+                      errors.estimated_average_ticket
+                        ? "border-red-500"
+                        : "border-gray-300"
+                    }`}
+                  />
+                  {/* {errors.estimated_average_ticket && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.estimated_average_ticket[0]}
+                    </p>
+                  )} */}
+                </div>
+              </div>
+
+
               <div>
                 <label className="block text-sm font-medium text-white">
                   Estimated Highest ticket you will process
@@ -1736,7 +1708,7 @@ export default function JotForm() {
                       <input
                         type="range"
                         required
-                        min="0"
+                        min="50"
                         max="100"
                         name="transaction_card_present"
                         value={formData.transaction_card_present}
@@ -1753,7 +1725,7 @@ export default function JotForm() {
                     <div className="flex items-center gap-2">
                       <input
                         type="range"
-                        min="0"
+                        min="50"
                         required
                         max="100"
                         name="transaction_keyed_in"
@@ -1773,7 +1745,7 @@ export default function JotForm() {
                     <div className="flex items-center gap-2">
                       <input
                         type="range"
-                        min="0"
+                        min="50"
                         max="100"
                         required
                         name="transaction_all_online"
@@ -1851,7 +1823,7 @@ export default function JotForm() {
                   Select Tip Amounts to be added to the receipts
                 </label>
                 <div className="flex flex-col gap-2">
-                  {["18%", "20%", "25%", "15%"].map((tip) => (
+                  {["15%", "18%", "20%", "25%"].map((tip) => (
                     <label
                       key={tip}
                       className="inline-flex items-center text-white"

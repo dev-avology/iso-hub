@@ -7,7 +7,7 @@ import { useSearchParams, useParams } from "react-router-dom";
 
 const imageTypes = ['jpg', 'jpeg', 'png', 'gif'];
 
-const SecureUpload: React.FC = () => {
+const SecureUploadUserFiles: React.FC = () => {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [isValidLink, setIsValidLink] = useState<boolean>(false);
@@ -20,9 +20,9 @@ const SecureUpload: React.FC = () => {
   const [signatureType, setSignatureType] = useState("e-signature");
   const data = searchParams.get('data');
   const [hoveredFileIdx, setHoveredFileIdx] = useState<number | null>(null);
-  const { user_id, user_data } = useParams<{ user_id: string,user_data: string }>();
+  const { user_data } = useParams<{ user_data: string }>();
 
-  const user_new_data  = user_id+"&"+user_data;
+  const user_new_data  = user_data;
   useEffect(() => {
     const checkUniqueString = async () => {
       // if (!data) {
@@ -32,7 +32,7 @@ const SecureUpload: React.FC = () => {
       // }
 
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/file/check-unique-string/${user_new_data}`);
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/file/check-unique-string-for-user/${user_new_data}`);
 
         const responseData = await response.json();
 
@@ -119,7 +119,7 @@ const SecureUpload: React.FC = () => {
       }
     }
 
-    // try {
+    try {
       setIsUploading(true);
       const formData = new FormData();
       formData.append('unique_string', user_new_data);
@@ -137,7 +137,7 @@ const SecureUpload: React.FC = () => {
       });
 
       const token = localStorage.getItem('auth_token');
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/upload-files`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/upload-user-files`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -156,12 +156,12 @@ const SecureUpload: React.FC = () => {
       setUploadedFiles([]);
       setSignatureDate('');
       clearSignature();
-    // } catch (error) {
-    //   console.error('Upload error:', error);
-    //   toast.error('Failed to upload files');
-    // } finally {
-    //   setIsUploading(false);
-    // }
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast.error('Failed to upload files');
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const formatFileSize = (bytes: number): string => {
@@ -433,4 +433,4 @@ const SecureUpload: React.FC = () => {
   );
 };
 
-export default SecureUpload; 
+export default SecureUploadUserFiles; 

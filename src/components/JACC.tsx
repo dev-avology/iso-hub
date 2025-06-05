@@ -50,7 +50,7 @@ export default function JACC() {
         onClick={() => setIsMinimized(false)}
         className="fixed bottom-4 right-4 p-4 bg-zinc-900 rounded-full shadow-xl border border-yellow-400/20 text-yellow-400 hover:bg-zinc-800 transition-colors duration-200"
       >
-        <Bot className="h-6 w-6" />
+        {/* <Bot className="h-6 w-6" /> */}
       </button>
     );
   }
