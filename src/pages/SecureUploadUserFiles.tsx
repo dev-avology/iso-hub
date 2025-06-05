@@ -332,7 +332,8 @@ const SecureUploadUserFiles: React.FC = () => {
             )}
 
             {/* Signature Section - Conditional Arrangement */}
-            {signatureType === "clearance" ? (
+
+            {/* {signatureType === "clearance" ? (
               <div className="border border-yellow-400/20 rounded-lg p-4 mb-6">
                 <h3 className="text-sm font-medium text-yellow-400 mb-4">Clearance Signature</h3>
                 <p className="text-gray-400">Please submit a physical clearance signature or upload scanned copy.</p>
@@ -341,7 +342,6 @@ const SecureUploadUserFiles: React.FC = () => {
               <div className="border border-yellow-400/20 rounded-lg p-4 mb-6">
                 <h3 className="text-sm font-medium text-yellow-400 mb-4">E-signature</h3>
 
-                {/* Date Field */}
                 <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
                   <div>
                     <label htmlFor="signature_date" className="block text-sm font-medium text-gray-300 mb-1">
@@ -362,7 +362,6 @@ const SecureUploadUserFiles: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Signature Field */}
                 <div className="mt-3">
                   <label className="block text-sm font-medium text-gray-300 mb-1">Signature</label>
                   <div className="border border-gray-600 rounded bg-white">
@@ -373,7 +372,6 @@ const SecureUploadUserFiles: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Clear Signature Button */}
                 <div className="flex items-center justify-end md:justify-start mt-2">
                   <button
                     type="button"
@@ -384,7 +382,7 @@ const SecureUploadUserFiles: React.FC = () => {
                   </button>
                 </div>
               </div>
-            )}
+            )} */}
 
             {/* Personal Guarantee Section */}
             {/* <div className="mb-6 border border-yellow-400/20 rounded-lg p-4 mb-6">
