@@ -32,10 +32,10 @@ const adminCategories = [
 ];
 
 const adminSubMenu = [
-  { name: 'Home', icon: User, path: '/admin' },
+  { name: 'Users', icon: User, path: '/admin' },
   { name: 'Team Member', icon: User, path: '/teammember' },
   // { name: 'Vendor', icon: User, path: '/vendor' },
-  { name: 'Documents', icon: File, path: '/master_database_documents' },
+  { name: 'Documents', icon: File, path: '/documents' },
   // { name: 'All Reps', icon: User, path: '/all_reps' },
   { name: 'Notifications', icon: Bell, path: '/application_notifications' },
   // { name: 'Forms', icon: FormInput, path: '/forms' },

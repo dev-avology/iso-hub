@@ -33,7 +33,7 @@ const ROLE_MAPPING = {
   '3': 'Manager',
   '4': 'Team Leader',
   '5': 'User',
-  '6': 'Team Member'
+  // '6': 'Team Member'
 };
 
 export default function Admin() {
@@ -54,6 +54,7 @@ export default function Admin() {
 
   // Filter states
   const [managersChecked, setManagersChecked] = useState(false);
+  const [adminChecked, setAdminChecked] = useState(false);
   const [teamLeadersChecked, setTeamLeadersChecked] = useState(false);
   const [usersChecked, setUsersChecked] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -284,6 +285,10 @@ export default function Admin() {
     setManagersChecked(e.target.checked);
   };
 
+  const handleAdminChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+   setAdminChecked(e.target.checked);
+  };
+
   const handleTeamLeadersChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTeamLeadersChecked(e.target.checked);
   };
@@ -294,21 +299,38 @@ export default function Admin() {
 
   // Filter the users array based on checked roles and exclude role_id 1 and 2
   const filteredUsers = users.filter((user) => {
-    // First exclude role_id 1 and 2
-    if (user.role_id === 1 || user.role_id === 2) return false;
-
     // Then apply checkbox filters
-    if (!managersChecked && !teamLeadersChecked && !usersChecked) return true;
+    if (!managersChecked && !teamLeadersChecked && !usersChecked && !adminChecked) return true;
     if (managersChecked && user.role_id === 3) return true;
     if (teamLeadersChecked && user.role_id === 4) return true;
     if (usersChecked && user.role_id === 5) return true;
+    if (adminChecked && (user.role_id === 1 || user.role_id === 2)) return true;
     return false;
   });
+
+  const value = localStorage.getItem("auth_user");
+  const parsedUser = value ? JSON.parse(value) : null;
 
   return (
     <>
       <Toaster position="top-right" reverseOrder={false} />
       <div className="shortmembers my-10 flex gap-7 items-center w-full text-center bg-yellow-500 py-5 px-5 rounded">
+
+        {(parsedUser.role_id === 1 || parsedUser.role_id === 2 ) && (
+
+        <div className="short text-white font-medium flex items-center gap-2">
+          <input
+            type="checkbox"
+            className="h-[20px] w-[20px]"
+            onChange={handleAdminChange}
+            checked={adminChecked}
+          />
+          <span>Admin</span>
+        </div>
+
+        )}
+
+
         <div className="short text-white font-medium flex items-center gap-2">
           <input
             type="checkbox"
@@ -334,7 +356,7 @@ export default function Admin() {
             onChange={handleUsersChange}
             checked={usersChecked}
           />
-          <span>Users</span>
+          <span>Users/Reps</span>
         </div>
       </div>
 
@@ -500,7 +522,7 @@ export default function Admin() {
                   <option value="3">Manager</option>
                   <option value="4">Team Leader</option>
                   <option value="5">User</option>
-                  <option value="6">Team Member</option>
+                  {/* <option value="6">Team Member</option> */}
                 </select>
               </div>
 
@@ -641,7 +663,7 @@ export default function Admin() {
                   <option value="3">Manager</option>
                   <option value="4">Team Leader</option>
                   <option value="5">User</option>
-                  <option value="6">Team member</option>
+                  {/* <option value="6">Team member</option> */}
                 </select>
               </div>
 

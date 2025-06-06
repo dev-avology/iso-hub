@@ -2399,85 +2399,6 @@ export default function PreApplications() {
     }
   };
 
-  // // Add this function inside the PreApplications component
-  // const handleDownloadPDF = async (form: FormData) => {
-  //   // Create a hidden div with the details you want to export
-  //   const containerId = `pdf-details-container-${form.id}`;
-  //   let container = document.getElementById(containerId);
-  //   if (!container) {
-  //     // Create the container if it doesn't exist
-  //     container = document.createElement("div");
-  //     container.id = containerId;
-  //     container.style.position = "fixed";
-  //     container.style.left = "-9999px";
-  //     container.style.top = "0";
-  //     container.style.width = "800px";
-  //     container.style.background = "white";
-  //     container.style.color = "black";
-  //     container.style.padding = "24px";
-  //     container.innerHTML = `
-  //       <h2 style='font-size: 24px; font-weight: bold; color: #eab308;'>Pre-Application Details</h2>
-  //       <hr style='margin: 12px 0;' />
-  //       <div><b>DBA:</b> ${form.business_dba || "-"}</div>
-  //       <div><b>Business Contact Name:</b> ${form.business_contact_name || "-"}</div>
-  //       <div><b>Bank Name:</b> ${form.bank_name || "-"}</div>
-  //       <div><b>Date:</b> ${form.created_at ? dayjs(form.created_at).format("DD-MM-YYYY") : "-"}</div>
-  //       <div><b>Status:</b> ${form.status}</div>
-  //       <div><b>Business City:</b> ${form.business_city || "-"}</div>
-  //       <div><b>Business State:</b> ${form.business_state || "-"}</div>
-  //       <div><b>Business Zip:</b> ${form.business_zip || "-"}</div>
-  //       <div><b>Business Phone Number:</b> ${form.business_phone_number || "-"}</div>
-  //       <div><b>Contact Number:</b> ${form.business_contact_number || "-"}</div>
-  //       <div><b>Business Start Date:</b> ${form.business_start_date || "-"}</div>
-  //       <div><b>Federal Tax ID:</b> ${form.business_tax_id || "-"}</div>
-  //       <!-- Add more fields as needed -->
-  //     `;
-  //     document.body.appendChild(container);
-  //   }
-  //   // Use html2canvas to render the container
-  //   const canvas = await html2canvas(container, { scale: 2 });
-  //   const imgData = canvas.toDataURL("image/png");
-  //   const pdf = new jsPDF({ orientation: "portrait", unit: "px", format: "a4" });
-  //   const pageWidth = pdf.internal.pageSize.getWidth();
-  //   const pageHeight = pdf.internal.pageSize.getHeight();
-  //   const imgProps = pdf.getImageProperties(imgData);
-  //   const pdfWidth = pageWidth - 40;
-  //   const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-  //   pdf.addImage(imgData, "PNG", 20, 20, pdfWidth, pdfHeight);
-  //   pdf.save(`pre-application-details-${form.id}.pdf`);
-  //   // Optionally remove the container after export
-  //   document.body.removeChild(container);
-  // };
-
-  // Add this function inside the PreApplications component
-  // const handleDownloadDesignPDF = async (form: FormData) => {
-  //   const containerId = `pdf-design-container-${form.id}`;
-  //   let container = document.getElementById(containerId);
-  //   // Always re-render the PreAppDetailsPDF content to ensure latest data
-  //   if (container) {
-  //     container.innerHTML = "";
-  //     ReactDOM.render(<PreAppDetailsPDF form={form} />, container);
-  //   }
-  //   // Wait for images to load
-  //   if (!container) return;
-  //   const images = container.getElementsByTagName("img");
-  //   await Promise.all(Array.from(images).map(img => {
-  //     if (img.complete) return Promise.resolve();
-  //     return new Promise(resolve => {
-  //       img.onload = img.onerror = resolve;
-  //     });
-  //   }));
-  //   const canvas = await html2canvas(container, { scale: 2 });
-  //   const imgData = canvas.toDataURL("image/png");
-  //   const pdf = new jsPDF({ orientation: "portrait", unit: "px", format: "a4" });
-  //   const pageWidth = pdf.internal.pageSize.getWidth();
-  //   const imgProps = pdf.getImageProperties(imgData);
-  //   const pdfWidth = pageWidth - 40;
-  //   const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-  //   pdf.addImage(imgData, "PNG", 20, 20, pdfWidth, pdfHeight);
-  //   pdf.save(`pre-application-design-${form.id}.pdf`);
-  // };
-
   const handleDownloadDesignPDF = async (form: FormData) => {
     setDownloadingPDFId(form.id);
     try {
@@ -2906,7 +2827,7 @@ export default function PreApplications() {
               </div>
 
               <h3 className="text-2xl font-bold text-white mb-2">
-                Delete JotForm
+                Delete Pre-Application Form
               </h3>
 
               <p className="text-gray-300 mb-6">

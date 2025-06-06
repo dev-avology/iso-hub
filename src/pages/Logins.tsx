@@ -248,13 +248,18 @@ function SortableVendorCard({ vendor, index, onEdit, onDelete, onShow, id }: Sor
         >
           <ExternalLink className="h-4 w-4" />
         </a>
-        <button
-          className="text-red-500 hover:text-red-700"
-          title="Delete Vendor"
-          onClick={() => onDelete(vendor.id)}
-        >
-          <Trash2 className="h-4 w-4" />
-        </button>
+
+        {(roleId === 1 || roleId === 2) && (
+
+          <button
+            className="text-red-500 hover:text-red-700"
+            title="Delete Vendor"
+            onClick={() => onDelete(vendor.id)}
+          >
+            <Trash2 className="h-4 w-4" />
+          </button>
+
+        )}
       </div>
       <div className="flex items-start space-x-4 mb-4">
         {vendor.logo_url ? (
@@ -314,6 +319,9 @@ export default function Logins() {
   const [isLoading, setIsLoading] = useState(false);
   const [editVendorId, setEditVendorId] = useState<number | null>(null);
   const [selectedVendor, setSelectedVendor] = useState<VendorTemplate | null>(null);
+
+  const parsedUser = JSON.parse(localStorage.getItem("auth_user") || "{}");
+  const role_id = parsedUser.role_id;
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -816,6 +824,8 @@ export default function Logins() {
                       </span>
                     </span>
                   </button>
+
+                  {(role_id === 1 || role_id === 2) && (
                   <button
                     onClick={() => openAddVendorModal(category.id)}
                     disabled={isLoading}
@@ -833,6 +843,7 @@ export default function Logins() {
                       `Add ${category.name}`
                     )}
                   </button>
+                  )}
                 </div>
                 {isOpen && (
                   <div className="border-t border-gray-200">
