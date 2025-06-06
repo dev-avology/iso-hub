@@ -115,7 +115,7 @@ const SecurePortal: React.FC = () => {
       const userId = user.id;
 
       const response = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/file/lists/${userId}`,
+        `${import.meta.env.VITE_API_BASE_URL}/file/user-lists/${userId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
