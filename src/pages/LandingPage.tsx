@@ -205,7 +205,7 @@ export default function LandingPage() {
             </div>
 
             {/* Compliance */}
-            <div className="bg-zinc-800 rounded-xl p-6 border border-yellow-400/20">
+            {/* <div className="bg-zinc-800 rounded-xl p-6 border border-yellow-400/20">
               <div className="h-12 w-12 bg-yellow-400/10 rounded-lg flex items-center justify-center mb-4">
                 <Shield className="h-6 w-6 text-yellow-400" />
               </div>
@@ -216,7 +216,7 @@ export default function LandingPage() {
                 Stay compliant with built-in tools for document retention and
                 audit trails.
               </p>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
