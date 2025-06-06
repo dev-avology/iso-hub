@@ -33,6 +33,8 @@ const ROLE_MAPPING = {
   '3': 'Manager',
   '4': 'Team Leader',
   '5': 'User',
+  '2': 'Admin',
+  '1': 'Super Admin'
   // '6': 'Team Member'
 };
 
