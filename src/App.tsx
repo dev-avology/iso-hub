@@ -82,7 +82,7 @@ function ProtectedAdminLayout({ children }: { children: React.ReactNode }) {
         <div className="max-w-7xl mx-auto">
           {children}
         </div>
-        <JACC />
+        {/* <JACC /> */}
       </Layout>
     </ProtectedRoute>
   );
