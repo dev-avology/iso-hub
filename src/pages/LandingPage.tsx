@@ -140,11 +140,10 @@ export default function LandingPage() {
                 <FileText className="h-6 w-6 text-yellow-400" />
               </div>
               <h3 className="text-xl font-semibold text-white mb-2">
-                Document Management
+                Document Management Hub
               </h3>
               <p className="text-gray-400">
-                Centralize all your processor agreements, gateway documentation,
-                and hardware guides in one secure location.
+                Centralize all your processor agreements, gateway documentation, and hardware guides in one organized location. Connect to Google Drive, Dropbox, and OneDrive for seamless file access.
               </p>
             </div>
 
@@ -154,11 +153,10 @@ export default function LandingPage() {
                 <Sparkles className="h-6 w-6 text-yellow-400" />
               </div>
               <h3 className="text-xl font-semibold text-white mb-2">
-                AI-Powered Assistant
+                ISO-AI Assistant Portal
               </h3>
               <p className="text-gray-400">
-                Get instant answers about processor requirements, integration
-                guides, and hardware specifications.
+                Access your AI-powered assistant portal designed for ISO professionals. Get quick answers about processor requirements, integration guidance, and industry best practices through an intuitive interface.
               </p>
             </div>
 
@@ -168,11 +166,10 @@ export default function LandingPage() {
                 <Lock className="h-6 w-6 text-yellow-400" />
               </div>
               <h3 className="text-xl font-semibold text-white mb-2">
-                Secure Document Portal
+                Secure Document Upload Portal
               </h3>
               <p className="text-gray-400">
-                Share sensitive documents with merchants securely and maintain
-                complete access control.
+                Enable businesses to safely and securely send documents through a protected upload interface. Built with encryption and role-based access controls, this portal ensures sensitive information is transmitted and received securely.
               </p>
             </div>
 
@@ -182,11 +179,10 @@ export default function LandingPage() {
                 <Users className="h-6 w-6 text-yellow-400" />
               </div>
               <h3 className="text-xl font-semibold text-white mb-2">
-                Pre-Application System
+                Secure Pre-Application Portal
               </h3>
               <p className="text-gray-400">
-                Streamline merchant onboarding with digital pre-applications and
-                automated workflows.
+                Allow merchants to securely and conveniently submit preliminary application information. This digital portal supports document uploads from both desktop and mobile devices, ensuring a safe and streamlined experience from the start.
               </p>
             </div>
 
@@ -196,27 +192,25 @@ export default function LandingPage() {
                 <DollarSign className="h-6 w-6 text-yellow-400" />
               </div>
               <h3 className="text-xl font-semibold text-white mb-2">
-                Revenue Tracking
+                ISO-Residuals Platform
               </h3>
               <p className="text-gray-400">
-                Monitor your portfolio performance and track residual income
-                across all processors.
+                The platform that started it all. Access all your residual data in one secure and easy-to-use location. Manage complex split arrangements and gain full visibility into your earnings with confidence.
               </p>
             </div>
 
             {/* Compliance */}
-            {/* <div className="bg-zinc-800 rounded-xl p-6 border border-yellow-400/20">
+            <div className="bg-zinc-800 rounded-xl p-6 border border-yellow-400/20">
               <div className="h-12 w-12 bg-yellow-400/10 rounded-lg flex items-center justify-center mb-4">
                 <Shield className="h-6 w-6 text-yellow-400" />
               </div>
               <h3 className="text-xl font-semibold text-white mb-2">
-                Compliance Tools
+                Vendor Directory
               </h3>
               <p className="text-gray-400">
-                Stay compliant with built-in tools for document retention and
-                audit trails.
+                Maintain a comprehensive directory of all your payment processors, gateways, and hardware vendors. Store contact information, support details, and vendor-specific documentation in one centralized location.
               </p>
-            </div> */}
+            </div>
           </div>
         </div>
       </div>
@@ -262,7 +256,7 @@ export default function LandingPage() {
 
               {/* Calendar Embed Container */}
               <div className="w-full bg-zinc-900/50 rounded-lg mb-6">
-                <iframe
+                {/* <iframe
                   src="https://api.leadconnectorhq.com/widget/booking/w81N45IZKBMP1TwyhPbW"
                   style={{
                     width: "100%",
@@ -272,7 +266,20 @@ export default function LandingPage() {
                   }}
                   scrolling="yes"
                   id="w81N45IZKBMP1TwyhPbW_1747062225604"
-                ></iframe>
+                ></iframe> */}
+
+              <iframe
+                src="https://api.leadconnectorhq.com/widget/booking/aCS2rvE1ALcxbyGMtc1C"
+                style={{
+                    width: "100%",
+                    height: "690px",
+                    border: "none",
+                    overflow: "hidden",
+                  }}
+                scrolling="yes"
+                id="aCS2rvE1ALcxbyGMtc1C_1749216117259"
+              />
+
               </div>
             </div>
           </div>
@@ -291,7 +298,7 @@ export default function LandingPage() {
           </div>
 
           <div className="max-w-3xl mx-auto bg-zinc-800 rounded-xl overflow-hidden shadow-2xl">
-            <iframe
+            {/* <iframe
               src="https://api.leadconnectorhq.com/widget/form/XlJsv8aFfLYN18CDgQub"
               scrolling="no"
               style={{
@@ -313,7 +320,37 @@ export default function LandingPage() {
               data-layout-iframe-id="inline-XlJsv8aFfLYN18CDgQub"
               data-form-id="XlJsv8aFfLYN18CDgQub"
               title="Contact Us"
-            />
+            /> */}
+
+
+
+
+<iframe
+  src="https://api.leadconnectorhq.com/widget/form/XlJsv8aFfLYN18CDgQub"
+  scrolling="no"
+   style={{
+                width: "100%",
+                height: "641px",
+                border: "none",
+                borderRadius: "4px",
+              }}
+  id="inline-XlJsv8aFfLYN18CDgQub"
+  data-layout='{"id":"INLINE"}'
+  data-trigger-type="alwaysShow"
+  data-trigger-value=""
+  data-activation-type="alwaysActivated"
+  data-activation-value=""
+  data-deactivation-type="neverDeactivate"
+  data-deactivation-value=""
+  data-form-name="Contact Us"
+  data-height="577"
+  data-layout-iframe-id="inline-XlJsv8aFfLYN18CDgQub"
+  data-form-id="XlJsv8aFfLYN18CDgQub"
+  title="Contact Us"
+/>
+
+
+
           </div>
         </div>
       </div>

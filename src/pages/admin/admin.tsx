@@ -34,8 +34,8 @@ const ROLE_MAPPING = {
   '4': 'Team Leader',
   '5': 'User',
   '2': 'Admin',
-  '1': 'Super Admin'
-  // '6': 'Team Member'
+  '1': 'Super Admin',
+  '6': 'Team Member'
 };
 
 export default function Admin() {
@@ -524,7 +524,7 @@ export default function Admin() {
                   <option value="3">Manager</option>
                   <option value="4">Team Leader</option>
                   <option value="5">User</option>
-                  {/* <option value="6">Team Member</option> */}
+                  <option value="6">Team Member</option>
                 </select>
               </div>
 
@@ -665,7 +665,7 @@ export default function Admin() {
                   <option value="3">Manager</option>
                   <option value="4">Team Leader</option>
                   <option value="5">User</option>
-                  {/* <option value="6">Team member</option> */}
+                  <option value="6">Team Member</option>
                 </select>
               </div>
 
