@@ -4,6 +4,7 @@ import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { LucideIcon } from 'lucide-react';
 import UserRep from './UserRep';
 import JACC from './JACC';
+import { useState, useEffect } from 'react';
 
 interface Category {
   name: string;
@@ -12,39 +13,6 @@ interface Category {
   external?: boolean;
   onClick?: () => void;
 }
-
-const nonAdminCategories: Category[] = [
-  // { name: 'Processors', icon: CreditCard },
-  // { name: 'Gateways', icon: Router },
-  // { name: 'Hardware/Equipment', icon: HardDrive },
-  // { name: 'Internal', icon: Briefcase },
-  // { name: 'Misc', icon: MoreHorizontal },
-  { name: 'ISO-Residuals', icon: FileText, href: 'https://dev.tracerpos.com/', external: true },
-  { name: 'ISO-AI', icon: Cpu, href: 'https://02aa0592-869c-416a-869f-4cb3baafbabd-00-17ngv8bepjtga.picard.replit.dev' , external: true},
-  { name: 'Settings', icon: Settings },
-  // { name: 'Users', icon: User, href: '/users' },
-  // { name: 'Residuals', icon: FileText, href: 'https://dev.tracerpos.com/'  },
-];
-
-const adminCategories = [
-  ...nonAdminCategories,
-  { name: 'Admin', icon: User, href: '#' },
-];
-
-const adminSubMenu = [
-  { name: 'Users', icon: User, path: '/admin' },
-  { name: 'Team Member', icon: User, path: '/teammember' },
-  // { name: 'Vendor', icon: User, path: '/vendor' },
-  { name: 'Documents', icon: File, path: '/documents' },
-  // { name: 'All Reps', icon: User, path: '/all_reps' },
-  { name: 'Notifications', icon: Bell, path: '/application_notifications' },
-  // { name: 'Forms', icon: FormInput, path: '/forms' },
-];
-
-const userSubMenu = [
-  { name: 'User Notification', icon: Bell, path: '/user-notification' },
-];
-
 
 export default function Sidebar({
   open,
@@ -56,6 +24,78 @@ export default function Sidebar({
   const { logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+
+  const [encryptedKey, setEncryptedKey] = useState([]);
+
+  const userData = localStorage.getItem("auth_user");
+  const user = JSON.parse(userData);
+  const role_id = user.role_id;
+
+  const fetchEncryptedCredentials = async () => {
+    try {
+      const token = localStorage.getItem('auth_token');
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/encrypt/cred`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch users');
+      }
+      const data = await response.json();
+      console.log('data encryption', data.data.cipher);
+      setEncryptedKey(data.data);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    } 
+  };
+
+  useEffect(() => {
+    fetchEncryptedCredentials();
+  }, []);
+
+  const newEncryptedKey = encryptedKey?.cipher || '';
+  const iv = encryptedKey?.iv || '';
+
+  const queryParams = (role_id === 1 || role_id === 2)
+  ? `?secX=${encodeURIComponent(newEncryptedKey)}&secY=${encodeURIComponent(iv)}`
+  : '';
+
+  // const iv = encodeURIComponent("3jdtvH6MNd1V0PvakGs5VA==");
+  const nonAdminCategories: Category[] = [
+    // { name: 'Processors', icon: CreditCard },
+    // { name: 'Gateways', icon: Router },
+    // { name: 'Hardware/Equipment', icon: HardDrive },
+    // { name: 'Internal', icon: Briefcase },
+    // { name: 'Misc', icon: MoreHorizontal },
+    { name: 'ISO-Residuals', icon: FileText, href: `https://dev.tracerpos.com${queryParams}`, external: true },
+    { name: 'ISO-AI', icon: Cpu, href: 'https://02aa0592-869c-416a-869f-4cb3baafbabd-00-17ngv8bepjtga.picard.replit.dev' , external: true},
+    { name: 'Settings', icon: Settings },
+    // { name: 'Users', icon: User, href: '/users' },
+    // { name: 'Residuals', icon: FileText, href: 'https://dev.tracerpos.com/'  },
+  ];
+
+  const adminCategories = [
+    ...nonAdminCategories,
+    { name: 'Admin', icon: User, href: '#' },
+  ];
+
+  const adminSubMenu = [
+    { name: 'Users', icon: User, path: '/admin' },
+    { name: 'Team Member', icon: User, path: '/teammember' },
+    // { name: 'Vendor', icon: User, path: '/vendor' },
+    { name: 'Documents', icon: File, path: '/documents' },
+    // { name: 'All Reps', icon: User, path: '/all_reps' },
+    { name: 'Notifications', icon: Bell, path: '/application_notifications' },
+    // { name: 'Forms', icon: FormInput, path: '/forms' },
+  ];
+
+  const userSubMenu = [
+    { name: 'User Notification', icon: Bell, path: '/user-notification' },
+  ];
 
   // Get role_id from auth_user in localStorage
   const authUser = JSON.parse(localStorage.getItem('auth_user') || '{}');
@@ -78,7 +118,6 @@ export default function Sidebar({
     }
     return location.pathname === path;
   };
-
 
   const categories = isAdmin ? adminCategories : nonAdminCategories;
   console.log(categories, 'categories');
