@@ -85,7 +85,7 @@ export default function Sidebar({
 
   const adminSubMenu = [
     { name: 'Users', icon: User, path: '/admin' },
-    { name: 'Team Member', icon: User, path: '/teammember' },
+    // { name: 'Team Member', icon: User, path: '/teammember' },
     // { name: 'Vendor', icon: User, path: '/vendor' },
     { name: 'Documents', icon: File, path: '/documents' },
     // { name: 'All Reps', icon: User, path: '/all_reps' },

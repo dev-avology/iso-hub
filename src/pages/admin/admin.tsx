@@ -58,6 +58,7 @@ export default function Admin() {
   const [managersChecked, setManagersChecked] = useState(false);
   const [adminChecked, setAdminChecked] = useState(false);
   const [teamLeadersChecked, setTeamLeadersChecked] = useState(false);
+  const [teamMembersChecked, setTeamMembersChecked] = useState(false);
   const [usersChecked, setUsersChecked] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string[] }>({});
@@ -299,13 +300,18 @@ export default function Admin() {
     setUsersChecked(e.target.checked);
   };
 
+  const handleTeamMemberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTeamMembersChecked(e.target.checked);
+  };
+
   // Filter the users array based on checked roles and exclude role_id 1 and 2
   const filteredUsers = users.filter((user) => {
     // Then apply checkbox filters
-    if (!managersChecked && !teamLeadersChecked && !usersChecked && !adminChecked) return true;
+    if (!managersChecked && !teamLeadersChecked && !usersChecked && !adminChecked && !teamMembersChecked) return true;
     if (managersChecked && user.role_id === 3) return true;
     if (teamLeadersChecked && user.role_id === 4) return true;
     if (usersChecked && user.role_id === 5) return true;
+    if (teamMembersChecked && user.role_id === 6) return true;
     if (adminChecked && (user.role_id === 1 || user.role_id === 2)) return true;
     return false;
   });
@@ -360,6 +366,18 @@ export default function Admin() {
           />
           <span>Users/Reps</span>
         </div>
+
+
+        <div className="short text-white font-medium flex items-center gap-2">
+          <input
+            type="checkbox"
+            className="h-[20px] w-[20px]"
+            onChange={handleTeamMemberChange}
+            checked={teamMembersChecked}
+          />
+          <span>Team Member</span>
+        </div>
+
       </div>
 
       <div className="user_cont my-5">
