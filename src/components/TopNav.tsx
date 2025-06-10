@@ -57,21 +57,24 @@ export default function TopNav({
         }
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to fetch notifications..');
-      }
-
       const data = await response.json();
-      // console.log(data,'get data');
+
+      if(data && data.message == 'Unauthorized'){
+          handleLogout();
+      }
+      console.log('get data',data);
       if (data.status === 'success') {
         setUserNotificationCount(data.count);
         // console.log(data);
       } else {
-        throw new Error(data.message || 'Failed to fetch');
+        handleLogout();
       }
     } catch (error) {
       console.error('Error fetching notifications:', error);
       toast.error('Failed to fetch notifications');
+      setTimeout(() => {
+        handleLogout();
+      }, 1000);
     }
   }
 

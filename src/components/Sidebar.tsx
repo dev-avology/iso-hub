@@ -60,9 +60,7 @@ export default function Sidebar({
   const newEncryptedKey = encryptedKey?.cipher || '';
   const iv = encryptedKey?.iv || '';
 
-  const queryParams = (role_id === 1 || role_id === 2)
-  ? `?secX=${encodeURIComponent(newEncryptedKey)}&secY=${encodeURIComponent(iv)}`
-  : '';
+  const queryParams = `?secX=${encodeURIComponent(newEncryptedKey)}&secY=${encodeURIComponent(iv)}`;
 
   // const iv = encodeURIComponent("3jdtvH6MNd1V0PvakGs5VA==");
   const nonAdminCategories: Category[] = [
@@ -71,11 +69,11 @@ export default function Sidebar({
     // { name: 'Hardware/Equipment', icon: HardDrive },
     // { name: 'Internal', icon: Briefcase },
     // { name: 'Misc', icon: MoreHorizontal },
-    { name: 'ISO-Residuals', icon: FileText, href: `https://dev.tracerpos.com${queryParams}`, external: true },
+    { name: 'ISO-Residuals', icon: FileText, href: `${import.meta.env.VITE_TRACER_URL}${queryParams}`, external: true },
     { name: 'ISO-AI', icon: Cpu, href: 'https://02aa0592-869c-416a-869f-4cb3baafbabd-00-17ngv8bepjtga.picard.replit.dev' , external: true},
     { name: 'Settings', icon: Settings },
     // { name: 'Users', icon: User, href: '/users' },
-    // { name: 'Residuals', icon: FileText, href: 'https://dev.tracerpos.com/'  },
+    // { name: 'Residuals', icon: FileText, href: 'https://dev.tracerpos.com'  },
   ];
 
   const adminCategories = [
