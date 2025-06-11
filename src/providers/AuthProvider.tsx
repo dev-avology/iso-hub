@@ -35,7 +35,7 @@ interface AuthContextType {
   roles: string[];
   permissions: string[];
   isLoading: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string, is_tracer_user?: string) => Promise<void>;
   logout: () => Promise<void>;
   isAuthenticated: boolean;
   isAdmin: boolean;
@@ -112,14 +112,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [token]);
 
-  const login = async (email: string, password: string) => {
-    try {
+  const login = async (email: string, password: string, is_tracer_user: string | null = null) => {
+    // try {
+
+      // Build request body dynamically
+     const body: any = { email, password };
+
+      if (is_tracer_user) {
+        body.is_iso_user = is_tracer_user;
+      }
+
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify(body),
       });
 
       if (!response.ok) {
@@ -155,10 +163,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(cleanUser);
       setRoles(userRoles);
       setPermissions(userPermissions);
-    } catch (error) {
-      console.error('Login error:', error);
-      throw error;
-    }
+    // } catch (error) {
+    //   console.error('Login error:', error);
+    //   throw error;
+    // }
   };
 
   const logout = async () => {

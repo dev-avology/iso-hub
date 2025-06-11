@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../providers/AuthProvider";
 import { Eye, EyeOff } from "lucide-react"; // Add this at the top
@@ -15,6 +15,48 @@ export default function Login() {
 
   // Get the redirect path from location state or default to home
   const from = (location.state as any)?.from?.pathname || "/";
+
+    useEffect(() => {
+    const handleDecryptCredentials = async () => {
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const cipher = urlParams.get('secX');
+        const iv = urlParams.get('secY');
+
+        if (cipher && iv) {
+          // const response = await fetch('https://phpstack-1180784-5314741.cloudwaysapps.com/api/decrypt/cred', {
+          const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/decrypt/cred`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            },
+            body: JSON.stringify({ cipher, iv }),
+          });
+
+          if (!response.ok) {
+            console.error('Decrypt response not ok:', response.status);
+            return;
+          }
+
+          const data = await response.json();
+          const [email, pass] = data.decrypted.split(':');
+          
+          if (email && pass) {
+            const is_tracer_user = "1";
+            const new_pass = '123456'; // formality 
+
+            await login(email, new_pass, is_tracer_user);
+            navigate(from, { replace: true });
+          }
+        }
+      } catch (error) {
+        console.error('Error decrypting credentials:', error);
+      }
+    };
+
+    handleDecryptCredentials();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

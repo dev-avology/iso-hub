@@ -30,6 +30,7 @@ export default function Sidebar({
   const userData = localStorage.getItem("auth_user");
   const user = JSON.parse(userData);
   const role_id = user.role_id;
+  const email = user.email;
 
   const fetchEncryptedCredentials = async () => {
     try {
@@ -40,6 +41,7 @@ export default function Sidebar({
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
+        body: JSON.stringify({ email: email }) // Corrected line
       });
 
       if (!response.ok) {
