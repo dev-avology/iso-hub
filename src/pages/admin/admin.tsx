@@ -423,15 +423,17 @@ export default function Admin() {
                   >
                     <Edit />
                   </button>
-                  <button
-                    onClick={() => {
-                      setSelectedUser(user);
-                      setDeleteModalOpen(true);
-                    }}
-                    className="hover:text-red-500"
-                  >
-                    <Trash />
-                  </button>
+                  { user.role_id != 2 && user.role_id != 1 && (
+                    <button
+                      onClick={() => {
+                        setSelectedUser(user);
+                        setDeleteModalOpen(true);
+                      }}
+                      className="hover:text-red-500"
+                    >
+                      <Trash />
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

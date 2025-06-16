@@ -40,6 +40,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isAdmin: boolean;
   isSuperAdmin: boolean;
+  verifySession: (userId: number, roleId: number) => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -63,6 +64,48 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const daysDifference = (currentDate.getTime() - createdDate.getTime()) / (1000 * 60 * 60 * 24);
 
     return daysDifference >= TOKEN_EXPIRY_DAYS;
+  };
+
+  const verifySession = async (userId: number, roleId: number): Promise<boolean> => {
+    try {
+      const storedToken = localStorage.getItem('auth_token');
+      console.log('Verifying session with token:', storedToken);
+      if (!storedToken) {
+        console.log('No token found');
+        return false;
+      }
+
+      console.log('Making API call to verify session');
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/verify-session`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${storedToken}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ user_id: userId, role_id: roleId })
+      });
+
+      console.log('API response status:', response.status);
+      if (!response.ok) {
+        console.log('API response not ok');
+        throw new Error('Session verification failed');
+      }
+
+      const data = await response.json();
+      console.log('API response data:', data);
+      
+      if (data.valid) {
+        setToken(storedToken);
+        setUser(data.user);
+        setRoles(data.roles || []);
+        setPermissions(data.permissions || []);
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Session verification error:', error);
+      return false;
+    }
   };
 
   const clearAuthData = () => {
@@ -110,14 +153,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       return () => clearInterval(interval);
     }
+    console.log('hello this is first token');
   }, [token]);
 
   const login = async (email: string, password: string, is_tracer_user: string | null = null) => {
-    // try {
-
-      // Build request body dynamically
-     const body: any = { email, password };
-
+    try {
+      const body: any = { email, password };
       if (is_tracer_user) {
         body.is_iso_user = is_tracer_user;
       }
@@ -134,55 +175,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         throw new Error('Login failed');
       }
 
-      const data: LoginResponse = await response.json();
+      const data = await response.json();
       
-      // Extract only the necessary user data without roles
-      const { roles: userRoles, permissions: userPermissions, token: userToken, user: userData } = data;
-      
-      // Create a clean user object without the roles property
-      const cleanUser: User = {
-        id: userData.id,
-        first_name: userData.first_name,
-        last_name: userData.last_name,
-        email: userData.email,
-        phone: userData.phone,
-        role_id: userData.role_id,
-        email_verified_at: userData.email_verified_at,
-        created_at: userData.created_at,
-        updated_at: userData.updated_at,
-      };
-
-      // Store auth data
-      localStorage.setItem('auth_token', userToken);
-      localStorage.setItem('auth_user', JSON.stringify(cleanUser));
-      localStorage.setItem('auth_roles', JSON.stringify(userRoles));
-      localStorage.setItem('auth_permissions', JSON.stringify(userPermissions));
+      localStorage.setItem('auth_token', data.token);
+      localStorage.setItem('auth_user', JSON.stringify(data.user));
+      localStorage.setItem('auth_roles', JSON.stringify(data.roles));
+      localStorage.setItem('auth_permissions', JSON.stringify(data.permissions));
       localStorage.setItem(TOKEN_CREATED_KEY, new Date().toISOString());
       
-      setToken(userToken);
-      setUser(cleanUser);
-      setRoles(userRoles);
-      setPermissions(userPermissions);
-    // } catch (error) {
-    //   console.error('Login error:', error);
-    //   throw error;
-    // }
+      setToken(data.token);
+      setUser(data.user);
+      setRoles(data.roles);
+      setPermissions(data.permissions);
+    } catch (error) {
+      console.error('Login error:', error);
+      throw error;
+    }
   };
 
   const logout = async () => {
     try {
       if (token) {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/logout`, {
+        await fetch(`${import.meta.env.VITE_API_BASE_URL}/logout`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
         });
-
-        if (!response.ok) {
-          console.error('Logout API call failed');
-        }
       }
     } catch (error) {
       console.error('Logout error:', error);
@@ -207,6 +227,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isAuthenticated: !!token,
         isAdmin,
         isSuperAdmin,
+        verifySession
       }}
     >
       {children}
@@ -216,9 +237,64 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  console.log(context,'context');
   if (context === undefined) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
+
+  // Add event listener for storage changes
+  useEffect(() => {
+    const handleStorageChange = async (e: StorageEvent) => {
+      if (e.key === 'auth_user') {
+        console.log('LocalStorage auth_user changed:', e.newValue);
+        try {
+          if (e.newValue) {
+            const parsedUser = JSON.parse(e.newValue);
+            console.log('Verifying session for user:', parsedUser);
+            const isValid = await context.verifySession(parsedUser.id, parsedUser.role_id);
+            console.log('Session verification result:', isValid);
+            if (!isValid) {
+              console.log('Session invalid, logging out');
+              context.logout();
+            }
+          }
+        } catch (error) {
+          console.error('Error handling storage change:', error);
+          context.logout();
+        }
+      }
+    };
+
+    // Add storage event listener
+    window.addEventListener('storage', handleStorageChange);
+
+    // Initial verification
+    const verifyCurrentSession = async () => {
+      const storedUser = localStorage.getItem('auth_user');
+      console.log('Current stored user:', storedUser);
+      if (storedUser && context.user) {
+        try {
+          const parsedUser = JSON.parse(storedUser);
+          console.log('Verifying current session for user:', parsedUser);
+          const isValid = await context.verifySession(parsedUser.id, parsedUser.role_id);
+          console.log('Current session verification result:', isValid);
+          if (!isValid) {
+            console.log('Current session invalid, logging out');
+            context.logout();
+          }
+        } catch (error) {
+          console.error('Error verifying current session:', error);
+          context.logout();
+        }
+      }
+    };
+
+    verifyCurrentSession();
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, [context]);
+
   return context;
-}; 
+};
