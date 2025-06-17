@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../providers/AuthProvider";
-import { Eye, EyeOff } from "lucide-react"; // Add this at the top
+import { Eye, EyeOff } from "lucide-react";
+import EulaModal from "../../components/EulaModal";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -13,7 +14,11 @@ export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
   const { login } = useAuth();
-  const [showPassword, setShowPassword] = useState(false); // Add this with your other state hooks
+  const [showEulaModal, setShowEulaModal] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  // New state to temporarily store credentials for EULA flow
+  const [tempCredentials, setTempCredentials] = useState<{ email: string; password: string } | null>(null);
 
   // Get the redirect path from location state or default to home
   const from = (location.state as any)?.from?.pathname || "/";
@@ -32,7 +37,6 @@ export default function Login() {
 
   const handleSpecialLogin = async (cipher: string, iv: string) => {
     try {
-      // const response = await fetch('https://phpstack-1180784-5314741.cloudwaysapps.com/api/decrypt/cred', {
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/decrypt/cred`, {
         method: 'POST',
         headers: {
@@ -44,6 +48,9 @@ export default function Login() {
 
       if (!response.ok) {
         console.error('Decrypt response not ok:', response.status);
+        setError("Failed to decrypt credentials.");
+        setIsLoading(false);
+        setShouldShowLogin(true);
         return;
       }
 
@@ -56,11 +63,35 @@ export default function Login() {
 
         await login(email, new_pass, is_tracer_user);
         navigate(from, { replace: true });
+      } else {
+        setError("Invalid decrypted credentials.");
+        setIsLoading(false);
+        setShouldShowLogin(true);
       }
     } catch (error) {
       console.error('Special login error:', error);
+      setError("An error occurred during special login.");
       setIsLoading(false);
       setShouldShowLogin(true);
+    }
+  };
+
+  // New function to handle EULA consent
+  const handleEulaConsent = async () => {
+    if (tempCredentials) {
+      setIsLoading(true); // Show loading while re-attempting login
+      setShowEulaModal(false); // Close modal
+      try {
+        // Proceed with actual login after EULA consent
+        await login(tempCredentials.email, tempCredentials.password, undefined, '1'); // Pass '1' for is_agreement
+        navigate(from, { replace: true });
+      } catch (error: any) {
+        console.error('Login after EULA consent failed:', error);
+        setError(error.message || 'Failed to log in after agreement. Please try again.');
+      } finally {
+        setTempCredentials(null); // Clear temp credentials
+        setIsLoading(false); // Hide loading regardless of success/failure
+      }
     }
   };
 
@@ -70,11 +101,41 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-      await login(email, password);
-      navigate(from, { replace: true });
-    } catch (err) {
-      setError("Invalid email or password");
-    } finally {
+      // First, check agreement status using the new API
+      const checkResponse = await fetch(`${import.meta.env.VITE_API_BASE_URL}/check-agreement`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!checkResponse.ok) {
+        const errorData = await checkResponse.json();
+        console.error('Check agreement API error:', errorData);
+        setError(errorData.message || 'Invalid email or password.'); // Show error for invalid credentials
+        setIsLoading(false);
+        return; // Stop if credentials are bad or API fails
+      }
+
+      const checkData = await checkResponse.json();
+      const userAgreementStatus = checkData.user.is_agreement;
+
+      if (userAgreementStatus === 1) {
+        // If agreement is already 1, proceed with full login
+        await login(email, password, undefined, '1'); // Pass '1' for is_agreement
+        navigate(from, { replace: true });
+      } else {
+        // If agreement is not 1, show EULA modal
+        setTempCredentials({ email, password }); // Store credentials
+        setShowEulaModal(true); // Show EULA modal
+        setIsLoading(false); // Stop loading, EULA modal takes over
+      }
+
+    } catch (error: any) {
+      console.error('Login attempt error (pre-agreement check):', error);
+      setError(error.message || "An unexpected error occurred during agreement check.");
       setIsLoading(false);
     }
   };
@@ -102,7 +163,6 @@ export default function Login() {
           </div>
         </div>
 
-        {/* <h2 className="text-3xl font-bold text-white mb-6 text-center">Login</h2> */}
         <form onSubmit={handleSubmit}>
           {error && (
             <div className="mb-4 p-3 bg-red-500/10 border border-red-500 rounded text-red-500 text-sm">
@@ -162,6 +222,17 @@ export default function Login() {
           </button>
         </form>
       </div>
+
+      {showEulaModal && (
+        <EulaModal
+          onAgree={handleEulaConsent}
+          onCancel={() => {
+            setShowEulaModal(false);
+            setTempCredentials(null); // Clear temp credentials if cancelled
+            setIsLoading(false); // Stop loading if EULA is dismissed without agreeing
+          }}
+        />
+      )}
     </div>
   );
 }

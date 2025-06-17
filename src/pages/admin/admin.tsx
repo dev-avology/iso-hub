@@ -178,8 +178,36 @@ export default function Admin() {
       }
 
       if (data.status === 'success') {
+        // Send credentials email
+        try {
+          const emailResponse = await fetch(`${import.meta.env.VITE_API_BASE_URL}/send-credentials-mail`, {
+            method: 'POST',
+            headers: {
+              'Authorization': formattedToken,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              name: `${formData.first_name} ${formData.last_name}`,
+              email: formData.email,
+              password: formData.password,
+              user_id: data.data.id,
+              website_name: 'ISO Hub',
+              website_url: 'https://isohub.io/login'
+            })
+          });
 
-        toast.success('User created successfully');
+          const emailData = await emailResponse.json();
+          
+          if (!emailResponse.ok) {
+            console.error('Failed to send credentials email:', emailData);
+            toast.error('User created but failed to send credentials email');
+          } else {
+            toast.success('User created and credentials sent successfully');
+          }
+        } catch (emailError) {
+          console.error('Error sending credentials email:', emailError);
+          toast.error('User created but failed to send credentials email');
+        }
 
         setFormData({
           first_name: '',
