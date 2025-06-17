@@ -203,7 +203,7 @@ export default function LandingPage() {
                 Document Management Hub
               </h3>
               <p className="text-gray-400">
-                Centralize all your processor agreements, gateway documentation, and hardware guides in one organized location. Connect to Google Drive, Dropbox, and OneDrive for seamless file access.
+                Securely store and organize processor agreements, gateway guides, and hardware documentation in one place. Integrates with Google Drive, Dropbox, and OneDrive for easy access. Built with encryption and role-based access controls.
               </p>
             </div>
 
@@ -216,7 +216,7 @@ export default function LandingPage() {
                 ISO-AI Assistant Portal
               </h3>
               <p className="text-gray-400">
-                Access your AI-powered assistant portal designed for ISO professionals. Get quick answers about processor requirements, integration guidance, and industry best practices through an intuitive interface.
+               Your AI-powered ISO assistant. Instantly get answers about processors, integrations, and best practices. ISO-AI reads your uploaded documents to deliver smarter, faster support.
               </p>
             </div>
 
@@ -229,7 +229,7 @@ export default function LandingPage() {
                 Secure Document Upload Portal
               </h3>
               <p className="text-gray-400">
-                Enable businesses to safely and securely send documents through a protected upload interface. Built with encryption and role-based access controls, this portal ensures sensitive information is transmitted and received securely.
+                Enable businesses to safely and securely send documents through a protected upload interface. This portal ensures sensitive information is transmitted and received securely.
               </p>
             </div>
 
@@ -294,7 +294,7 @@ export default function LandingPage() {
                 "Centralize all processor and gateway documentation",
                 "Reduce time spent searching for information",
                 "Streamline merchant onboarding process",
-                "Ensure document security and compliance",
+                "We follow SOC 2-aligned best practices",
                 "Track portfolio performance in real-time",
                 "Access AI-powered support 24/7",
               ].map((benefit, index) => (

@@ -108,7 +108,11 @@ export default function Login() {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ 
+          email, 
+          password,
+          is_slug: '1' // Add is_slug=1 for manual login
+        }),
       });
 
       if (!checkResponse.ok) {
@@ -124,7 +128,7 @@ export default function Login() {
 
       if (userAgreementStatus === 1) {
         // If agreement is already 1, proceed with full login
-        await login(email, password, undefined, '1'); // Pass '1' for is_agreement
+        await login(email, password, undefined, '1'); // Pass '1' for is_agreement and is_slug
         navigate(from, { replace: true });
       } else {
         // If agreement is not 1, show EULA modal

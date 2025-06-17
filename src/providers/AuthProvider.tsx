@@ -36,7 +36,7 @@ interface AuthContextType {
   roles: string[];
   permissions: string[];
   isLoading: boolean;
-  login: (email: string, password: string, is_tracer_user?: string, is_agreement?: string) => Promise<void>;
+  login: (email: string, password: string, is_tracer_user?: string, is_agreement?: string, is_slug?: string) => Promise<void>;
   logout: () => Promise<void>;
   isAuthenticated: boolean;
   isAdmin: boolean;
@@ -157,9 +157,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     console.log('hello this is first token');
   }, [token]);
 
-  const login = async (email: string, password: string, is_tracer_user?: string, is_agreement?: string) => {
+  const login = async (email: string, password: string, is_tracer_user?: string, is_agreement?: string, is_slug?: string) => {
     try {
-      const body: any = { email, password };
+      const body: any = { 
+        email, 
+        password
+      };
       
       // Only add is_iso_user if is_tracer_user is provided
       if (is_tracer_user) {
@@ -170,6 +173,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (is_agreement) {
         body.is_agreement = is_agreement;
         console.log('Login with agreement requested (is_agreement:', is_agreement, ').');
+      }
+
+      // Add is_slug if provided
+      if (is_slug) {
+        body.is_slug = is_slug;
       }
 
       console.log('Login request body:', body); // Debug log
