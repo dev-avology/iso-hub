@@ -90,6 +90,11 @@ export default function LandingPage() {
         </div>
       </div>
 
+      {/* secuity puspose images Section */}
+
+
+
+
       {/* Video Section */}
       {/* <div className="py-24 bg-zinc-900/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -120,6 +125,61 @@ export default function LandingPage() {
         </div>
       </div> */}
 
+       {/* Security Certifications Section */}
+       <section className="py-16 bg-zinc-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold text-white sm:text-4xl">
+              Security & Compliance
+            </h2>
+            <p className="mt-4 text-lg text-gray-300">
+              Your data security is our top priority. We maintain the highest standards of security and compliance.
+            </p>
+          </div>
+
+          <div className="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="bg-zinc-800 rounded-lg p-6 flex flex-col items-center ring-1 ring-inset ring-yellow-400/20 hover:bg-zinc-700 transition-colors duration-200">
+              <img
+                src="/CCPA.jpeg"
+                alt="CCPA Compliance"
+                className="h-24 w-auto object-contain mb-4"
+              />
+              <h3 className="text-xl font-semibold text-yellow-400 mb-2">CCPA Compliance</h3>
+              <p className="text-gray-400 text-center">
+                Compliant with California Consumer Privacy Act standards
+              </p>
+            </div>
+
+            <div className="bg-zinc-800 rounded-lg p-6 flex flex-col items-center ring-1 ring-inset ring-yellow-400/20 hover:bg-zinc-700 transition-colors duration-200">
+              <img
+                src="/logo-iso-27001.png"
+                alt="ISO 27001 Certification"
+                className="h-24 w-auto object-contain mb-4"
+              />
+              <h3 className="text-xl font-semibold text-yellow-400 mb-2">ISO 27001 Certified</h3>
+              <p className="text-gray-400 text-center">
+                International standard for information security management
+              </p>
+            </div>
+
+            <div className="bg-zinc-800 rounded-lg p-6 flex flex-col items-center ring-1 ring-inset ring-yellow-400/20 hover:bg-zinc-700 transition-colors duration-200">
+              <img
+                src="/png-clipart-computer-security-center-for-internet-security-benchmark-threat-data-analysis-miscellaneous-blue.png"
+                alt="Security Benchmark"
+                className="h-24 w-auto object-contain mb-4"
+              />
+              <h3 className="text-xl font-semibold text-yellow-400 mb-2">Security Benchmark</h3>
+              <p className="text-gray-400 text-center">
+                Industry-leading security standards and practices
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Spacer Section */}
+      <div className="h-16 bg-black"></div>
+
       {/* Features Grid */}
       <div className="py-24 bg-zinc-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -135,7 +195,7 @@ export default function LandingPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {/* Document Management */}
-            <div className="bg-zinc-800 rounded-xl p-6 border border-yellow-400/20">
+            <div className="bg-zinc-800 rounded-xl p-6 border border-yellow-400/20 hover:bg-zinc-700 transition-colors duration-200">
               <div className="h-12 w-12 bg-yellow-400/10 rounded-lg flex items-center justify-center mb-4">
                 <FileText className="h-6 w-6 text-yellow-400" />
               </div>
@@ -148,7 +208,7 @@ export default function LandingPage() {
             </div>
 
             {/* AI Assistant */}
-            <div className="bg-zinc-800 rounded-xl p-6 border border-yellow-400/20">
+            <div className="bg-zinc-800 rounded-xl p-6 border border-yellow-400/20 hover:bg-zinc-700 transition-colors duration-200">
               <div className="h-12 w-12 bg-yellow-400/10 rounded-lg flex items-center justify-center mb-4">
                 <Sparkles className="h-6 w-6 text-yellow-400" />
               </div>
@@ -161,7 +221,7 @@ export default function LandingPage() {
             </div>
 
             {/* Secure Portal */}
-            <div className="bg-zinc-800 rounded-xl p-6 border border-yellow-400/20">
+            <div className="bg-zinc-800 rounded-xl p-6 border border-yellow-400/20 hover:bg-zinc-700 transition-colors duration-200">
               <div className="h-12 w-12 bg-yellow-400/10 rounded-lg flex items-center justify-center mb-4">
                 <Lock className="h-6 w-6 text-yellow-400" />
               </div>
@@ -174,7 +234,7 @@ export default function LandingPage() {
             </div>
 
             {/* Pre-Applications */}
-            <div className="bg-zinc-800 rounded-xl p-6 border border-yellow-400/20">
+            <div className="bg-zinc-800 rounded-xl p-6 border border-yellow-400/20 hover:bg-zinc-700 transition-colors duration-200">
               <div className="h-12 w-12 bg-yellow-400/10 rounded-lg flex items-center justify-center mb-4">
                 <Users className="h-6 w-6 text-yellow-400" />
               </div>
@@ -187,7 +247,7 @@ export default function LandingPage() {
             </div>
 
             {/* Revenue Tracking */}
-            <div className="bg-zinc-800 rounded-xl p-6 border border-yellow-400/20">
+            <div className="bg-zinc-800 rounded-xl p-6 border border-yellow-400/20 hover:bg-zinc-700 transition-colors duration-200">
               <div className="h-12 w-12 bg-yellow-400/10 rounded-lg flex items-center justify-center mb-4">
                 <DollarSign className="h-6 w-6 text-yellow-400" />
               </div>
@@ -200,7 +260,7 @@ export default function LandingPage() {
             </div>
 
             {/* Compliance */}
-            <div className="bg-zinc-800 rounded-xl p-6 border border-yellow-400/20">
+            <div className="bg-zinc-800 rounded-xl hover:bg-zinc-700 p-6 border border-yellow-400/20">
               <div className="h-12 w-12 bg-yellow-400/10 rounded-lg flex items-center justify-center mb-4">
                 <Shield className="h-6 w-6 text-yellow-400" />
               </div>
@@ -268,17 +328,17 @@ export default function LandingPage() {
                   id="w81N45IZKBMP1TwyhPbW_1747062225604"
                 ></iframe> */}
 
-              <iframe
-                src="https://api.leadconnectorhq.com/widget/booking/aCS2rvE1ALcxbyGMtc1C"
-                style={{
+                <iframe
+                  src="https://api.leadconnectorhq.com/widget/booking/aCS2rvE1ALcxbyGMtc1C"
+                  style={{
                     width: "100%",
                     height: "690px",
                     border: "none",
                     overflow: "hidden",
                   }}
-                scrolling="yes"
-                id="aCS2rvE1ALcxbyGMtc1C_1749216117259"
-              />
+                  scrolling="yes"
+                  id="aCS2rvE1ALcxbyGMtc1C_1749216117259"
+                />
 
               </div>
             </div>
@@ -325,29 +385,29 @@ export default function LandingPage() {
 
 
 
-<iframe
-  src="https://api.leadconnectorhq.com/widget/form/XlJsv8aFfLYN18CDgQub"
-  scrolling="no"
-   style={{
+            <iframe
+              src="https://api.leadconnectorhq.com/widget/form/XlJsv8aFfLYN18CDgQub"
+              scrolling="no"
+              style={{
                 width: "100%",
                 height: "641px",
                 border: "none",
                 borderRadius: "4px",
               }}
-  id="inline-XlJsv8aFfLYN18CDgQub"
-  data-layout='{"id":"INLINE"}'
-  data-trigger-type="alwaysShow"
-  data-trigger-value=""
-  data-activation-type="alwaysActivated"
-  data-activation-value=""
-  data-deactivation-type="neverDeactivate"
-  data-deactivation-value=""
-  data-form-name="Contact Us"
-  data-height="577"
-  data-layout-iframe-id="inline-XlJsv8aFfLYN18CDgQub"
-  data-form-id="XlJsv8aFfLYN18CDgQub"
-  title="Contact Us"
-/>
+              id="inline-XlJsv8aFfLYN18CDgQub"
+              data-layout='{"id":"INLINE"}'
+              data-trigger-type="alwaysShow"
+              data-trigger-value=""
+              data-activation-type="alwaysActivated"
+              data-activation-value=""
+              data-deactivation-type="neverDeactivate"
+              data-deactivation-value=""
+              data-form-name="Contact Us"
+              data-height="577"
+              data-layout-iframe-id="inline-XlJsv8aFfLYN18CDgQub"
+              data-form-id="XlJsv8aFfLYN18CDgQub"
+              title="Contact Us"
+            />
 
 
 
@@ -355,25 +415,25 @@ export default function LandingPage() {
         </div>
       </div>
 
+
+
       {/* Footer */}
-      <footer className="bg-zinc-900 border-t border-yellow-400/20 py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="flex items-center">
-               <img src="ISOHubLOGO.png" alt="" style={{ maxWidth: '12%' }} />
-              {/* <Shield className="h-8 w-8 text-yellow-400" />
-              <span className="ml-2 text-xl font-bold text-white">
-                ISO<span className="text-yellow-400">Hub</span>
-              </span> */}
-            </div>
-            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm text-gray-400">
-              <Link to="/privacy-policy" className="hover:text-white underline">
-                Privacy Policy
-              </Link>
-              <span>
-                © {new Date().getFullYear()} ISOHub. All rights reserved.
-              </span>
-            </div>
+      <footer className="bg-zinc-900 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="flex items-center">
+            <img src="ISOHubLOGO.png" alt="ISOHub Logo" className="h-20 w-auto" />
+            {/* If you want the text ISO Hub next to logo, uncomment below and adjust styling */}
+            {/* <span className="ml-2 text-xl font-bold text-white">
+              ISO<span className="text-yellow-400">Hub</span>
+            </span> */}
+          </div>
+          <div className="flex flex-wrap justify-center sm:justify-end items-center gap-2 sm:gap-4 text-sm text-gray-400 mt-4 sm:mt-0">
+            <Link to="/privacy-policy" className="hover:text-white transition-colors duration-200">
+              Privacy Policy
+            </Link>
+            <span>
+              &copy; {new Date().getFullYear()} ISOHub. All rights reserved.
+            </span>
           </div>
         </div>
       </footer>
