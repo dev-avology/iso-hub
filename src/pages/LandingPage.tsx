@@ -125,57 +125,6 @@ export default function LandingPage() {
         </div>
       </div> */}
 
-       {/* Security Certifications Section */}
-       <section className="py-16 bg-zinc-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h2 className="text-3xl font-bold text-white sm:text-4xl">
-              Security & Compliance
-            </h2>
-            <p className="mt-4 text-lg text-gray-300">
-              Your data security is our top priority. We maintain the highest standards of security and compliance.
-            </p>
-          </div>
-
-          <div className="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            <div className="bg-zinc-800 rounded-lg p-6 flex flex-col items-center ring-1 ring-inset ring-yellow-400/20 hover:bg-zinc-700 transition-colors duration-200">
-              <img
-                src="/CCPA.jpeg"
-                alt="CCPA Compliance"
-                className="h-24 w-auto object-contain mb-4"
-              />
-              <h3 className="text-xl font-semibold text-yellow-400 mb-2">CCPA Compliance</h3>
-              <p className="text-gray-400 text-center">
-                Compliant with California Consumer Privacy Act standards
-              </p>
-            </div>
-
-            <div className="bg-zinc-800 rounded-lg p-6 flex flex-col items-center ring-1 ring-inset ring-yellow-400/20 hover:bg-zinc-700 transition-colors duration-200">
-              <img
-                src="/logo-iso-27001.png"
-                alt="ISO 27001 Certification"
-                className="h-24 w-auto object-contain mb-4"
-              />
-              <h3 className="text-xl font-semibold text-yellow-400 mb-2">ISO 27001 Certified</h3>
-              <p className="text-gray-400 text-center">
-                International standard for information security management
-              </p>
-            </div>
-
-            <div className="bg-zinc-800 rounded-lg p-6 flex flex-col items-center ring-1 ring-inset ring-yellow-400/20 hover:bg-zinc-700 transition-colors duration-200">
-              <img
-                src="/png-clipart-computer-security-center-for-internet-security-benchmark-threat-data-analysis-miscellaneous-blue.png"
-                alt="Security Benchmark"
-                className="h-24 w-auto object-contain mb-4"
-              />
-              <h3 className="text-xl font-semibold text-yellow-400 mb-2">Security Benchmark</h3>
-              <p className="text-gray-400 text-center">
-                Industry-leading security standards and practices
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Spacer Section */}
       <div className="h-16 bg-black"></div>
@@ -185,7 +134,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold text-white mb-4">
-              Everything You Need to Succeed
+              Secured File Gateway
             </h2>
             <p className="text-gray-400 max-w-2xl mx-auto">
               Powerful tools and features designed specifically for ISOs and
@@ -274,6 +223,66 @@ export default function LandingPage() {
           </div>
         </div>
       </div>
+
+     {/* Black Background Spacer */}
+    <section className="py-12 bg-black">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      </div>
+    </section>
+
+
+      {/* Security Certifications Section */}
+      <section className="py-16 bg-zinc-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold text-white sm:text-4xl">
+              Security & Compliance
+            </h2>
+            <p className="mt-4 text-lg text-gray-300">
+              Your data security is our top priority. We maintain the highest standards of security and compliance.
+            </p>
+          </div>
+
+          <div className="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="bg-zinc-800 rounded-lg p-6 flex flex-col items-center ring-1 ring-inset ring-yellow-400/20 hover:bg-zinc-700 transition-colors duration-200">
+              <img
+                src="/CCPA.jpeg"
+                alt="CCPA Compliance"
+                className="h-24 w-auto object-contain mb-4"
+              />
+              <h3 className="text-xl font-semibold text-yellow-400 mb-2">CCPA Compliance</h3>
+              <p className="text-gray-400 text-center">
+                Compliant with California Consumer Privacy Act standards
+              </p>
+            </div>
+
+            <div className="bg-zinc-800 rounded-lg p-6 flex flex-col items-center ring-1 ring-inset ring-yellow-400/20 hover:bg-zinc-700 transition-colors duration-200">
+              <img
+                src="/logo-iso-27001.png"
+                alt="ISO 27001 Certification"
+                className="h-24 w-auto object-contain mb-4"
+              />
+              <h3 className="text-xl font-semibold text-yellow-400 mb-2">ISO 27001 Certified</h3>
+              <p className="text-gray-400 text-center">
+                International standard for information security management
+              </p>
+            </div>
+
+            <div className="bg-zinc-800 rounded-lg p-6 flex flex-col items-center ring-1 ring-inset ring-yellow-400/20 hover:bg-zinc-700 transition-colors duration-200">
+              <img
+                src="/png-clipart-computer-security-center-for-internet-security-benchmark-threat-data-analysis-miscellaneous-blue.png"
+                alt="Security Benchmark"
+                className="h-24 w-auto object-contain mb-4"
+              />
+              <h3 className="text-xl font-semibold text-yellow-400 mb-2">Security Benchmark</h3>
+              <p className="text-gray-400 text-center">
+                Industry-leading security standards and practices
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
 
       {/* Benefits Section with Calendar */}
       <div className="py-24">
