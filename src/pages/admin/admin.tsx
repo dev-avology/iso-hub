@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Edit, Trash, X } from "lucide-react";
+import { Edit, Trash, X, Loader2 } from "lucide-react";
 import { toast, Toaster } from "react-hot-toast";
 
 interface User {
@@ -61,6 +61,7 @@ export default function Admin() {
   const [teamMembersChecked, setTeamMembersChecked] = useState(false);
   const [usersChecked, setUsersChecked] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string[] }>({});
 
   const fetchUsers = async (id?: string) => {
@@ -303,6 +304,8 @@ export default function Admin() {
     e.preventDefault();
     if (!selectedUser) return;
 
+    setIsUpdating(true);
+
     try {
       const token = localStorage.getItem("auth_token");
       const response = await fetch(
@@ -340,6 +343,9 @@ export default function Admin() {
       fetchUsers();
     } catch (error) {
       console.error("Error updating user:", error);
+      toast.error("Failed to update user. Please try again.");
+    } finally {
+      setIsUpdating(false);
     }
   };
 
@@ -623,9 +629,17 @@ export default function Admin() {
               <div className="pt-4">
                 <button
                   type="submit"
-                  className="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-3 px-5 rounded font-medium uppercase transition duration-200"
+                  disabled={isSubmitting}
+                  className="w-full bg-yellow-500 hover:bg-yellow-600 disabled:bg-yellow-700 disabled:cursor-not-allowed text-white py-3 px-5 rounded font-medium uppercase transition duration-200 flex items-center justify-center gap-2"
                 >
-                  Add User
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Creating User...
+                    </>
+                  ) : (
+                    "Add User"
+                  )}
                 </button>
               </div>
             </form>
@@ -739,9 +753,17 @@ export default function Admin() {
               <div className="pt-4">
                 <button
                   type="submit"
-                  className="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-3 px-5 rounded font-medium uppercase transition duration-200"
+                  disabled={isUpdating}
+                  className="w-full bg-yellow-500 hover:bg-yellow-600 disabled:bg-yellow-700 disabled:cursor-not-allowed text-white py-3 px-5 rounded font-medium uppercase transition duration-200 flex items-center justify-center gap-2"
                 >
-                  Update User
+                  {isUpdating ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Updating User...
+                    </>
+                  ) : (
+                    "Update User"
+                  )}
                 </button>
               </div>
             </form>
