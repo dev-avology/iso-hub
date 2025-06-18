@@ -273,36 +273,24 @@ export default function Admin() {
         }
       );
 
-      // // Try to parse the response safely
-      // let data: any = {};
-      // let responseText: string;
-      // try {
-      //   responseText = await response.text();
-      //   const contentType = response.headers.get("Content-Type") || "";
-      //   if (contentType.includes("application/json")) {
-      //     data = JSON.parse(responseText);
-      //   } else {
-      //     console.warn("Unexpected content type:", contentType);
-      //     throw new Error("Invalid response format from server.");
-      //   }
-      // } catch (err) {
-      //   console.error("Failed to parse response:", err);
-      //   toast.error("Server returned an unexpected response.");
-      //   setIsSubmitting(false);
-      //   return;
-      // }
-
+      // Try to parse the response safely
       let data: any = {};
+      let responseText: string;
       try {
-        data = await response.json();
+        responseText = await response.text();
+        const contentType = response.headers.get("Content-Type") || "";
+        if (contentType.includes("application/json")) {
+          data = JSON.parse(responseText);
+        } else {
+          console.warn("Unexpected content type:", contentType);
+          throw new Error("Invalid response format from server.");
+        }
       } catch (err) {
-        const rawText = await response.text(); // Get raw server response
-        console.error("Failed to parse JSON:", err, rawText);
-        toast.error("Unexpected server response. Please contact support.");
+        console.error("Failed to parse response:", err);
+        toast.error("Server returned an unexpected response.");
         setIsSubmitting(false);
         return;
       }
-
 
       // Handle validation errors (Laravel 422)
       if (response.status === 422) {
