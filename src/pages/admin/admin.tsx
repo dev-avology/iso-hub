@@ -12,6 +12,7 @@ interface User {
   email_verified_at: string | null;
   created_at: string;
   updated_at: string;
+  birthday?: Date | string;
 }
 
 interface UserFormData {
@@ -21,6 +22,7 @@ interface UserFormData {
   phone: string;
   password: string;
   role_id: string;
+  birthday: string; // Form input uses string, we'll convert to Date when needed
 }
 
 interface ApiResponse {
@@ -52,6 +54,7 @@ export default function Admin() {
     phone: "",
     password: "",
     role_id: "5", // Default to user role
+    birthday: "",
   });
 
   // Filter states
@@ -137,7 +140,9 @@ export default function Admin() {
 
       // Handle CORS errors specifically
       if (!response.ok && response.status === 0) {
-        toast.error("Network error: Unable to connect to server. Please check your internet connection.");
+        toast.error(
+          "Network error: Unable to connect to server. Please check your internet connection."
+        );
         setIsSubmitting(false);
         return;
       }
@@ -164,7 +169,7 @@ export default function Admin() {
       // Handle validation errors (Laravel 422)
       if (response.status === 422) {
         const validationErrors = data.errors || {};
-        console.log('validationErrors',validationErrors);
+        console.log("validationErrors", validationErrors);
         setErrors(validationErrors);
         Object.values(validationErrors).forEach((fieldErrors: any) => {
           if (Array.isArray(fieldErrors)) {
@@ -184,7 +189,9 @@ export default function Admin() {
 
       // Handle CORS errors
       if (response.status === 0 || response.status === 403) {
-        toast.error("Access denied. This may be due to CORS configuration. Please contact your administrator.");
+        toast.error(
+          "Access denied. This may be due to CORS configuration. Please contact your administrator."
+        );
         setIsSubmitting(false);
         return;
       }
@@ -237,6 +244,7 @@ export default function Admin() {
           phone: "",
           password: "",
           role_id: "5",
+          birthday: "",
         });
         setIsModalOpen(false);
         await fetchUsers(); // Refresh users list
@@ -245,10 +253,15 @@ export default function Admin() {
       }
     } catch (error) {
       console.error("Error creating user:", error);
-      
+
       // Check if it's a CORS error
-      if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
-        toast.error("Network error: Unable to connect to server. This may be due to CORS configuration.");
+      if (
+        error instanceof TypeError &&
+        error.message.includes("Failed to fetch")
+      ) {
+        toast.error(
+          "Network error: Unable to connect to server. This may be due to CORS configuration."
+        );
       } else {
         toast.error(
           error instanceof Error ? error.message : "Something went wrong."
@@ -289,6 +302,17 @@ export default function Admin() {
 
   const handleEdit = (user: User) => {
     setSelectedUser(user);
+    
+    // Convert birthday to string format for form input
+    let birthdayString = "";
+    if (user.birthday) {
+      if (typeof user.birthday === 'string') {
+        birthdayString = user.birthday;
+      } else if (user.birthday instanceof Date) {
+        birthdayString = user.birthday.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+      }
+    }
+    
     setFormData({
       first_name: user.first_name,
       last_name: user.last_name,
@@ -296,6 +320,7 @@ export default function Admin() {
       phone: user.phone,
       password: "", // Password field is empty for security
       role_id: user.role_id.toString(),
+      birthday: birthdayString,
     });
     setIsEditModalOpen(true);
   };
@@ -335,6 +360,7 @@ export default function Admin() {
         phone: "",
         password: "",
         role_id: "5",
+        birthday: "",
       });
       toast.success("User updated successfully");
       setIsEditModalOpen(false);
@@ -563,19 +589,35 @@ export default function Admin() {
                 </div>
               </div>
 
-              <div>
-                <label className="block text-gray-300 mb-2">Email</label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                  required
-                />
-                {errors.email && (
-                  <p className="text-red-500 text-sm mt-1">{errors.email[0]}</p>
-                )}
+              <div className="flex gap-4">
+                <div className="w-1/2">
+                  <label className="block text-gray-300 mb-2">Email</label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    required
+                  />
+
+                  {errors.email && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.email[0]}
+                    </p>
+                  )}
+                </div>
+                <div className="w-1/2">
+                  <label className="block text-gray-300 mb-2">Date of Birth</label>
+                  <input
+                    type="date"
+                    name="birthday"
+                    value={formData.birthday}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    required
+                  />
+                </div>
               </div>
 
               <div>
@@ -662,6 +704,7 @@ export default function Admin() {
                   phone: "",
                   password: "",
                   role_id: "5",
+                  birthday: "",
                 });
               }}
               className="absolute top-4 right-4 text-gray-400 hover:text-white"
@@ -697,16 +740,29 @@ export default function Admin() {
                 </div>
               </div>
 
-              <div>
-                <label className="block text-gray-300 mb-2">Email</label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                  required
-                />
+              <div className="flex gap-4">
+                <div className="w-1/2">
+                  <label className="block text-gray-300 mb-2">Email</label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    required
+                  />
+                </div>
+                <div className="w-1/2">
+                  <label className="block text-gray-300 mb-2">Date of Birth</label>
+                  <input
+                    type="date"
+                    name="birthday"
+                    value={formData.birthday}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    required
+                  />
+                </div>
               </div>
 
               <div>
