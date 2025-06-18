@@ -24,7 +24,7 @@ const EulaModal: React.FC<EulaModalProps> = ({ onAgree, onCancel }) => {
           <p className="mb-4">
             By checking the box below and clicking "Agree and Login", you acknowledge that you have read,
             understood, and agree to be bound by the privacy policy outlined in our{' '}
-            <a href={termsLink} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+            <a href={termsLink} target="_blank" rel="noopener noreferrer" className="text-yellow-600 hover:underline">
               Privacy Policy
             </a>.
           </p>
