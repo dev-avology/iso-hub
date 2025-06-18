@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { Edit, Trash, X } from 'lucide-react';
-import { toast, Toaster } from 'react-hot-toast';
+import { useState, useEffect } from "react";
+import { Edit, Trash, X } from "lucide-react";
+import { toast, Toaster } from "react-hot-toast";
 
 interface User {
   id: number;
@@ -30,12 +30,12 @@ interface ApiResponse {
 }
 
 const ROLE_MAPPING = {
-  '3': 'Manager',
-  '4': 'Team Leader',
-  '5': 'User',
-  '2': 'Admin',
-  '1': 'Super Admin',
-  '6': 'Team Member'
+  "3": "Manager",
+  "4": "Team Leader",
+  "5": "User",
+  "2": "Admin",
+  "1": "Super Admin",
+  "6": "Team Member",
 };
 
 export default function Admin() {
@@ -46,12 +46,12 @@ export default function Admin() {
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [formData, setFormData] = useState<UserFormData>({
-    first_name: '',
-    last_name: '',
-    email: '',
-    phone: '',
-    password: '',
-    role_id: '5' // Default to user role
+    first_name: "",
+    last_name: "",
+    email: "",
+    phone: "",
+    password: "",
+    role_id: "5", // Default to user role
   });
 
   // Filter states
@@ -63,27 +63,29 @@ export default function Admin() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string[] }>({});
 
-
   const fetchUsers = async (id?: string) => {
     try {
       setIsLoading(true);
-      const token = localStorage.getItem('auth_token');
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/user/lists`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: id ? JSON.stringify({ user_id: id }) : undefined,
-      });
+      const token = localStorage.getItem("auth_token");
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/user/lists`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: id ? JSON.stringify({ user_id: id }) : undefined,
+        }
+      );
 
       if (!response.ok) {
-        throw new Error('Failed to fetch users');
+        throw new Error("Failed to fetch users");
       }
       const data: ApiResponse = await response.json();
       setUsers(data.data);
     } catch (error) {
-      console.error('Error fetching users:', error);
+      console.error("Error fetching users:", error);
     } finally {
       setIsLoading(false);
     }
@@ -93,13 +95,148 @@ export default function Admin() {
     fetchUsers();
   }, []);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
+
+  // const handleSubmit = async (e: React.FormEvent) => {
+
+  //   e.preventDefault();
+  //   setIsSubmitting(true);
+  //   setErrors({});
+
+  //   try {
+  //     // Try different ways to get the token
+  //     let token = localStorage.getItem('auth_token');
+
+  //     // If not found in auth_token, try other common token storage keys
+  //     if (!token) {
+  //       token = localStorage.getItem('token');
+  //     }
+  //     if (!token) {
+  //       token = localStorage.getItem('access_token');
+  //     }
+
+  //     console.log('Token found:', token);
+
+  //     // Check if token exists
+  //     if (!token) {
+  //       toast.error('You are not logged in. Please log in again.');
+  //       setIsSubmitting(false);
+  //       return;
+  //     }
+
+  //     // Make sure token is properly formatted - remove any existing Bearer prefix first
+  //     const cleanToken = token.replace('Bearer ', '');
+  //     const formattedToken = `Bearer ${cleanToken}`;
+
+  //     console.log('Formatted token:', formattedToken);
+
+  //     const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/user/create`, {
+  //       method: 'POST',
+  //       headers: {
+  //         'Authorization': formattedToken,
+  //         'Content-Type': 'application/json'
+  //       },
+  //       body: JSON.stringify(formData)
+  //     });
+
+  //     const data = await response.json();
+  //     console.log('API response:', data);
+
+  //     if (!response.ok) {
+  //       if (response.status === 401) {
+  //         toast.error('Your session has expired. Please log in again.');
+  //         // Optionally redirect to login page
+  //         // window.location.href = '/login';
+  //         setIsSubmitting(false);
+  //         return;
+  //       }
+
+  //       if (response.status === 422) {
+  //         // setErrors(data.errors || {});
+  //         // Object.keys(data.errors || {}).forEach((key) => {
+  //         //   data.errors[key].forEach((errorMsg: string) => {
+  //         //     toast.error(errorMsg);
+  //         //   });
+  //         // });
+
+  //         const validationErrors = data.errors || {};
+  //         setErrors(validationErrors);
+
+  //         // Show toast for each error message
+  //         Object.values(validationErrors).forEach((fieldErrors: string[] | any) => {
+  //           fieldErrors.forEach((msg: string) => toast.error(msg));
+  //         });
+
+  //       } else {
+  //         throw new Error(data.message || 'Form submission failed');
+  //       }
+  //       setIsSubmitting(false);
+  //       return;
+  //     }
+
+  //     if (data.status === 'success') {
+  //       // Send credentials email
+  //       try {
+  //         const emailResponse = await fetch(`${import.meta.env.VITE_API_BASE_URL}/send-credentials-mail`, {
+  //           method: 'POST',
+  //           headers: {
+  //             'Authorization': formattedToken,
+  //             'Content-Type': 'application/json'
+  //           },
+  //           body: JSON.stringify({
+  //             name: `${formData.first_name} ${formData.last_name}`,
+  //             email: formData.email,
+  //             password: formData.password,
+  //             user_id: data.data.id,
+  //             website_name: 'ISO Hub',
+  //             website_url: 'https://isohub.io/login'
+  //           })
+  //         });
+
+  //         const emailData = await emailResponse.json();
+  //         console.log('emailData',emailData);
+
+  //         if (!emailResponse.ok) {
+  //           console.error('Failed to send credentials email:', emailData);
+  //           toast.error('User created but failed to send credentials email');
+  //         } else {
+  //           toast.success('User created and credentials sent successfully');
+  //         }
+  //       } catch (emailError) {
+  //         console.error('Error sending credentials email:', emailError);
+  //         toast.error('User created but failed to send credentials email');
+  //       }
+
+  //       setFormData({
+  //         first_name: '',
+  //         last_name: '',
+  //         email: '',
+  //         phone: '',
+  //         password: '',
+  //         role_id: '5'
+  //       });
+  //       setIsModalOpen(false);
+
+  //       // Refresh the users list
+  //       await fetchUsers();
+  //     } else {
+  //       throw new Error(data.message || 'Form submission failed');
+  //     }
+  //   } catch (error) {
+  //     console.error('Error creating user:', error);
+  //     toast.error(error instanceof Error ? error.message : 'Failed to create user');
+  //   } finally {
+  //     setIsSubmitting(false);
+  //   }
+  // };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -107,126 +244,131 @@ export default function Admin() {
     setErrors({});
 
     try {
-      // Try different ways to get the token
-      let token = localStorage.getItem('auth_token');
+      // Retrieve token from various storage options
+      let token =
+        localStorage.getItem("auth_token") ||
+        localStorage.getItem("token") ||
+        localStorage.getItem("access_token");
 
-      // If not found in auth_token, try other common token storage keys
       if (!token) {
-        token = localStorage.getItem('token');
-      }
-      if (!token) {
-        token = localStorage.getItem('access_token');
-      }
-
-      console.log('Token found:', token);
-
-      // Check if token exists
-      if (!token) {
-        toast.error('You are not logged in. Please log in again.');
+        toast.error("You are not logged in. Please log in again.");
         setIsSubmitting(false);
         return;
       }
 
-      // Make sure token is properly formatted - remove any existing Bearer prefix first
-      const cleanToken = token.replace('Bearer ', '');
+      // Format token
+      const cleanToken = token.replace(/^Bearer\s+/i, "");
       const formattedToken = `Bearer ${cleanToken}`;
 
-      console.log('Formatted token:', formattedToken);
-
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/user/create`, {
-        method: 'POST',
-        headers: {
-          'Authorization': formattedToken,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData)
-      });
-
-      const data = await response.json();
-      console.log('API response:', data);
-
-      if (!response.ok) {
-        if (response.status === 401) {
-          toast.error('Your session has expired. Please log in again.');
-          // Optionally redirect to login page
-          // window.location.href = '/login';
-          setIsSubmitting(false);
-          return;
+      // Submit the user creation request
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/user/create`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: formattedToken,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
         }
+      );
 
-        if (response.status === 422) {
-          // setErrors(data.errors || {});
-          // Object.keys(data.errors || {}).forEach((key) => {
-          //   data.errors[key].forEach((errorMsg: string) => {
-          //     toast.error(errorMsg);
-          //   });
-          // });
-
-          const validationErrors = data.errors || {};
-          setErrors(validationErrors);
-
-          // Show toast for each error message
-          Object.values(validationErrors).forEach((fieldErrors: string[] | any) => {
-            fieldErrors.forEach((msg: string) => toast.error(msg));
-          });
-
+      // Try to parse the response safely
+      let data: any = {};
+      let responseText: string;
+      try {
+        responseText = await response.text();
+        const contentType = response.headers.get("Content-Type") || "";
+        if (contentType.includes("application/json")) {
+          data = JSON.parse(responseText);
         } else {
-          throw new Error(data.message || 'Form submission failed');
+          console.warn("Unexpected content type:", contentType);
+          throw new Error("Invalid response format from server.");
         }
+      } catch (err) {
+        console.error("Failed to parse response:", err);
+        toast.error("Server returned an unexpected response.");
         setIsSubmitting(false);
         return;
       }
 
-      if (data.status === 'success') {
+      // Handle validation errors (Laravel 422)
+      if (response.status === 422) {
+        const validationErrors = data.errors || {};
+        setErrors(validationErrors);
+        Object.values(validationErrors).forEach((fieldErrors: string[]) => {
+          fieldErrors.forEach((msg) => toast.error(msg));
+        });
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Handle unauthorized
+      if (response.status === 401) {
+        toast.error("Your session has expired. Please log in again.");
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Handle generic failure
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to create user.");
+      }
+
+      // Handle success
+      if (data.status === "success") {
         // Send credentials email
         try {
-          const emailResponse = await fetch(`${import.meta.env.VITE_API_BASE_URL}/send-credentials-mail`, {
-            method: 'POST',
-            headers: {
-              'Authorization': formattedToken,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              name: `${formData.first_name} ${formData.last_name}`,
-              email: formData.email,
-              password: formData.password,
-              user_id: data.data.id,
-              website_name: 'ISO Hub',
-              website_url: 'https://isohub.io/login'
-            })
-          });
+          const emailResponse = await fetch(
+            `${import.meta.env.VITE_API_BASE_URL}/send-credentials-mail`,
+            {
+              method: "POST",
+              headers: {
+                Authorization: formattedToken,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                name: `${formData.first_name} ${formData.last_name}`,
+                email: formData.email,
+                password: formData.password,
+                user_id: data.data.id,
+                website_name: "ISO Hub",
+                website_url: `${import.meta.env.VITE_API_URL}/login`,
+              }),
+            }
+          );
 
           const emailData = await emailResponse.json();
-          
           if (!emailResponse.ok) {
-            console.error('Failed to send credentials email:', emailData);
-            toast.error('User created but failed to send credentials email');
+            console.error("Failed to send credentials email:", emailData);
+            toast.error("User created but failed to send credentials email.");
           } else {
-            toast.success('User created and credentials sent successfully');
+            toast.success("User created and credentials sent successfully.");
           }
         } catch (emailError) {
-          console.error('Error sending credentials email:', emailError);
-          toast.error('User created but failed to send credentials email');
+          console.error("Error sending email:", emailError);
+          toast.error("User created but failed to send credentials email.");
         }
 
+        // Reset form
         setFormData({
-          first_name: '',
-          last_name: '',
-          email: '',
-          phone: '',
-          password: '',
-          role_id: '5'
+          first_name: "",
+          last_name: "",
+          email: "",
+          phone: "",
+          password: "",
+          role_id: "5",
         });
         setIsModalOpen(false);
-
-        // Refresh the users list
-        await fetchUsers();
+        await fetchUsers(); // Refresh users list
       } else {
-        throw new Error(data.message || 'Form submission failed');
+        throw new Error(data.message || "Form submission failed.");
       }
     } catch (error) {
-      console.error('Error creating user:', error);
-      toast.error(error instanceof Error ? error.message : 'Failed to create user');
+      console.error("Error creating user:", error);
+      toast.error(
+        error instanceof Error ? error.message : "Something went wrong."
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -234,16 +376,19 @@ export default function Admin() {
 
   const handleDelete = async (id: number) => {
     try {
-      const token = localStorage.getItem('auth_token');
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/user/destroy/${id}`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`
+      const token = localStorage.getItem("auth_token");
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/user/destroy/${id}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-      });
+      );
 
       if (!response.ok) {
-        throw new Error('Failed to delete user');
+        throw new Error("Failed to delete user");
       }
 
       // Close the delete modal
@@ -253,7 +398,7 @@ export default function Admin() {
       // Refresh the users list after successful deletion
       fetchUsers();
     } catch (error) {
-      console.error('Error deleting user:', error);
+      console.error("Error deleting user:", error);
     }
   };
 
@@ -264,8 +409,8 @@ export default function Admin() {
       last_name: user.last_name,
       email: user.email,
       phone: user.phone,
-      password: '', // Password field is empty for security
-      role_id: user.role_id.toString()
+      password: "", // Password field is empty for security
+      role_id: user.role_id.toString(),
     });
     setIsEditModalOpen(true);
   };
@@ -275,39 +420,42 @@ export default function Admin() {
     if (!selectedUser) return;
 
     try {
-      const token = localStorage.getItem('auth_token');
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/user/update`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          ...formData,
-          id: selectedUser.id
-        }),
-      });
+      const token = localStorage.getItem("auth_token");
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/user/update`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            ...formData,
+            id: selectedUser.id,
+          }),
+        }
+      );
 
       if (!response.ok) {
-        throw new Error('Failed to update user');
+        throw new Error("Failed to update user");
       }
 
       // Reset form and close modal
       setFormData({
-        first_name: '',
-        last_name: '',
-        email: '',
-        phone: '',
-        password: '',
-        role_id: '5'
+        first_name: "",
+        last_name: "",
+        email: "",
+        phone: "",
+        password: "",
+        role_id: "5",
       });
-      toast.success('User updated successfully');
+      toast.success("User updated successfully");
       setIsEditModalOpen(false);
       setSelectedUser(null);
       // Refresh the users list
       fetchUsers();
     } catch (error) {
-      console.error('Error updating user:', error);
+      console.error("Error updating user:", error);
     }
   };
 
@@ -317,7 +465,7 @@ export default function Admin() {
   };
 
   const handleAdminChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-   setAdminChecked(e.target.checked);
+    setAdminChecked(e.target.checked);
   };
 
   const handleTeamLeadersChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -335,7 +483,14 @@ export default function Admin() {
   // Filter the users array based on checked roles and exclude role_id 1 and 2
   const filteredUsers = users.filter((user) => {
     // Then apply checkbox filters
-    if (!managersChecked && !teamLeadersChecked && !usersChecked && !adminChecked && !teamMembersChecked) return true;
+    if (
+      !managersChecked &&
+      !teamLeadersChecked &&
+      !usersChecked &&
+      !adminChecked &&
+      !teamMembersChecked
+    )
+      return true;
     if (managersChecked && user.role_id === 3) return true;
     if (teamLeadersChecked && user.role_id === 4) return true;
     if (usersChecked && user.role_id === 5) return true;
@@ -351,21 +506,17 @@ export default function Admin() {
     <>
       <Toaster position="top-right" reverseOrder={false} />
       <div className="shortmembers my-10 flex gap-7 items-center w-full text-center bg-yellow-500 py-5 px-5 rounded">
-
-        {(parsedUser.role_id === 1 || parsedUser.role_id === 2 ) && (
-
-        <div className="short text-white font-medium flex items-center gap-2">
-          <input
-            type="checkbox"
-            className="h-[20px] w-[20px]"
-            onChange={handleAdminChange}
-            checked={adminChecked}
-          />
-          <span>Admin</span>
-        </div>
-
+        {(parsedUser.role_id === 1 || parsedUser.role_id === 2) && (
+          <div className="short text-white font-medium flex items-center gap-2">
+            <input
+              type="checkbox"
+              className="h-[20px] w-[20px]"
+              onChange={handleAdminChange}
+              checked={adminChecked}
+            />
+            <span>Admin</span>
+          </div>
         )}
-
 
         <div className="short text-white font-medium flex items-center gap-2">
           <input
@@ -395,7 +546,6 @@ export default function Admin() {
           <span>Users/Reps</span>
         </div>
 
-
         <div className="short text-white font-medium flex items-center gap-2">
           <input
             type="checkbox"
@@ -405,7 +555,6 @@ export default function Admin() {
           />
           <span>Team Member</span>
         </div>
-
       </div>
 
       <div className="user_cont my-5">
@@ -442,7 +591,13 @@ export default function Admin() {
               <div className="userdata w-[20%]">{user.last_name}</div>
               <div className="userdata w-[20%]">{user.email}</div>
               <div className="userdata w-[20%]">{user.phone}</div>
-              <div className="userdata w-[20%]">{ROLE_MAPPING[user.role_id.toString() as keyof typeof ROLE_MAPPING]}</div>
+              <div className="userdata w-[20%]">
+                {
+                  ROLE_MAPPING[
+                    user.role_id.toString() as keyof typeof ROLE_MAPPING
+                  ]
+                }
+              </div>
               <div className="edit-delete-btn absolute right-5 hidden group-hover:block">
                 <div className="edit_data flex gap-2 items-center">
                   <button
@@ -451,7 +606,7 @@ export default function Admin() {
                   >
                     <Edit />
                   </button>
-                  { user.role_id != 2 && user.role_id != 1 && (
+                  {user.role_id != 2 && user.role_id != 1 && (
                     <button
                       onClick={() => {
                         setSelectedUser(user);
@@ -483,7 +638,6 @@ export default function Admin() {
             <h2 className="text-2xl font-bold text-white mb-6">Add New User</h2>
 
             <form onSubmit={handleSubmit} className="space-y-4">
-
               <div className="flex gap-4">
                 <div className="w-1/2">
                   <label className="block text-gray-300 mb-2">First Name</label>
@@ -496,7 +650,9 @@ export default function Admin() {
                     required
                   />
                   {errors.first_name && (
-                    <p className="text-red-500 text-sm mt-1">{errors.first_name[0]}</p>
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.first_name[0]}
+                    </p>
                   )}
                 </div>
                 <div className="w-1/2">
@@ -510,7 +666,9 @@ export default function Admin() {
                     required
                   />
                   {errors.last_name && (
-                    <p className="text-red-500 text-sm mt-1">{errors.last_name[0]}</p>
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.last_name[0]}
+                    </p>
                   )}
                 </div>
               </div>
@@ -556,7 +714,9 @@ export default function Admin() {
                   required
                 />
                 {errors.password && (
-                  <p className="text-red-500 text-sm mt-1">{errors.password[0]}</p>
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.password[0]}
+                  </p>
                 )}
               </div>
 
@@ -585,7 +745,6 @@ export default function Admin() {
                 </button>
               </div>
             </form>
-
           </div>
         </div>
       )}
@@ -599,12 +758,12 @@ export default function Admin() {
                 setIsEditModalOpen(false);
                 setSelectedUser(null);
                 setFormData({
-                  first_name: '',
-                  last_name: '',
-                  email: '',
-                  phone: '',
-                  password: '',
-                  role_id: '5'
+                  first_name: "",
+                  last_name: "",
+                  email: "",
+                  phone: "",
+                  password: "",
+                  role_id: "5",
                 });
               }}
               className="absolute top-4 right-4 text-gray-400 hover:text-white"
@@ -650,7 +809,6 @@ export default function Admin() {
                     className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
                     required
                   />
-
                 </div>
                 <div className="w-1/2">
                   <label className="block text-gray-300 mb-2">Last Name</label>
@@ -662,7 +820,6 @@ export default function Admin() {
                     className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
                     required
                   />
-
                 </div>
               </div>
 
@@ -691,7 +848,9 @@ export default function Admin() {
               </div>
 
               <div>
-                <label className="block text-gray-300 mb-2">Password (leave blank to keep current)</label>
+                <label className="block text-gray-300 mb-2">
+                  Password (leave blank to keep current)
+                </label>
                 <input
                   type="password"
                   name="password"
@@ -749,11 +908,16 @@ export default function Admin() {
                 <Trash className="h-6 w-6 text-red-600" />
               </div>
 
-              <h3 className="text-2xl font-bold text-white mb-2">Delete User</h3>
+              <h3 className="text-2xl font-bold text-white mb-2">
+                Delete User
+              </h3>
 
               <p className="text-gray-300 mb-6">
-                Are you sure you want to delete <span className="font-semibold">{selectedUser.first_name} {selectedUser.last_name}</span>?
-                This action cannot be undone.
+                Are you sure you want to delete{" "}
+                <span className="font-semibold">
+                  {selectedUser.first_name} {selectedUser.last_name}
+                </span>
+                ? This action cannot be undone.
               </p>
 
               <div className="flex gap-4 justify-center">

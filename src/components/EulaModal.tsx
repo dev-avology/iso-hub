@@ -9,8 +9,7 @@ const EulaModal: React.FC<EulaModalProps> = ({ onAgree, onCancel }) => {
   const [hasConsented, setHasConsented] = useState(false);
 
   // Link to your actual terms and conditions document
-  const termsLink = "https://isohub.io/terms-and-conditions"; // <--- IMPORTANT: Replace with your actual T&C link
-
+  const termsLink = `${import.meta.env.VITE_API_URL}/privacy-policy`;
   return (
     <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col">
@@ -24,9 +23,9 @@ const EulaModal: React.FC<EulaModalProps> = ({ onAgree, onCancel }) => {
           </p>
           <p className="mb-4">
             By checking the box below and clicking "Agree and Login", you acknowledge that you have read,
-            understood, and agree to be bound by the terms and conditions outlined in our{' '}
+            understood, and agree to be bound by the privacy policy outlined in our{' '}
             <a href={termsLink} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-              Terms and Conditions
+              Privacy Policy
             </a>.
           </p>
           <p className="mb-4">
