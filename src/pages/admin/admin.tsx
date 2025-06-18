@@ -105,158 +105,19 @@ export default function Admin() {
     }));
   };
 
-  // const handleSubmit = async (e: React.FormEvent) => {
-
-  //   e.preventDefault();
-  //   setIsSubmitting(true);
-  //   setErrors({});
-
-  //   try {
-  //     // Try different ways to get the token
-  //     let token = localStorage.getItem('auth_token');
-
-  //     // If not found in auth_token, try other common token storage keys
-  //     if (!token) {
-  //       token = localStorage.getItem('token');
-  //     }
-  //     if (!token) {
-  //       token = localStorage.getItem('access_token');
-  //     }
-
-  //     console.log('Token found:', token);
-
-  //     // Check if token exists
-  //     if (!token) {
-  //       toast.error('You are not logged in. Please log in again.');
-  //       setIsSubmitting(false);
-  //       return;
-  //     }
-
-  //     // Make sure token is properly formatted - remove any existing Bearer prefix first
-  //     const cleanToken = token.replace('Bearer ', '');
-  //     const formattedToken = `Bearer ${cleanToken}`;
-
-  //     console.log('Formatted token:', formattedToken);
-
-  //     const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/user/create`, {
-  //       method: 'POST',
-  //       headers: {
-  //         'Authorization': formattedToken,
-  //         'Content-Type': 'application/json'
-  //       },
-  //       body: JSON.stringify(formData)
-  //     });
-
-  //     const data = await response.json();
-  //     console.log('API response:', data);
-
-  //     if (!response.ok) {
-  //       if (response.status === 401) {
-  //         toast.error('Your session has expired. Please log in again.');
-  //         // Optionally redirect to login page
-  //         // window.location.href = '/login';
-  //         setIsSubmitting(false);
-  //         return;
-  //       }
-
-  //       if (response.status === 422) {
-  //         // setErrors(data.errors || {});
-  //         // Object.keys(data.errors || {}).forEach((key) => {
-  //         //   data.errors[key].forEach((errorMsg: string) => {
-  //         //     toast.error(errorMsg);
-  //         //   });
-  //         // });
-
-  //         const validationErrors = data.errors || {};
-  //         setErrors(validationErrors);
-
-  //         // Show toast for each error message
-  //         Object.values(validationErrors).forEach((fieldErrors: string[] | any) => {
-  //           fieldErrors.forEach((msg: string) => toast.error(msg));
-  //         });
-
-  //       } else {
-  //         throw new Error(data.message || 'Form submission failed');
-  //       }
-  //       setIsSubmitting(false);
-  //       return;
-  //     }
-
-  //     if (data.status === 'success') {
-  //       // Send credentials email
-  //       try {
-  //         const emailResponse = await fetch(`${import.meta.env.VITE_API_BASE_URL}/send-credentials-mail`, {
-  //           method: 'POST',
-  //           headers: {
-  //             'Authorization': formattedToken,
-  //             'Content-Type': 'application/json'
-  //           },
-  //           body: JSON.stringify({
-  //             name: `${formData.first_name} ${formData.last_name}`,
-  //             email: formData.email,
-  //             password: formData.password,
-  //             user_id: data.data.id,
-  //             website_name: 'ISO Hub',
-  //             website_url: 'https://isohub.io/login'
-  //           })
-  //         });
-
-  //         const emailData = await emailResponse.json();
-  //         console.log('emailData',emailData);
-
-  //         if (!emailResponse.ok) {
-  //           console.error('Failed to send credentials email:', emailData);
-  //           toast.error('User created but failed to send credentials email');
-  //         } else {
-  //           toast.success('User created and credentials sent successfully');
-  //         }
-  //       } catch (emailError) {
-  //         console.error('Error sending credentials email:', emailError);
-  //         toast.error('User created but failed to send credentials email');
-  //       }
-
-  //       setFormData({
-  //         first_name: '',
-  //         last_name: '',
-  //         email: '',
-  //         phone: '',
-  //         password: '',
-  //         role_id: '5'
-  //       });
-  //       setIsModalOpen(false);
-
-  //       // Refresh the users list
-  //       await fetchUsers();
-  //     } else {
-  //       throw new Error(data.message || 'Form submission failed');
-  //     }
-  //   } catch (error) {
-  //     console.error('Error creating user:', error);
-  //     toast.error(error instanceof Error ? error.message : 'Failed to create user');
-  //   } finally {
-  //     setIsSubmitting(false);
-  //   }
-  // };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     setErrors({});
 
     try {
-      // Retrieve token from various storage options
-      let token =
-        localStorage.getItem("auth_token") ||
-        localStorage.getItem("token") ||
-        localStorage.getItem("access_token");
-
+      const token = localStorage.getItem("auth_token");
       if (!token) {
-        toast.error("You are not logged in. Please log in again.");
+        toast.error("Authentication token not found. Please log in again.");
         setIsSubmitting(false);
         return;
       }
 
-      // Format token
       const cleanToken = token.replace(/^Bearer\s+/i, "");
       const formattedToken = `Bearer ${cleanToken}`;
 
@@ -272,6 +133,13 @@ export default function Admin() {
           body: JSON.stringify(formData),
         }
       );
+
+      // Handle CORS errors specifically
+      if (!response.ok && response.status === 0) {
+        toast.error("Network error: Unable to connect to server. Please check your internet connection.");
+        setIsSubmitting(false);
+        return;
+      }
 
       // Try to parse the response safely
       let data: any = {};
@@ -297,8 +165,10 @@ export default function Admin() {
         const validationErrors = data.errors || {};
         console.log('validationErrors',validationErrors);
         setErrors(validationErrors);
-        Object.values(validationErrors).forEach((fieldErrors: string[]) => {
-          fieldErrors.forEach((msg) => toast.error(msg));
+        Object.values(validationErrors).forEach((fieldErrors: any) => {
+          if (Array.isArray(fieldErrors)) {
+            fieldErrors.forEach((msg: string) => toast.error(msg));
+          }
         });
         setIsSubmitting(false);
         return;
@@ -307,6 +177,13 @@ export default function Admin() {
       // Handle unauthorized
       if (response.status === 401) {
         toast.error("Your session has expired. Please log in again.");
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Handle CORS errors
+      if (response.status === 0 || response.status === 403) {
+        toast.error("Access denied. This may be due to CORS configuration. Please contact your administrator.");
         setIsSubmitting(false);
         return;
       }
@@ -367,9 +244,15 @@ export default function Admin() {
       }
     } catch (error) {
       console.error("Error creating user:", error);
-      toast.error(
-        error instanceof Error ? error.message : "Something went wrong."
-      );
+      
+      // Check if it's a CORS error
+      if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
+        toast.error("Network error: Unable to connect to server. This may be due to CORS configuration.");
+      } else {
+        toast.error(
+          error instanceof Error ? error.message : "Something went wrong."
+        );
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -775,30 +658,6 @@ export default function Admin() {
             <h2 className="text-2xl font-bold text-white mb-6">Edit User</h2>
 
             <form onSubmit={handleUpdate} className="space-y-4">
-              {/* <div>
-                <label className="block text-gray-300 mb-2">First Name</label>
-                <input
-                  type="text"
-                  name="first_name"
-                  value={formData.first_name}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-gray-300 mb-2">Last Name</label>
-                <input
-                  type="text"
-                  name="last_name"
-                  value={formData.last_name}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                  required
-                />
-              </div> */}
-
               <div className="flex gap-4">
                 <div className="w-1/2">
                   <label className="block text-gray-300 mb-2">First Name</label>
