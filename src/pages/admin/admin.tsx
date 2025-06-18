@@ -295,6 +295,7 @@ export default function Admin() {
       // Handle validation errors (Laravel 422)
       if (response.status === 422) {
         const validationErrors = data.errors || {};
+        console.log('validationErrors',validationErrors);
         setErrors(validationErrors);
         Object.values(validationErrors).forEach((fieldErrors: string[]) => {
           fieldErrors.forEach((msg) => toast.error(msg));
