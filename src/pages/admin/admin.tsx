@@ -169,8 +169,8 @@ export default function Admin() {
       // Handle validation errors (Laravel 422 or status 422 in JSON)
       if (response.status === 422 || (response.status === 200 && data.status === 422)) {
         const validationErrors = data.errors || {};
-        console.log("validationErrors", validationErrors);
         setErrors(validationErrors);
+        // Show only field-specific error messages as toasts
         Object.values(validationErrors).forEach((fieldErrors: any) => {
           if (Array.isArray(fieldErrors)) {
             fieldErrors.forEach((msg: string) => toast.error(msg));
@@ -255,13 +255,29 @@ export default function Admin() {
       console.error("Error creating user:", error);
 
       // Check if it's a CORS error
-      if (
-        error instanceof TypeError &&
-        error.message.includes("Failed to fetch")
-      ) {
+      if (error instanceof TypeError && error.message.includes("Failed to fetch")) {
         toast.error(
           "Network error: Unable to connect to server. This may be due to CORS configuration."
         );
+      } else if (error instanceof Response) {
+        // Try to handle 422 validation error in catch block
+        try {
+          const text = await error.text();
+          const data = JSON.parse(text);
+          if (error.status === 422 || (error.status === 200 && data.status === 422)) {
+            const validationErrors = data.errors || {};
+            setErrors(validationErrors);
+            Object.values(validationErrors).forEach((fieldErrors: any) => {
+              if (Array.isArray(fieldErrors)) {
+                fieldErrors.forEach((msg: string) => toast.error(msg));
+              }
+            });
+            return;
+          }
+        } catch (parseErr) {
+          // fallback to generic error
+        }
+        toast.error("Something went wrong.");
       } else {
         toast.error(
           error instanceof Error ? error.message : "Something went wrong."
