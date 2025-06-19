@@ -2410,6 +2410,8 @@ export default function PreApplications() {
   };
 
   const handleDownloadDesignPDF = async (form: FormData) => {
+    // Also trigger zip download
+    handleDownloadDocs(form.id);
     setDownloadingPDFId(form.id);
     try {
       const containerId = `pdf-design-container-${form.id}`;
@@ -2774,7 +2776,7 @@ export default function PreApplications() {
                         </button>
 
                         {/* {form.mail_status === 2 && ( */}
-                          <button
+                          {/* <button
                             onClick={() => handleDownloadDocs(form.id)}
                             disabled={downloadingId === form.id}
                             className={`inline-flex items-center gap-1 text-xs font-medium ${
@@ -2814,7 +2816,7 @@ export default function PreApplications() {
                                 Download
                               </>
                             )}
-                          </button>
+                          </button> */}
                         {/* )} */}
                         {/* <button
                           onClick={() => handleDownloadPDF(form)}
