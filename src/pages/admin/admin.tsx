@@ -177,9 +177,9 @@ export default function Admin() {
             fieldErrors.forEach((msg: string) => toast.error(msg));
           }
         });
-        // Do not show generic message if field errors exist
         setIsSubmitting(false);
-        return;
+        // Throw a custom error so the catch block can also handle it
+        throw { isValidationError: true, validationErrors };
       }
 
       // Handle unauthorized
@@ -255,7 +255,6 @@ export default function Admin() {
       }
     } catch (error) {
       console.error("Error creating user:", error);
-      // Check if it's a CORS error
       if (error instanceof TypeError && error.message.includes("Failed to fetch")) {
         toast.error(
           "Network error: Unable to connect to server. This may be due to CORS configuration."
@@ -282,8 +281,15 @@ export default function Admin() {
           // fallback to generic error
         }
         toast.error("Something went wrong.");
+      } else if (error && typeof error === 'object' && (error as any).isValidationError) {
+        // Custom thrown validation error
+        const validationErrors = (error as any).validationErrors || {};
+        Object.values(validationErrors).forEach((fieldErrors: any) => {
+          if (Array.isArray(fieldErrors)) {
+            fieldErrors.forEach((msg: string) => toast.error(msg));
+          }
+        });
       } else {
-        // Only show error.message if it's not 'Validation failed' or if there are no field errors
         if (error instanceof Error && error.message === "Validation failed") {
           // Do not show generic toast, field errors will be shown
         } else {
