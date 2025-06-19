@@ -166,8 +166,8 @@ export default function Admin() {
         return;
       }
 
-      // Handle validation errors (Laravel 422)
-      if (response.status === 422) {
+      // Handle validation errors (Laravel 422 or status 422 in JSON)
+      if (response.status === 422 || (response.status === 200 && data.status === 422)) {
         const validationErrors = data.errors || {};
         console.log("validationErrors", validationErrors);
         setErrors(validationErrors);
