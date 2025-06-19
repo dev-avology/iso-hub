@@ -114,193 +114,57 @@ export default function Admin() {
     setIsSubmitting(true);
     setErrors({});
 
-    try {
-      const token = localStorage.getItem("auth_token");
-      if (!token) {
-        toast.error("Authentication token not found. Please log in again.");
-        setIsSubmitting(false);
-        return;
-      }
-
-      const cleanToken = token.replace(/^Bearer\s+/i, "");
-      const formattedToken = `Bearer ${cleanToken}`;
-
-      // Submit the user creation request
-      const response = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/user/create`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: formattedToken,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        }
-      );
-
-      // Handle CORS errors specifically
-      if (!response.ok && response.status === 0) {
-        toast.error(
-          "Network error: Unable to connect to server. Please check your internet connection."
-        );
-        setIsSubmitting(false);
-        return;
-      }
-
-      // Try to parse the response safely
-      let data: any = {};
-      let responseText: string;
-      try {
-        responseText = await response.text();
-        const contentType = response.headers.get("Content-Type") || "";
-        if (contentType.includes("application/json")) {
-          data = JSON.parse(responseText);
-        } else {
-          console.warn("Unexpected content type:", contentType);
-          throw new Error("Invalid response format from server.");
-        }
-      } catch (err) {
-        console.error("Failed to parse response:", err);
-        toast.error("Server returned an unexpected response.");
-        setIsSubmitting(false);
-        return;
-      }
-
-      // Handle validation errors (Laravel 422 or status 422 in JSON)
-      if (response.status === 422 || (response.status === 200 && data.status === 422)) {
-        const validationErrors = data.errors || {};
-        setErrors(validationErrors);
-        let hasFieldErrors = false;
-        Object.values(validationErrors).forEach((fieldErrors: any) => {
-          if (Array.isArray(fieldErrors)) {
-            hasFieldErrors = true;
-            fieldErrors.forEach((msg: string) => toast.error(msg));
-          }
-        });
-        setIsSubmitting(false);
-        // Throw a custom error so the catch block can also handle it
-        throw { isValidationError: true, validationErrors };
-      }
-
-      // Handle unauthorized
-      if (response.status === 401) {
-        toast.error("Your session has expired. Please log in again.");
-        setIsSubmitting(false);
-        return;
-      }
-
-      // Handle CORS errors
-      if (response.status === 0 || response.status === 403) {
-        toast.error(
-          "Access denied. This may be due to CORS configuration. Please contact your administrator."
-        );
-        setIsSubmitting(false);
-        return;
-      }
-
-      // Handle generic failure
-      if (!response.ok) {
-        throw new Error(data.message || "Failed to create user.");
-      }
-
-      // Handle success
-      if (data.status === "success") {
-        // Send credentials email
-        try {
-          const emailResponse = await fetch(
-            `${import.meta.env.VITE_API_BASE_URL}/send-credentials-mail`,
-            {
-              method: "POST",
-              headers: {
-                Authorization: formattedToken,
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                name: `${formData.first_name} ${formData.last_name}`,
-                email: formData.email,
-                password: formData.password,
-                user_id: data.data.id,
-                website_name: "ISO Hub",
-                website_url: `${import.meta.env.VITE_API_URL}/login`,
-              }),
-            }
-          );
-
-          const emailData = await emailResponse.json();
-          if (!emailResponse.ok) {
-            console.error("Failed to send credentials email:", emailData);
-            toast.error("User created but failed to send credentials email.");
-          } else {
-            toast.success("User created and credentials sent successfully.");
-          }
-        } catch (emailError) {
-          console.error("Error sending email:", emailError);
-          toast.error("User created but failed to send credentials email.");
-        }
-
-        // Reset form
-        setFormData({
-          first_name: "",
-          last_name: "",
-          email: "",
-          phone: "",
-          password: "",
-          role_id: "5",
-          birthday: "",
-        });
-        setIsModalOpen(false);
-        await fetchUsers(); // Refresh users list
-      } else {
-        throw new Error(data.message || "Form submission failed.");
-      }
-    } catch (error) {
-      console.error("Error creating user:", error);
-      if (error instanceof TypeError && error.message.includes("Failed to fetch")) {
-        toast.error(
-          "Network error: Unable to connect to server. This may be due to CORS configuration."
-        );
-      } else if (error instanceof Response) {
-        // Try to handle 422 validation error in catch block
-        try {
-          const text = await error.text();
-          const data = JSON.parse(text);
-          if (error.status === 422 || (error.status === 200 && data.status === 422)) {
-            const validationErrors = data.errors || {};
-            setErrors(validationErrors);
-            let hasFieldErrors = false;
-            Object.values(validationErrors).forEach((fieldErrors: any) => {
-              if (Array.isArray(fieldErrors)) {
-                hasFieldErrors = true;
-                fieldErrors.forEach((msg: string) => toast.error(msg));
-              }
-            });
-            // Do not show generic message if field errors exist
-            return;
-          }
-        } catch (parseErr) {
-          // fallback to generic error
-        }
-        toast.error("Something went wrong.");
-      } else if (error && typeof error === 'object' && (error as any).isValidationError) {
-        // Custom thrown validation error
-        const validationErrors = (error as any).validationErrors || {};
-        Object.values(validationErrors).forEach((fieldErrors: any) => {
-          if (Array.isArray(fieldErrors)) {
-            fieldErrors.forEach((msg: string) => toast.error(msg));
-          }
-        });
-      } else {
-        if (error instanceof Error && error.message === "Validation failed") {
-          // Do not show generic toast, field errors will be shown
-        } else {
-          toast.error(
-            error instanceof Error ? error.message : "Something went wrong."
-          );
-        }
-      }
-    } finally {
+    // --- DEBUG: Commented out try-catch for debugging ---
+    const token = localStorage.getItem("auth_token");
+    if (!token) {
       setIsSubmitting(false);
+      return;
     }
+
+    const cleanToken = token.replace(/^Bearer\s+/i, "");
+    const formattedToken = `Bearer ${cleanToken}`;
+
+    // Submit the user creation request
+    const response = await fetch(
+      `${import.meta.env.VITE_API_BASE_URL}/user/create`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: formattedToken,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      }
+    );
+
+    let data: any = {};
+    let responseText: string;
+    responseText = await response.text();
+    const contentType = response.headers.get("Content-Type") || "";
+    if (contentType.includes("application/json")) {
+      data = JSON.parse(responseText);
+    } else {
+      console.warn("Unexpected content type:", contentType);
+    }
+
+    // If 200 and errors/message, log for debugging
+    if (
+      response.status === 200 &&
+      data.errors &&
+      data.message
+    ) {
+      console.log("DEBUG VALIDATION ERROR:", data);
+      setIsSubmitting(false);
+      return;
+    }
+    // Also handle if status is 422 in data
+    if (data.status === 422 && data.errors && data.message) {
+      console.log("DEBUG VALIDATION ERROR (status 422):", data);
+      setIsSubmitting(false);
+      return;
+    }
+
+    setIsSubmitting(false);
   };
 
   const handleDelete = async (id: number) => {
