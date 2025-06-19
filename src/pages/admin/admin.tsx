@@ -170,12 +170,14 @@ export default function Admin() {
       if (response.status === 422 || (response.status === 200 && data.status === 422)) {
         const validationErrors = data.errors || {};
         setErrors(validationErrors);
-        // Show only field-specific error messages as toasts
+        let hasFieldErrors = false;
         Object.values(validationErrors).forEach((fieldErrors: any) => {
           if (Array.isArray(fieldErrors)) {
+            hasFieldErrors = true;
             fieldErrors.forEach((msg: string) => toast.error(msg));
           }
         });
+        // Do not show generic message if field errors exist
         setIsSubmitting(false);
         return;
       }
@@ -253,7 +255,6 @@ export default function Admin() {
       }
     } catch (error) {
       console.error("Error creating user:", error);
-
       // Check if it's a CORS error
       if (error instanceof TypeError && error.message.includes("Failed to fetch")) {
         toast.error(
@@ -267,11 +268,14 @@ export default function Admin() {
           if (error.status === 422 || (error.status === 200 && data.status === 422)) {
             const validationErrors = data.errors || {};
             setErrors(validationErrors);
+            let hasFieldErrors = false;
             Object.values(validationErrors).forEach((fieldErrors: any) => {
               if (Array.isArray(fieldErrors)) {
+                hasFieldErrors = true;
                 fieldErrors.forEach((msg: string) => toast.error(msg));
               }
             });
+            // Do not show generic message if field errors exist
             return;
           }
         } catch (parseErr) {
@@ -279,9 +283,14 @@ export default function Admin() {
         }
         toast.error("Something went wrong.");
       } else {
-        toast.error(
-          error instanceof Error ? error.message : "Something went wrong."
-        );
+        // Only show error.message if it's not 'Validation failed' or if there are no field errors
+        if (error instanceof Error && error.message === "Validation failed") {
+          // Do not show generic toast, field errors will be shown
+        } else {
+          toast.error(
+            error instanceof Error ? error.message : "Something went wrong."
+          );
+        }
       }
     } finally {
       setIsSubmitting(false);
