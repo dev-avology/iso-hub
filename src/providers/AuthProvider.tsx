@@ -293,7 +293,7 @@ export const useAuth = () => {
     // Initial verification
     const verifyCurrentSession = async () => {
       const storedUser = localStorage.getItem('auth_user');
-      console.log('Current stored user:', storedUser);
+      // console.log('Current stored user:', storedUser);
       if (storedUser && context.user) {
         try {
           const parsedUser = JSON.parse(storedUser);

@@ -15,6 +15,7 @@ import {
   FileText,
   Image,
   File,
+  Mail,
 } from "lucide-react";
 import { toast, Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
@@ -2143,6 +2144,15 @@ export default function PreApplications() {
   const [downloadingId, setDownloadingId] = useState<number | null>(null);
   const [downloadingPDFId, setDownloadingPDFId] = useState<number | null>(null);
 
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [emailForm, setEmailForm] = useState({
+    dba: "",
+    merchantName: "",
+    email: "",
+    phone: "",
+  });
+  const [emailSending, setEmailSending] = useState(false);
+
   // const preAppLink = `${window.location.origin}/iso-forms?data=${formToken}`; // The base URL for your form
   const value = localStorage.getItem("auth_user");
   const parsedUser = value ? JSON.parse(value) : null;
@@ -2482,6 +2492,45 @@ export default function PreApplications() {
     }
   };
 
+  // Email Modal form handlers
+  const handleEmailInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmailForm({ ...emailForm, [e.target.name]: e.target.value });
+  };
+  const handleEmailFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setEmailSending(true);
+    const payload = {
+      dba: emailForm.dba,
+      merchant_name: emailForm.merchantName,
+      email: emailForm.email,
+      phone: emailForm.phone,
+      iso_form_link: preAppLink,
+      user_id: user_id,
+    };
+    try {
+      const token = localStorage.getItem("auth_token");
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/send-form-link-mail`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+      const result = await response.json();
+      if (response.ok && result.status === "success") {
+        toast.success("Email sent successfully");
+        setShowEmailModal(false);
+        setEmailForm({ dba: "", merchantName: "", email: "", phone: "" });
+      } else {
+        toast.error(result.message || "Failed to send email");
+      }
+    } catch (error) {
+      toast.error("Failed to send email");
+    } finally {
+      setEmailSending(false);
+    }
+  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -2502,47 +2551,127 @@ export default function PreApplications() {
 
       {/* Pre-Application Link Section */}
       <div className="bg-zinc-900 rounded-lg shadow-sm p-6 mb-8 border border-yellow-400/20">
-        <h2 className="text-lg font-semibold text-white mb-4">
-          Pre-Application Form Link
-        </h2>
-        <div className="flex items-center space-x-4">
-          <div className="flex-1 min-w-0">
-            <div className="relative flex items-center">
-              <input
-                type="text"
-                readOnly
-                value={preAppLink}
-                className="block w-full pr-10 truncate bg-zinc-800 border-zinc-700 text-white rounded-md focus:ring-yellow-400 focus:border-yellow-400"
-              />
-              <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-                <a
-                  href={preAppLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-400 hover:text-yellow-400"
-                >
-                  <ExternalLink className="h-5 w-5" />
-                </a>
-              </div>
-            </div>
-          </div>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold text-white">
+            Pre-Application Form Link
+          </h2>
           <button
-            onClick={copyLink}
+            onClick={() => setShowEmailModal(true)}
             className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-yellow-400 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400"
           >
-            {copied ? (
-              <>
-                <CheckCircle className="h-5 w-5 mr-2" />
-                Copied!
-              </>
-            ) : (
-              <>
-                <Copy className="h-5 w-5 mr-2" />
-                Copy Link
-              </>
-            )}
+            <Mail className="h-5 w-5 mr-2" />
+            Email
           </button>
         </div>
+        <div className="flex-1 min-w-0">
+          <div className="relative flex items-center">
+            <input
+              type="text"
+              readOnly
+              value={preAppLink}
+              className="block pr-10 truncate bg-zinc-800 border-zinc-700 text-white rounded-md focus:ring-yellow-400 focus:border-yellow-400 mr-2"
+              style={{ width: 'calc(100% - 160px)' }}
+            />
+            <div className="absolute inset-y-0 right-24 flex items-center pr-3">
+              <a
+                href={preAppLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-yellow-400"
+              >
+                <ExternalLink className="h-5 w-5" />
+              </a>
+            </div>
+            <button
+              onClick={copyLink}
+              className="absolute right-0 top-1/2 -translate-y-1/2 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-yellow-400 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400"
+            >
+              {copied ? (
+                <>
+                  <CheckCircle className="h-5 w-5 mr-2" />
+                  Copied!
+                </>
+              ) : (
+                <>
+                  <Copy className="h-5 w-5 mr-2" />
+                  Copy Link
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+        {/* Email Modal */}
+        {showEmailModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="bg-zinc-900 rounded-lg p-6 w-full max-w-md relative">
+              <button
+                className="absolute top-2 right-2 text-gray-400 hover:text-yellow-400"
+                onClick={() => setShowEmailModal(false)}
+              >
+                <X className="h-6 w-6" />
+              </button>
+              <h3 className="text-lg font-semibold text-yellow-400 mb-4 flex items-center">
+                <Mail className="h-5 w-5 mr-2" /> Send Pre-Application Link via Email
+              </h3>
+              <form onSubmit={handleEmailFormSubmit} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">DBA</label>
+                  <input
+                    type="text"
+                    name="dba"
+                    value={emailForm.dba}
+                    onChange={handleEmailInputChange}
+                    className="w-full rounded-md bg-zinc-800 border border-zinc-700 text-white px-3 py-2 focus:ring-yellow-400 focus:border-yellow-400"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Merchant Name</label>
+                  <input
+                    type="text"
+                    name="merchantName"
+                    value={emailForm.merchantName}
+                    onChange={handleEmailInputChange}
+                    className="w-full rounded-md bg-zinc-800 border border-zinc-700 text-white px-3 py-2 focus:ring-yellow-400 focus:border-yellow-400"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Email</label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={emailForm.email}
+                    onChange={handleEmailInputChange}
+                    className="w-full rounded-md bg-zinc-800 border border-zinc-700 text-white px-3 py-2 focus:ring-yellow-400 focus:border-yellow-400"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Phone</label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={emailForm.phone}
+                    onChange={handleEmailInputChange}
+                    className="w-full rounded-md bg-zinc-800 border border-zinc-700 text-white px-3 py-2 focus:ring-yellow-400 focus:border-yellow-400"
+                    required
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="w-full mt-2 inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-yellow-400 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400"
+                  disabled={emailSending}
+                >
+                  {emailSending ? (
+                    <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                  ) : null}
+                  Send to Email
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Pre-Application List */}
