@@ -155,7 +155,7 @@ const blankFormData: FormData = {
   business_legal_name: "",
   business_products_sold: "",
   business_return_policy: "",
-  terminal_other: ""
+  terminal_other: "",
 };
 
 // Add this CSS at the top of the file
@@ -197,6 +197,7 @@ export default function JotForm() {
   const { user_id } = useParams<{ user_id: string }>();
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const data = searchParams.get("data");
+  const formId = searchParams.get("id") ?? "";
   const [errors, setErrors] = useState<{ [key: string]: string[] }>({});
   const [isReadOnly, setIsReadOnly] = useState<{
     readOnly?: boolean;
@@ -368,6 +369,7 @@ export default function JotForm() {
 
     formDataToSend.append("signature", signatureData);
     formDataToSend.append("user_id", user_id);
+    formDataToSend.append("form_id", formId);
 
     // Append owner data and files
     ownerFormData.forEach((owner, ownerIdx) => {
@@ -506,6 +508,7 @@ export default function JotForm() {
             <input type="hidden" name="is_duplicate" value="1" />
           )}
 
+          <input type="hidden" name="form_id" value={formId} />
           {/* BUSINESS PROFILE */}
           <fieldset className="border border-gray-300 rounded-lg p-6">
             <legend className="text-lg font-semibold text-gray-800 px-2 text-white">

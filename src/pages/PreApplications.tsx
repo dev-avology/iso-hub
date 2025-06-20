@@ -2706,7 +2706,7 @@ export default function PreApplications() {
                     DBA
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                    Merchant Name
+                    Business Contact Name
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                     Email
@@ -2730,7 +2730,7 @@ export default function PreApplications() {
                       {form.business_dba || "-"}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                      {form.merchant_name || "-"}
+                      {form.business_contact_name || "-"}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                       {form.email || "-"}
