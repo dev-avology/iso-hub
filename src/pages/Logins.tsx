@@ -10,6 +10,7 @@ import {
   X,
   Pencil,
   Trash2,
+  Shield
 } from "lucide-react";
 import axios from "axios";
 import EditVendor from '../components/EditVendor';
@@ -30,13 +31,11 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import type { UniqueIdentifier, DragEndEvent } from '@dnd-kit/core';
 
-const categories = [
-  { id: "processors", name: "Processors", icon: CreditCard },
-  { id: "gateways", name: "Gateways", icon: Router },
-  { id: "hardware", name: "Hardware/Equipment", icon: HardDrive },
-];
+// const value = localStorage.getItem("auth_user");
+// const parsedUser = value ? JSON.parse(value) : null;
+// const roleId = parsedUser.role_id;
 
-const categoryIds = ['processors', 'gateways', 'hardware'];
+const categoryIds = ['processors', 'gateways', 'hardware', 'internal'];
 
 interface VendorTemplate {
   id: number;
@@ -340,6 +339,21 @@ export default function Logins() {
   const parsedUser = JSON.parse(localStorage.getItem("auth_user") || "{}");
   const role_id = parsedUser.role_id;
 
+  const categories = [
+    { id: "gateways", name: "Gateways", icon: Router },
+    { id: "hardware", name: "Hardware/Equipment", icon: HardDrive },
+    // { id: "internal", name: "Internal", icon: Shield }, // <- updated
+    // { id: "processors", name: "Processors", icon: CreditCard },
+  ];
+
+  // Conditionally add "internal"
+  if (role_id == 1 || role_id == 2) {
+    categories.push({ id: "internal", name: "Internal", icon: Shield });
+  }
+
+  // Add remaining item
+  categories.push({ id: "processors", name: "Processors", icon: CreditCard });
+
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -365,6 +379,7 @@ export default function Logins() {
         throw new Error("Authentication token not found. Please login again.");
       }
       const parsedUser = JSON.parse(localStorage.getItem("auth_user") || "{}");
+      // const role_id =parsedUser?.role_id;
       const body: any = {};
       if (parsedUser?.role_id !== 2) {
         body.user_id = parsedUser.id;
@@ -396,6 +411,9 @@ export default function Logins() {
             (a.card_order ?? Infinity) - (b.card_order ?? Infinity)
           ),
           hardware: (vendorsByType.hardware || []).sort((a: any, b: any) => 
+            (a.card_order ?? Infinity) - (b.card_order ?? Infinity)
+          ),
+          internal: (vendorsByType.internal || []).sort((a: any, b: any) => 
             (a.card_order ?? Infinity) - (b.card_order ?? Infinity)
           ),
         };
@@ -784,6 +802,9 @@ export default function Logins() {
       toast.error("Failed to save card order");
     }
   };
+
+  console.log('items',categories);
+  console.log('vendors222',vendors);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
