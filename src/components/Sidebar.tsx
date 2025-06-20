@@ -12,6 +12,7 @@ import {
   LayoutDashboard,
   Users,
   UserPlus,
+  BookOpen
 } from "lucide-react";
 import { useAuth } from "../providers/AuthProvider";
 import { useNavigate, Link, useLocation } from "react-router-dom";
@@ -103,6 +104,9 @@ export default function Sidebar({
       external: true,
     },
     { name: "Settings", icon: Settings },
+
+    { name: "Resources", icon: BookOpen, href: "/applications" }
+    
     // { name: 'Users', icon: User, href: '/users' },
     // { name: 'Residuals', icon: FileText, href: 'https://dev.tracerpos.com'  },
   ];
