@@ -2530,6 +2530,7 @@ export default function PreApplications() {
         toast.success("Email sent successfully");
         setShowEmailModal(false);
         setEmailForm({ dba: "", merchantName: "", email: "", phone: "" });
+        fetchForms();
       } else {
         toast.error(result.message || "Failed to send email");
       }
