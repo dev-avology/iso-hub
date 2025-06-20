@@ -78,6 +78,10 @@ interface FormData {
   personal_guarantee_required: string;
   clear_signature: string;
   is_same_shipping_address: string;
+  iso_form_status: number;
+  merchant_name: string;
+  email: string;
+  phone: string;
 
   // Additional fields from API response
   get_jotform_details?: Array<{
@@ -2144,6 +2148,8 @@ export default function PreApplications() {
   const [downloadingId, setDownloadingId] = useState<number | null>(null);
   const [downloadingPDFId, setDownloadingPDFId] = useState<number | null>(null);
 
+  console.log('forms',forms);
+
   const [showEmailModal, setShowEmailModal] = useState(false);
   const [emailForm, setEmailForm] = useState({
     dba: "",
@@ -2572,9 +2578,9 @@ export default function PreApplications() {
               readOnly
               value={preAppLink}
               className="block pr-10 truncate bg-zinc-800 border-zinc-700 text-white rounded-md focus:ring-yellow-400 focus:border-yellow-400 mr-2"
-              style={{ width: 'calc(100% - 160px)' }}
+              style={{ width: 'calc(100% - 129px)' }}
             />
-            <div className="absolute inset-y-0 right-24 flex items-center pr-3">
+            <div className="absolute inset-y-0 right-24 flex items-center pr-9">
               <a
                 href={preAppLink}
                 target="_blank"
@@ -2699,18 +2705,21 @@ export default function PreApplications() {
                     DBA
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                    Business Contact Name
+                    Merchant Name
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                    Bank Name
+                    Email
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                    Date
+                    Phone
                   </th>
+
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Status</th>
+
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                     Actions
                   </th>
-                  {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Docs status</th> */}
+                  
                 </tr>
               </thead>
               <tbody className="bg-zinc-900 divide-y divide-gray-700">
@@ -2720,28 +2729,35 @@ export default function PreApplications() {
                       {form.business_dba || "-"}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                      {form.business_contact_name || "-"}
+                      {form.merchant_name || "-"}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                      {form.bank_name || "-"}
+                      {form.email || "-"}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                      {dayjs(form.created_at).format("DD-MM-YYYY")}
+                      {form.phone || "-"}
                     </td>
-                    {/* <td className="px-6 py-4 whitespace-nowrap">
+
+                    <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`px-2 py-0.5 text-[12px] font-medium rounded-full 
-                        ${form.status === 0 ? 'bg-yellow-100 text-yellow-800' :
-                          form.status === 1 ? 'bg-blue-100 text-blue-800' :
-                            form.status === 2 ? 'bg-green-100 text-green-800' :
-                              form.status === 3 ? 'bg-red-100 text-red-800' :
-                                'bg-gray-100 text-gray-800'}`}>
-                        {form.status === 0 ? 'New' :
-                          form.status === 1 ? 'In Review' :
-                            form.status === 2 ? 'Approved' :
-                              form.status === 3 ? 'Declined' :
-                                'Unknown'}
+                        ${form.iso_form_status === 0 ? 'bg-yellow-100 text-yellow-800' :
+                          form.iso_form_status === 1 ? 'bg-blue-100 text-blue-800' :
+                          form.iso_form_status === 2 ? 'bg-green-100 text-green-800' :
+                          form.iso_form_status === 3 ? 'bg-red-100 text-red-800' :
+                          form.iso_form_status === 4 ? 'bg-purple-100 text-purple-800' :
+                          form.iso_form_status === 5 ? 'bg-teal-100 text-teal-800' :
+                          'bg-gray-100 text-gray-800'}`}>
+                        
+                        {form.iso_form_status === 0 ? 'Pending' :
+                          form.iso_form_status === 1 ? 'Sent' :
+                          form.iso_form_status === 2 ? 'Delivered' :
+                          form.iso_form_status === 3 ? 'Opened' :
+                          form.iso_form_status === 4 ? 'Link Clicked' :
+                          form.iso_form_status === 5 ? 'Completed' :
+                          'Unknown'}
                       </span>
-                    </td> */}
+                    </td>
+
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                       <div className="flex items-center space-x-4">
                         <button

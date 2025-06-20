@@ -155,12 +155,29 @@ function VendorLoginModal({ vendor, onClose }: VendorLoginModalProps) {
               <span className="text-gray-200">{vendor.rep_name}</span>
             </div>
           )}
+
+
+          {vendor.rep_email && (
+            <div className="flex items-center bg-zinc-800/70 rounded px-3 py-2 text-sm">
+              <span className="font-semibold text-yellow-400 w-28">Contact Email:</span>
+              <span className="text-gray-200">{vendor.rep_email}</span>
+            </div>
+          )}
+
           {vendor.support_info && (
             <div className="flex items-center bg-zinc-800/70 rounded px-3 py-2 text-sm">
               <span className="font-semibold text-yellow-400 w-28">Support:</span>
               <span className="text-gray-200">{vendor.support_info}</span>
             </div>
           )}
+
+          {vendor.rep_phone && (
+            <div className="flex items-center bg-zinc-800/70 rounded px-3 py-2 text-sm">
+              <span className="font-semibold text-yellow-400 w-28">Rep Phone:</span>
+              <span className="text-gray-200">{vendor.rep_phone}</span>
+            </div>
+          )}
+
           {vendor.notes && (
             <div className="flex items-center bg-zinc-800/70 rounded px-3 py-2 text-sm">
               <span className="font-semibold text-yellow-400 w-28">Notes:</span>
