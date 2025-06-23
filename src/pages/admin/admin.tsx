@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Edit, Trash, X, Loader2 } from "lucide-react";
+import { Edit, Trash, X, Loader2, Eye, EyeOff } from "lucide-react";
 import { toast, Toaster } from "react-hot-toast";
 
 interface User {
@@ -47,6 +47,8 @@ export default function Admin() {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showEditPassword, setShowEditPassword] = useState(false);
   const [formData, setFormData] = useState<UserFormData>({
     first_name: "",
     last_name: "",
@@ -109,170 +111,7 @@ export default function Admin() {
     }));
   };
 
-  // const handleSubmit = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   setIsSubmitting(true);
-  //   setErrors({});
-
-  //   try {
-  //     const token = localStorage.getItem("auth_token");
-  //     if (!token) {
-  //       toast.error("Authentication token not found. Please log in again.");
-  //       setIsSubmitting(false);
-  //       return;
-  //     }
-
-  //     const cleanToken = token.replace(/^Bearer\s+/i, "");
-  //     const formattedToken = `Bearer ${cleanToken}`;
-
-  //     // Submit the user creation request
-  //     const response = await fetch(
-  //       `${import.meta.env.VITE_API_BASE_URL}/user/create`,
-  //       {
-  //         method: "POST",
-  //         headers: {
-  //           Authorization: formattedToken,
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify(formData),
-  //       }
-  //     );
-
-  //     // Handle CORS errors specifically
-  //     if (!response.ok && response.status === 0) {
-  //       toast.error(
-  //         "Network error: Unable to connect to server. Please check your internet connection."
-  //       );
-  //       setIsSubmitting(false);
-  //       return;
-  //     }
-
-  //     // Try to parse the response safely
-  //     let data: any = {};
-  //     let responseText: string;
-  //     try {
-  //       responseText = await response.text();
-  //       const contentType = response.headers.get("Content-Type") || "";
-  //       if (contentType.includes("application/json")) {
-  //         data = JSON.parse(responseText);
-  //       } else {
-  //         console.warn("Unexpected content type:", contentType);
-  //         throw new Error("Invalid response format from server.");
-  //       }
-  //     } catch (err) {
-  //       console.error("Failed to parse response:", err);
-  //       toast.error("Server returned an unexpected response.");
-  //       setIsSubmitting(false);
-  //       return;
-  //     }
-
-  //     // Handle validation errors (Laravel 422)
-  //     if (response.status === 422) {
-  //       const validationErrors = data.errors || {};
-  //       console.log("validationErrors", validationErrors);
-  //       setErrors(validationErrors);
-  //       Object.values(validationErrors).forEach((fieldErrors: any) => {
-  //         if (Array.isArray(fieldErrors)) {
-  //           fieldErrors.forEach((msg: string) => toast.error(msg));
-  //         }
-  //       });
-  //       setIsSubmitting(false);
-  //       return;
-  //     }
-
-  //     // Handle unauthorized
-  //     if (response.status === 401) {
-  //       toast.error("Your session has expired. Please log in again.");
-  //       setIsSubmitting(false);
-  //       return;
-  //     }
-
-  //     // Handle CORS errors
-  //     if (response.status === 0 || response.status === 403) {
-  //       toast.error(
-  //         "Access denied. This may be due to CORS configuration. Please contact your administrator."
-  //       );
-  //       setIsSubmitting(false);
-  //       return;
-  //     }
-
-  //     // Handle generic failure
-  //     if (!response.ok) {
-  //       throw new Error(data.message || "Failed to create user.");
-  //     }
-
-  //     // Handle success
-  //     if (data.status === "success") {
-  //       // Send credentials email
-  //       try {
-  //         const emailResponse = await fetch(
-  //           `${import.meta.env.VITE_API_BASE_URL}/send-credentials-mail`,
-  //           {
-  //             method: "POST",
-  //             headers: {
-  //               Authorization: formattedToken,
-  //               "Content-Type": "application/json",
-  //             },
-  //             body: JSON.stringify({
-  //               name: `${formData.first_name} ${formData.last_name}`,
-  //               email: formData.email,
-  //               password: formData.password,
-  //               user_id: data.data.id,
-  //               website_name: "ISO Hub",
-  //               website_url: `${import.meta.env.VITE_API_URL}/login`,
-  //             }),
-  //           }
-  //         );
-
-  //         const emailData = await emailResponse.json();
-  //         if (!emailResponse.ok) {
-  //           console.error("Failed to send credentials email:", emailData);
-  //           toast.error("User created but failed to send credentials email.");
-  //         } else {
-  //           toast.success("User created and credentials sent successfully.");
-  //         }
-  //       } catch (emailError) {
-  //         console.error("Error sending email:", emailError);
-  //         toast.error("User created but failed to send credentials email.");
-  //       }
-
-  //       // Reset form
-  //       setFormData({
-  //         first_name: "",
-  //         last_name: "",
-  //         email: "",
-  //         phone: "",
-  //         password: "",
-  //         role_id: "5",
-  //         birthday: "",
-  //       });
-  //       setIsModalOpen(false);
-  //       await fetchUsers(); // Refresh users list
-  //     } else {
-  //       throw new Error(data.message || "Form submission failed.");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error creating user:", error);
-
-  //     // Check if it's a CORS error
-  //     if (
-  //       error instanceof TypeError &&
-  //       error.message.includes("Failed to fetch")
-  //     ) {
-  //       toast.error(
-  //         "Network error: Unable to connect to server. This may be due to CORS configuration."
-  //       );
-  //     } else {
-  //       toast.error(
-  //         error instanceof Error ? error.message : "Something went wrong."
-  //       );
-  //     }
-  //   } finally {
-  //     setIsSubmitting(false);
-  //   }
-  // };
-
- const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     setErrors({});
@@ -388,7 +227,7 @@ export default function Admin() {
           console.error("Error sending email:", emailError);
           toast.error("User created but failed to send credentials email.");
         }
-
+        
         // ✅ Reset form after success
         setFormData({
           first_name: "",
@@ -421,7 +260,6 @@ export default function Admin() {
       setIsSubmitting(false);
     }
   };
-
 
   const handleDelete = async (id: number) => {
     try {
@@ -788,14 +626,23 @@ export default function Admin() {
 
               <div>
                 <label className="block text-gray-300 mb-2">Password</label>
-                <input
-                  type="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                  required
-                />
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 pr-10 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
+                  >
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
+                </div>
                 {errors.password && (
                   <p className="text-red-500 text-sm mt-1">
                     {errors.password[0]}
@@ -932,13 +779,22 @@ export default function Admin() {
                 <label className="block text-gray-300 mb-2">
                   Password (leave blank to keep current)
                 </label>
-                <input
-                  type="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                />
+                <div className="relative">
+                  <input
+                    type={showEditPassword ? "text" : "password"}
+                    name="password"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 pr-10 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowEditPassword(!showEditPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
+                  >
+                    {showEditPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
+                </div>
               </div>
 
               <div>

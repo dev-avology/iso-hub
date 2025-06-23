@@ -12,7 +12,8 @@ import {
   LayoutDashboard,
   Users,
   UserPlus,
-  BookOpen
+  BookOpen,
+  Gift
 } from "lucide-react";
 import { useAuth } from "../providers/AuthProvider";
 import { useNavigate, Link, useLocation } from "react-router-dom";
@@ -43,7 +44,7 @@ export default function Sidebar({
   const [encryptedKey, setEncryptedKey] = useState([]);
 
   const userData = localStorage.getItem("auth_user");
-  const user = JSON.parse(userData);
+  const user = userData ? JSON.parse(userData) : {};
   const role_id = user.role_id;
   const email = user.email;
 
@@ -130,6 +131,7 @@ export default function Sidebar({
 
     // { name: 'All Reps', icon: User, path: '/all_reps' },
     { name: "Notifications", icon: Bell, path: "/application_notifications" },
+    { name: "Birthday Notification", icon: Gift, path: "/birthday-notify" },
     // { name: 'Forms', icon: FormInput, path: '/forms' },
   ];
 
