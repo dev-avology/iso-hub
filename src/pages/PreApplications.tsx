@@ -263,8 +263,6 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
       email: email,
     };
 
-    console.log(formDataToSubmit);
-
     setLoading(true); // use loading here
     try {
       const accessToken = localStorage.getItem("auth_token");
@@ -2733,10 +2731,11 @@ export default function PreApplications() {
                       {form.business_contact_name || "-"}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                      {form.email || "-"}
+                      {form.get_jotform_details?.[0]?.business_contact_mail || "-"}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                      {form.phone || "-"}
+                      {/* {form.phone || "-"} */}
+                     {form.get_jotform_details?.[0]?.business_location_phone_number || "-"}
                     </td>
 
                     <td className="px-6 py-4 whitespace-nowrap">

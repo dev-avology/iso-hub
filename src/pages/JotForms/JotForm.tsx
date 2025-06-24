@@ -339,6 +339,25 @@ export default function JotForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isSubmitting) return;
+    // Validate each owner's required fields
+    for (let i = 0; i < ownerFormData.length; i++) {
+      const owner = ownerFormData[i];
+      const missingFields = [];
+
+      if (!owner.ownership_driver_licence_number) missingFields.push("Driver Licence Number");
+
+      // Check required file
+      if (!owner.driver_license_image || owner.driver_license_image.length === 0) {
+        missingFields.push("Driver's License File");
+      }
+
+      if (missingFields.length > 0) {
+        // alert();
+        toast.error(`Owner ${i + 1} is missing: ${missingFields.join(", ")}`);
+        return;
+      }
+    }
+
     
     const signaturePad = signatureRef.current;
     const signatureData =
@@ -866,6 +885,7 @@ export default function JotForm() {
                         ? "border-red-500"
                         : "border-gray-300"
                     }`}
+                    required
                   />
 
                   {/* {errors.business_contact_mail && (
@@ -888,6 +908,7 @@ export default function JotForm() {
                         ? "border-red-500"
                         : "border-gray-300"
                     }`}
+                  required
                   />
                   {/* {errors.business_location_phone_number && (
                     <p className="text-red-500 text-sm mt-1">
