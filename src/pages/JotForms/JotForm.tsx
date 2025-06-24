@@ -863,6 +863,7 @@ export default function JotForm() {
                         ? "border-red-500"
                         : "border-gray-300"
                     }`}
+                  required  
                   />
                   {/* {errors.business_contact_name && (
                     <p className="text-red-500 text-sm mt-1">
