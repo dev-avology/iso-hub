@@ -2197,7 +2197,7 @@ export default function PreApplications() {
       let body = undefined;
 
       // Add user_id to body only if role is NOT 1 or 2
-      if (parsedUser && parsedUser.role_id !== 1 && parsedUser.role_id !== 2) {
+      if (parsedUser && parsedUser.role_id !== 1) {
         body = JSON.stringify({ user_id: parsedUser.id });
       }
       // console.log(body,'body');

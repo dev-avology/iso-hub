@@ -31,15 +31,6 @@ interface ApiResponse {
   data: User[];
 }
 
-const ROLE_MAPPING = {
-  "3": "Manager",
-  "4": "Team Leader",
-  "5": "User",
-  "2": "Admin",
-  "1": "Super Admin",
-  "6": "Team Member",
-};
-
 export default function Admin() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -69,6 +60,22 @@ export default function Admin() {
   const [isUpdating, setIsUpdating] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string[] }>({});
 
+  const authUser = localStorage.getItem("auth_user");
+  const parsedUser = authUser ? JSON.parse(authUser) : null;
+  const role_id = parsedUser.role_id;
+  const user_id = parsedUser.id;
+
+  const ROLE_MAPPING = {
+    "3": "Manager",
+    "4": "Team Leader",
+    "5": "User",
+    "2": "Admin",
+    "1": "Super Admin",
+    "6": "Team Member",
+  };
+
+
+
   const fetchUsers = async (id?: string) => {
     try {
       setIsLoading(true);
@@ -81,7 +88,7 @@ export default function Admin() {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: id ? JSON.stringify({ user_id: id }) : undefined,
+          body: id ? JSON.stringify({ user_id: user_id }) : undefined,
         }
       );
 
@@ -404,14 +411,12 @@ export default function Admin() {
     return false;
   });
 
-  const value = localStorage.getItem("auth_user");
-  const parsedUser = value ? JSON.parse(value) : null;
-
   return (
     <>
       <Toaster position="top-right" reverseOrder={false} />
       <div className="shortmembers my-10 flex gap-7 items-center w-full text-center bg-yellow-500 py-5 px-5 rounded">
-        {(parsedUser.role_id === 1 || parsedUser.role_id === 2) && (
+
+        {(parsedUser.role_id === 1) && (
           <div className="short text-white font-medium flex items-center gap-2">
             <input
               type="checkbox"
@@ -423,24 +428,30 @@ export default function Admin() {
           </div>
         )}
 
-        <div className="short text-white font-medium flex items-center gap-2">
-          <input
-            type="checkbox"
-            className="h-[20px] w-[20px]"
-            onChange={handleManagersChange}
-            checked={managersChecked}
-          />
-          <span>Managers</span>
-        </div>
-        <div className="short text-white font-medium flex items-center gap-2">
-          <input
-            type="checkbox"
-            className="h-[20px] w-[20px]"
-            onChange={handleTeamLeadersChange}
-            checked={teamLeadersChecked}
-          />
+        {(parsedUser.role_id === 1) && (parsedUser.role_id === 2) && (
+           <div className="short text-white font-medium flex items-center gap-2">
+            <input
+              type="checkbox"
+              className="h-[20px] w-[20px]"
+              onChange={handleManagersChange}
+              checked={managersChecked}
+            />
+            <span>Managers</span>
+           </div>
+        )}
+
+        {(parsedUser.role_id === 1) && (parsedUser.role_id === 2) && (parsedUser.role_id === 3) && (
+          <div className="short text-white font-medium flex items-center gap-2">
+            <input
+              type="checkbox"
+              className="h-[20px] w-[20px]"
+              onChange={handleTeamLeadersChange}
+              checked={teamLeadersChecked}
+            />
           <span>Team Leaders</span>
         </div>
+        )}
+
         <div className="short text-white font-medium flex items-center gap-2">
           <input
             type="checkbox"
@@ -511,7 +522,7 @@ export default function Admin() {
                   >
                     <Edit />
                   </button>
-                  {user.role_id != 2 && user.role_id != 1 && (
+                  {user.role_id != 1 && (
                     <button
                       onClick={() => {
                         setSelectedUser(user);
@@ -659,8 +670,11 @@ export default function Admin() {
                   className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
                   required
                 >
-                  <option value="3">Manager</option>
-                  <option value="4">Team Leader</option>
+
+                  {role_id === 1 && <option value="2">Admin</option>}
+                  {(role_id === 1) && (role_id === 2) && <option value="3">Manager</option>}
+                  {(role_id === 1) && (role_id === 2) && (role_id === 3) && <option value="4">Team Leader</option>}
+            
                   <option value="5">User</option>
                   <option value="6">Team Member</option>
                 </select>
@@ -806,8 +820,13 @@ export default function Admin() {
                   className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
                   required
                 >
-                  <option value="3">Manager</option>
-                  <option value="4">Team Leader</option>
+
+                  {role_id === 1 && <option value="2">Admin</option>}
+                  {(role_id === 1) && (role_id === 2) && <option value="3">Manager</option>}
+                  {(role_id === 1) && (role_id === 2) && (role_id === 3) && <option value="4">Team Leader</option>}
+
+                  {/* <option value="3">Manager</option>
+                  <option value="4">Team Leader</option> */}
                   <option value="5">User</option>
                   <option value="6">Team Member</option>
                 </select>

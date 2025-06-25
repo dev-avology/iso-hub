@@ -58,6 +58,8 @@ export default function TopNav({
       });
 
       const data = await response.json();
+      // console.log(data);
+      // return false;
 
       if(data && data.message == 'Unauthorized'){
           handleLogout();
