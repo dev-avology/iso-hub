@@ -15,6 +15,7 @@ import {
   FileText,
   Image,
   File,
+  Mail,
 } from "lucide-react";
 import { toast, Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
@@ -77,6 +78,10 @@ interface FormData {
   personal_guarantee_required: string;
   clear_signature: string;
   is_same_shipping_address: string;
+  iso_form_status: number;
+  merchant_name: string;
+  email: string;
+  phone: string;
 
   // Additional fields from API response
   get_jotform_details?: Array<{
@@ -257,8 +262,6 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
       clear_signature: signatureType,
       email: email,
     };
-
-    console.log(formDataToSubmit);
 
     setLoading(true); // use loading here
     try {
@@ -2143,6 +2146,17 @@ export default function PreApplications() {
   const [downloadingId, setDownloadingId] = useState<number | null>(null);
   const [downloadingPDFId, setDownloadingPDFId] = useState<number | null>(null);
 
+  console.log('forms',forms);
+
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [emailForm, setEmailForm] = useState({
+    dba: "",
+    merchantName: "",
+    email: "",
+    phone: "",
+  });
+  const [emailSending, setEmailSending] = useState(false);
+
   // const preAppLink = `${window.location.origin}/iso-forms?data=${formToken}`; // The base URL for your form
   const value = localStorage.getItem("auth_user");
   const parsedUser = value ? JSON.parse(value) : null;
@@ -2183,6 +2197,7 @@ export default function PreApplications() {
       let body = undefined;
 
       // Add user_id to body only if role is NOT 1 or 2
+      //  if ((parsedUser && parsedUser.role_id !== 1)) {
       if (parsedUser && parsedUser.role_id !== 1 && parsedUser.role_id !== 2) {
         body = JSON.stringify({ user_id: parsedUser.id });
       }
@@ -2400,6 +2415,8 @@ export default function PreApplications() {
   };
 
   const handleDownloadDesignPDF = async (form: FormData) => {
+    // Also trigger zip download
+    handleDownloadDocs(form.id);
     setDownloadingPDFId(form.id);
     try {
       const containerId = `pdf-design-container-${form.id}`;
@@ -2482,6 +2499,46 @@ export default function PreApplications() {
     }
   };
 
+  // Email Modal form handlers
+  const handleEmailInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmailForm({ ...emailForm, [e.target.name]: e.target.value });
+  };
+  const handleEmailFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setEmailSending(true);
+    const payload = {
+      dba: emailForm.dba,
+      merchant_name: emailForm.merchantName,
+      email: emailForm.email,
+      phone: emailForm.phone,
+      iso_form_link: preAppLink,
+      user_id: user_id,
+    };
+    try {
+      const token = localStorage.getItem("auth_token");
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/send-form-link-mail`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+      const result = await response.json();
+      if (response.ok && result.status === "success") {
+        toast.success("Email sent successfully");
+        setShowEmailModal(false);
+        setEmailForm({ dba: "", merchantName: "", email: "", phone: "" });
+        fetchForms();
+      } else {
+        toast.error(result.message || "Failed to send email");
+      }
+    } catch (error) {
+      toast.error("Failed to send email");
+    } finally {
+      setEmailSending(false);
+    }
+  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -2502,47 +2559,127 @@ export default function PreApplications() {
 
       {/* Pre-Application Link Section */}
       <div className="bg-zinc-900 rounded-lg shadow-sm p-6 mb-8 border border-yellow-400/20">
-        <h2 className="text-lg font-semibold text-white mb-4">
-          Pre-Application Form Link
-        </h2>
-        <div className="flex items-center space-x-4">
-          <div className="flex-1 min-w-0">
-            <div className="relative flex items-center">
-              <input
-                type="text"
-                readOnly
-                value={preAppLink}
-                className="block w-full pr-10 truncate bg-zinc-800 border-zinc-700 text-white rounded-md focus:ring-yellow-400 focus:border-yellow-400"
-              />
-              <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-                <a
-                  href={preAppLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-400 hover:text-yellow-400"
-                >
-                  <ExternalLink className="h-5 w-5" />
-                </a>
-              </div>
-            </div>
-          </div>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold text-white">
+            Pre-Application Form Link
+          </h2>
           <button
-            onClick={copyLink}
+            onClick={() => setShowEmailModal(true)}
             className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-yellow-400 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400"
           >
-            {copied ? (
-              <>
-                <CheckCircle className="h-5 w-5 mr-2" />
-                Copied!
-              </>
-            ) : (
-              <>
-                <Copy className="h-5 w-5 mr-2" />
-                Copy Link
-              </>
-            )}
+            <Mail className="h-5 w-5 mr-2" />
+            Email
           </button>
         </div>
+        <div className="flex-1 min-w-0">
+          <div className="relative flex items-center">
+            <input
+              type="text"
+              readOnly
+              value={preAppLink}
+              className="block pr-10 truncate bg-zinc-800 border-zinc-700 text-white rounded-md focus:ring-yellow-400 focus:border-yellow-400 mr-2"
+              style={{ width: 'calc(100% - 129px)' }}
+            />
+            <div className="absolute inset-y-0 right-24 flex items-center pr-9">
+              <a
+                href={preAppLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-yellow-400"
+              >
+                <ExternalLink className="h-5 w-5" />
+              </a>
+            </div>
+            <button
+              onClick={copyLink}
+              className="absolute right-0 top-1/2 -translate-y-1/2 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-yellow-400 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400"
+            >
+              {copied ? (
+                <>
+                  <CheckCircle className="h-5 w-5 mr-2" />
+                  Copied!
+                </>
+              ) : (
+                <>
+                  <Copy className="h-5 w-5 mr-2" />
+                  Copy Link
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+        {/* Email Modal */}
+        {showEmailModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="bg-zinc-900 rounded-lg p-6 w-full max-w-md relative">
+              <button
+                className="absolute top-2 right-2 text-gray-400 hover:text-yellow-400"
+                onClick={() => setShowEmailModal(false)}
+              >
+                <X className="h-6 w-6" />
+              </button>
+              <h3 className="text-lg font-semibold text-yellow-400 mb-4 flex items-center">
+                <Mail className="h-5 w-5 mr-2" /> Send Pre-Application Link via Email
+              </h3>
+              <form onSubmit={handleEmailFormSubmit} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">DBA</label>
+                  <input
+                    type="text"
+                    name="dba"
+                    value={emailForm.dba}
+                    onChange={handleEmailInputChange}
+                    className="w-full rounded-md bg-zinc-800 border border-zinc-700 text-white px-3 py-2 focus:ring-yellow-400 focus:border-yellow-400"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Merchant Name</label>
+                  <input
+                    type="text"
+                    name="merchantName"
+                    value={emailForm.merchantName}
+                    onChange={handleEmailInputChange}
+                    className="w-full rounded-md bg-zinc-800 border border-zinc-700 text-white px-3 py-2 focus:ring-yellow-400 focus:border-yellow-400"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Email</label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={emailForm.email}
+                    onChange={handleEmailInputChange}
+                    className="w-full rounded-md bg-zinc-800 border border-zinc-700 text-white px-3 py-2 focus:ring-yellow-400 focus:border-yellow-400"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Phone</label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={emailForm.phone}
+                    onChange={handleEmailInputChange}
+                    className="w-full rounded-md bg-zinc-800 border border-zinc-700 text-white px-3 py-2 focus:ring-yellow-400 focus:border-yellow-400"
+                    required
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="w-full mt-2 inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-yellow-400 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400"
+                  disabled={emailSending}
+                >
+                  {emailSending ? (
+                    <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                  ) : null}
+                  Send to Email
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Pre-Application List */}
@@ -2571,15 +2708,18 @@ export default function PreApplications() {
                     Business Contact Name
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                    Bank Name
+                    Email
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                    Date
+                    Phone
                   </th>
+
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Status</th>
+
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                     Actions
                   </th>
-                  {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Docs status</th> */}
+                  
                 </tr>
               </thead>
               <tbody className="bg-zinc-900 divide-y divide-gray-700">
@@ -2592,25 +2732,33 @@ export default function PreApplications() {
                       {form.business_contact_name || "-"}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                      {form.bank_name || "-"}
+                      {form.get_jotform_details?.[0]?.business_contact_mail || "-"}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                      {dayjs(form.created_at).format("DD-MM-YYYY")}
+                      {/* {form.phone || "-"} */}
+                     {form.get_jotform_details?.[0]?.business_location_phone_number || "-"}
                     </td>
-                    {/* <td className="px-6 py-4 whitespace-nowrap">
+
+                    <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`px-2 py-0.5 text-[12px] font-medium rounded-full 
-                        ${form.status === 0 ? 'bg-yellow-100 text-yellow-800' :
-                          form.status === 1 ? 'bg-blue-100 text-blue-800' :
-                            form.status === 2 ? 'bg-green-100 text-green-800' :
-                              form.status === 3 ? 'bg-red-100 text-red-800' :
-                                'bg-gray-100 text-gray-800'}`}>
-                        {form.status === 0 ? 'New' :
-                          form.status === 1 ? 'In Review' :
-                            form.status === 2 ? 'Approved' :
-                              form.status === 3 ? 'Declined' :
-                                'Unknown'}
+                        ${form.iso_form_status === 0 ? 'bg-yellow-100 text-yellow-800' :
+                          form.iso_form_status === 1 ? 'bg-blue-100 text-blue-800' :
+                          form.iso_form_status === 2 ? 'bg-green-100 text-green-800' :
+                          form.iso_form_status === 3 ? 'bg-red-100 text-red-800' :
+                          form.iso_form_status === 4 ? 'bg-purple-100 text-purple-800' :
+                          form.iso_form_status === 5 ? 'bg-teal-100 text-teal-800' :
+                          'bg-gray-100 text-gray-800'}`}>
+                        
+                        {form.iso_form_status === 0 ? 'Pending' :
+                          form.iso_form_status === 1 ? 'Sent' :
+                          form.iso_form_status === 2 ? 'Delivered' :
+                          form.iso_form_status === 3 ? 'Opened' :
+                          form.iso_form_status === 4 ? 'Link Clicked' :
+                          form.iso_form_status === 5 ? 'Completed' :
+                          'Unknown'}
                       </span>
-                    </td> */}
+                    </td>
+
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                       <div className="flex items-center space-x-4">
                         <button
@@ -2645,7 +2793,7 @@ export default function PreApplications() {
                         </button>
 
                         {/* {form.mail_status === 2 && ( */}
-                          <button
+                          {/* <button
                             onClick={() => handleDownloadDocs(form.id)}
                             disabled={downloadingId === form.id}
                             className={`inline-flex items-center gap-1 text-xs font-medium ${
@@ -2685,7 +2833,7 @@ export default function PreApplications() {
                                 Download
                               </>
                             )}
-                          </button>
+                          </button> */}
                         {/* )} */}
                         {/* <button
                           onClick={() => handleDownloadPDF(form)}

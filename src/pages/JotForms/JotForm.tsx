@@ -155,7 +155,7 @@ const blankFormData: FormData = {
   business_legal_name: "",
   business_products_sold: "",
   business_return_policy: "",
-  terminal_other: ""
+  terminal_other: "",
 };
 
 // Add this CSS at the top of the file
@@ -197,6 +197,7 @@ export default function JotForm() {
   const { user_id } = useParams<{ user_id: string }>();
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const data = searchParams.get("data");
+  const formId = searchParams.get("id") ?? "";
   const [errors, setErrors] = useState<{ [key: string]: string[] }>({});
   const [isReadOnly, setIsReadOnly] = useState<{
     readOnly?: boolean;
@@ -338,7 +339,49 @@ export default function JotForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isSubmitting) return;
-    
+    // Validate each owner's required fields
+    for (let i = 0; i < ownerFormData.length; i++) {
+      const owner = ownerFormData[i];
+      const missingFields = [];
+
+      if (!owner.ownership_driver_licence_number) missingFields.push("Driver Licence Number");
+
+      // Check required file
+      if (!owner.driver_license_image || owner.driver_license_image.length === 0) {
+        missingFields.push("Driver's License File");
+      }
+
+      if (missingFields.length > 0) {
+        // alert();
+        toast.error(`Owner ${i + 1} is missing: ${missingFields.join(", ")}`);
+        return;
+      }
+    }
+
+    // ✅ Check banking docs
+    if (!uploadedFiles || uploadedFiles.length === 0) {
+      toast.error("Please upload at least one Banking Document.");
+      return;
+    }
+
+    // ✅ Validate business_profile_business_type (must have at least one selected)
+    if (
+      !formData.business_profile_business_type ||
+      formData.business_profile_business_type.length === 0
+    ) {
+      toast.error("Please select at least one Business Type.");
+      return;
+    }
+
+     // ✅ Validate business_profile_business_type (must have at least one selected)
+    if (
+      !formData.tip_amounts ||
+      formData.tip_amounts.length === 0
+    ) {
+      toast.error("Please select at least one Tip Amount.");
+      return;
+    }
+
     const signaturePad = signatureRef.current;
     const signatureData =
       signaturePad && !signaturePad.isEmpty() ? signaturePad.toDataURL() : "";
@@ -368,6 +411,7 @@ export default function JotForm() {
 
     formDataToSend.append("signature", signatureData);
     formDataToSend.append("user_id", user_id);
+    formDataToSend.append("form_id", formId);
 
     // Append owner data and files
     ownerFormData.forEach((owner, ownerIdx) => {
@@ -506,10 +550,14 @@ export default function JotForm() {
             <input type="hidden" name="is_duplicate" value="1" />
           )}
 
+          <input type="hidden" name="form_id" value={formId} />
           {/* BUSINESS PROFILE */}
           <fieldset className="border border-gray-300 rounded-lg p-6">
             <legend className="text-lg font-semibold text-gray-800 px-2 text-white">
               BUSINESS PROFILE
+              <span className="ml-2 text-sm text-red-400 font-normal">
+                (*Required)
+              </span>
             </legend>
             <div className="space-y-4">
               <div>
@@ -541,6 +589,7 @@ export default function JotForm() {
                   type="text"
                   {...isReadOnly}
                   onChange={handleInputChange}
+                  required
                   name="dba_street_address"
                   className={`mt-1 block w-full rounded-md shadow-sm ${
                     errors.dba_street_address
@@ -562,6 +611,7 @@ export default function JotForm() {
                 <input
                   type="text"
                   name="dba_street_address2"
+                  required
                   onChange={handleInputChange}
                   className={`mt-1 block w-full rounded-md shadow-sm ${
                     errors.dba_street_address2
@@ -584,6 +634,7 @@ export default function JotForm() {
                     type="text"
                     name="business_city"
                     onChange={handleInputChange}
+                    required
                     value={formData.business_city}
                     className={`mt-1 block w-full rounded-md shadow-sm ${
                       errors.business_city
@@ -604,6 +655,7 @@ export default function JotForm() {
                   <input
                     type="text"
                     name="business_state"
+                    required
                     onChange={handleInputChange}
                     value={formData.business_state}
                     className={`mt-1 block w-full rounded-md shadow-sm ${
@@ -625,6 +677,7 @@ export default function JotForm() {
                   <input
                     type="text"
                     name="business_zip"
+                    required
                     onChange={handleInputChange}
                     value={formData.business_zip}
                     className={`mt-1 block w-full rounded-md shadow-sm ${
@@ -658,7 +711,8 @@ export default function JotForm() {
                       className="inline-flex items-center text-white"
                     >
                       <input
-                        type="checkbox"                        
+                        type="checkbox" 
+                        // required                       
                         onChange={handleInputChange}
                         name="business_profile_business_type"
                         value={value}
@@ -704,6 +758,7 @@ export default function JotForm() {
                     type="radio"
                     name="is_same_shipping_address"
                     value="1"
+                    required
                     checked={formData.is_same_shipping_address === "1"}
                     onChange={handleInputChange}
                     className="mr-2"
@@ -718,6 +773,9 @@ export default function JotForm() {
           <fieldset className="border border-gray-300 rounded-lg p-6">
             <legend className="text-lg font-semibold text-gray-800 px-2 text-white">
               Corporate Contact Information
+              <span className="ml-2 text-sm text-red-400 font-normal">
+                (*Required)
+              </span>
             </legend>
             <div className="space-y-4">
               <div>
@@ -728,6 +786,7 @@ export default function JotForm() {
                   type="text"
                   onChange={handleInputChange}
                   name="corporate_street_address1"
+                  required
                   className={`mt-1 block w-full rounded-md shadow-sm ${
                     errors.corporate_street_address1
                       ? "border-red-500"
@@ -748,6 +807,7 @@ export default function JotForm() {
                   type="text"
                   onChange={handleInputChange}
                   name="corporate_street_address2"
+                  required
                   className={`mt-1 block w-full rounded-md shadow-sm ${
                     errors.corporate_street_address2
                       ? "border-red-500"
@@ -771,6 +831,7 @@ export default function JotForm() {
                     type="text"
                     name="corporate_city"
                     onChange={handleInputChange}
+                    required
                     className={`mt-1 block w-full rounded-md shadow-sm ${
                       errors.corporate_city
                         ? "border-red-500"
@@ -791,6 +852,7 @@ export default function JotForm() {
                     type="text"
                     name="corporate_state"
                     onChange={handleInputChange}
+                    required
                     className={`mt-1 block w-full rounded-md shadow-sm ${
                       errors.corporate_state
                         ? "border-red-500"
@@ -810,6 +872,7 @@ export default function JotForm() {
                   <input
                     type="text"
                     name="corporate_zip"
+                    required
                     onChange={handleInputChange}
                     className={`mt-1 block w-full rounded-md shadow-sm ${
                       errors.corporate_zip
@@ -841,6 +904,7 @@ export default function JotForm() {
                         ? "border-red-500"
                         : "border-gray-300"
                     }`}
+                  required  
                   />
                   {/* {errors.business_contact_name && (
                     <p className="text-red-500 text-sm mt-1">
@@ -863,6 +927,7 @@ export default function JotForm() {
                         ? "border-red-500"
                         : "border-gray-300"
                     }`}
+                    required
                   />
 
                   {/* {errors.business_contact_mail && (
@@ -885,6 +950,7 @@ export default function JotForm() {
                         ? "border-red-500"
                         : "border-gray-300"
                     }`}
+                  required
                   />
                   {/* {errors.business_location_phone_number && (
                     <p className="text-red-500 text-sm mt-1">
@@ -903,6 +969,7 @@ export default function JotForm() {
                     <input
                       type="date"
                       name="business_start_date"
+                      required
                       onChange={handleInputChange}
                       className="mt-1 block w-full rounded bg-gray-700 text-white border border-gray-600 px-3 py-2"
                     />
@@ -918,6 +985,7 @@ export default function JotForm() {
                     type="text"
                     name="business_website"
                     onChange={handleInputChange}
+                    required
                     className={`mt-1 block w-full rounded-md shadow-sm ${
                       errors.business_website
                         ? "border-red-500"
@@ -940,6 +1008,7 @@ export default function JotForm() {
                     type="text"
                     name="business_legal_name"
                     onChange={handleInputChange}
+                    required
                     className={`mt-1 block w-full rounded-md shadow-sm ${
                       errors.business_legal_name
                         ? "border-red-500"
@@ -964,6 +1033,7 @@ export default function JotForm() {
                     {...isReadOnly}
                     name="business_tax_id"
                     onChange={handleInputChange}
+                    required
                     className={`mt-1 block w-full rounded-md shadow-sm ${
                       errors.business_tax_id
                         ? "border-red-500"
@@ -986,6 +1056,7 @@ export default function JotForm() {
                     {...isReadOnly}
                     name="business_products_sold"
                     onChange={handleInputChange}
+                    required
                     className={`mt-1 block w-full rounded-md shadow-sm ${
                       errors.business_products_sold
                         ? "border-red-500"
@@ -1009,6 +1080,7 @@ export default function JotForm() {
                     {...isReadOnly}
                     name="business_return_policy"
                     onChange={handleInputChange}
+                    required
                     className={`mt-1 block w-full rounded-md shadow-sm ${
                       errors.business_return_policy
                         ? "border-red-500"
@@ -1030,6 +1102,9 @@ export default function JotForm() {
           <fieldset className="border border-gray-300 rounded-lg p-6">
             <legend className="text-lg font-semibold text-gray-800 px-2 text-white">
               Owner / Officer Information
+              <span className="ml-2 text-sm text-red-400 font-normal">
+                (*Required)
+              </span>
             </legend>
 
             <OwnerForm
@@ -1043,6 +1118,9 @@ export default function JotForm() {
           <fieldset className="border border-gray-300 rounded-lg p-6">
             <legend className="text-lg font-semibold text-gray-800 px-2 text-white">
               BANKING INFORMATION
+              <span className="ml-2 text-sm text-red-400 font-normal">
+                (*Required)
+              </span>
             </legend>
 
             <div className="space-y-4">
@@ -1056,6 +1134,7 @@ export default function JotForm() {
                     name="bank_name"
                     onChange={handleInputChange}
                     value={formData.bank_name}
+                    required
                     className={`mt-1 block w-full rounded-md shadow-sm ${
                       errors.bank_name ? "border-red-500" : "border-gray-300"
                     }`}
@@ -1073,6 +1152,7 @@ export default function JotForm() {
                   <input
                     type="text"
                     name="aba_routing"
+                    required
                     onChange={handleInputChange}
                     value={formData.aba_routing}
                     className={`mt-1 block w-full rounded-md shadow-sm ${
@@ -1093,6 +1173,7 @@ export default function JotForm() {
                   <input
                     type="text"
                     name="doa"
+                    required
                     onChange={handleInputChange}
                     value={formData.doa}
                     className={`mt-1 block w-full rounded-md shadow-sm ${
@@ -1113,6 +1194,11 @@ export default function JotForm() {
           <fieldset className="border border-gray-300 rounded-lg p-6">
             <legend className="text-lg font-semibold text-white px-2">
               BUSINESS TYPE
+
+              <span className="ml-2 text-sm text-red-400 font-normal">
+                (*Required)
+              </span>
+
             </legend>
 
             <div className="space-y-4">
@@ -1135,6 +1221,7 @@ export default function JotForm() {
                       <input
                         type="radio"
                         name="business_type"
+                        required
                         value={value}
                         checked={formData.business_type === value}
                         onChange={handleInputChange}
@@ -1176,6 +1263,9 @@ export default function JotForm() {
           <fieldset className="border border-gray-300 rounded-lg p-6">
             <legend className="text-lg font-semibold text-white px-2">
               PROCESSING SERVICES
+              <span className="ml-2 text-sm font-normal text-yellow-400">
+                (* Not required — leave blank if unsure)
+              </span>
             </legend>
 
             <div className="space-y-4">
@@ -1237,6 +1327,9 @@ export default function JotForm() {
           <fieldset className="border border-gray-300 rounded-lg p-6">
             <legend className="text-lg font-semibold text-gray-800 px-2 text-white">
               PROCESSING HARDWARE
+              <span className="ml-2 text-sm font-normal text-yellow-400">
+                (* Not required — leave blank if unsure)
+              </span>
             </legend>
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
@@ -1632,6 +1725,9 @@ export default function JotForm() {
           <fieldset className="border border-gray-300 rounded-lg p-6">
             <legend className="text-lg font-semibold text-gray-800 px-2 text-white">
               Credit Card Processing Information
+              <span className="ml-2 text-sm text-red-400 font-normal">
+                (*Required)
+              </span>
             </legend>
             <div className="space-y-6">
 
@@ -1783,6 +1879,7 @@ export default function JotForm() {
                     type="radio"
                     name="auto_settle_type"
                     value="manual"
+                    required
                     checked={formData.auto_settle_type === "manual"}
                     onChange={handleInputChange}
                     className="mr-2"
@@ -1811,6 +1908,7 @@ export default function JotForm() {
                     type="radio"
                     name="add_tips_to_account"
                     value="yes"
+                    required
                     checked={formData.add_tips_to_account === "yes"}
                     onChange={handleInputChange}
                     className="mr-2"
@@ -1847,6 +1945,9 @@ export default function JotForm() {
           <fieldset className="border border-gray-300 rounded-lg p-6">
             <legend className="text-lg font-semibold text-gray-800 px-2 text-white">
               Signature
+              <span className="ml-2 text-sm text-red-400 font-normal">
+                (*Required)
+              </span>
             </legend>
             <div className="space-y-4">
               <div>
