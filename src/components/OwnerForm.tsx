@@ -225,6 +225,7 @@ const OwnerForm = ({ formData, setFormData }) => {
                   </label>
                   <input
                     type="text"
+                    required
                     name="owner_street_address"
                     value={owner.owner_street_address}
                     onChange={(e) => handleInputChange(index, e)}
@@ -238,6 +239,7 @@ const OwnerForm = ({ formData, setFormData }) => {
                   <input
                     type="text"
                     name="owner_street_address2"
+                    required
                     value={owner.owner_street_address2}
                     onChange={(e) => handleInputChange(index, e)}
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
@@ -250,6 +252,7 @@ const OwnerForm = ({ formData, setFormData }) => {
                   </label>
                   <input
                     type="text"
+                    required
                     name="ownership_phone_number"
                     value={owner.ownership_phone_number}
                     onChange={(e) => handleInputChange(index, e)}
@@ -265,6 +268,7 @@ const OwnerForm = ({ formData, setFormData }) => {
                   </label>
                   <input
                     type="text"
+                    required
                     name="ownership_city"
                     value={owner.ownership_city}
                     onChange={(e) => handleInputChange(index, e)}
@@ -277,6 +281,7 @@ const OwnerForm = ({ formData, setFormData }) => {
                   </label>
                   <input
                     type="text"
+                    required
                     name="ownership_state"
                     value={owner.ownership_state}
                     onChange={(e) => handleInputChange(index, e)}
@@ -290,6 +295,7 @@ const OwnerForm = ({ formData, setFormData }) => {
                   <input
                     type="text"
                     name="ownership_zip"
+                    required
                     value={owner.ownership_zip}
                     onChange={(e) => handleInputChange(index, e)}
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
@@ -305,6 +311,7 @@ const OwnerForm = ({ formData, setFormData }) => {
                   <input
                     type="text"
                     name="ownership_percent"
+                    required
                     onChange={(e) => handleInputChange(index, e)}
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
                   />
@@ -316,6 +323,7 @@ const OwnerForm = ({ formData, setFormData }) => {
                   <input
                     type="text"
                     name="ownership_title"
+                    required
                     value={owner.ownership_title}
                     onChange={(e) => handleInputChange(index, e)}
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
@@ -328,6 +336,7 @@ const OwnerForm = ({ formData, setFormData }) => {
                   </label>
                   <input
                     type="email"
+                    required
                     name="ownership_email"
                     value={owner.ownership_email}
                     onChange={(e) => handleInputChange(index, e)}
@@ -345,6 +354,7 @@ const OwnerForm = ({ formData, setFormData }) => {
                     <input
                       type="date"
                       name="ownership_dob"
+                      required
                       value={owner.ownership_dob}
                       onChange={(e) => handleInputChange(index, e)}
                       className="mt-1 block w-full rounded bg-gray-700 text-white border border-gray-600 px-3 py-2"
@@ -359,6 +369,7 @@ const OwnerForm = ({ formData, setFormData }) => {
                   <input
                     type="text"
                     name="ownership_social_security_number"
+                    required
                     value={owner.ownership_social_security_number}
                     onChange={(e) => handleInputChange(index, e)}
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"

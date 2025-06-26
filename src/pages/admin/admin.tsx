@@ -416,7 +416,7 @@ export default function Admin() {
       <Toaster position="top-right" reverseOrder={false} />
       <div className="shortmembers my-10 flex gap-7 items-center w-full text-center bg-yellow-500 py-5 px-5 rounded">
 
-        {(parsedUser.role_id === 1) && (
+        {(parsedUser.role_id === 1) && (parsedUser.role_id === 2) && (
           <div className="short text-white font-medium flex items-center gap-2">
             <input
               type="checkbox"

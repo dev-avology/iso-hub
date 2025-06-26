@@ -71,7 +71,9 @@ function ProtectedLayout({ children }: { children: React.ReactNode }) {
 // Wrapper component for protected admin pages
 function ProtectedAdminLayout({ children }: { children: React.ReactNode }) {
   const authUser = JSON.parse(localStorage.getItem('auth_user') || '{}');
-  const isAdmin = authUser?.role_id === 2 || authUser?.role_id === 1 || authUser?.role_id === 3 || authUser?.role_id === 4 || authUser?.role_id === 5;
+  const isAdmin = authUser?.role_id === 2 || authUser?.role_id === 1;
+
+  // const isAdmin = authUser?.role_id === 2 || authUser?.role_id === 1 || authUser?.role_id === 3 || authUser?.role_id === 4 || authUser?.role_id === 5;
 
   if (!isAdmin) {
     return <Navigate to="/logins" replace />;
