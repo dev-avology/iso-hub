@@ -114,28 +114,28 @@ export default function Settings() {
   return (
     <div>
       <Toaster position="top-right" reverseOrder={false} />
-      <div className="max-w-xl mx-auto mt-2 bg-zinc-800 rounded-xl p-8 border border-yellow-400/20 shadow-2xl">
-        <h2 className="text-2xl font-bold text-white mb-6">User Setting</h2>
+      <div className="max-w-xl mx-auto mt-2 bg-white rounded-xl p-8 border border-gray-300 shadow-2xl">
+        <h2 className="text-2xl font-bold text-gray-800 mb-6">User Setting</h2>
         <form onSubmit={handleSave} className="space-y-6">
           {/* First and Last Name */}
           <div className="flex gap-4">
             <div className="w-1/2">
-              <label className="block text-gray-300 mb-2">First Name</label>
+              <label className="block text-gray-700 mb-2">First Name</label>
               <input
                 type="text"
                 placeholder="Enter first name"
-                className="w-full px-4 py-2 rounded-lg bg-zinc-900 text-white border border-yellow-400/20 focus:border-yellow-400 focus:outline-none"
+                className="w-full px-4 py-2 rounded-lg bg-white text-gray-800 border border-gray-300 focus:border-tracer-green focus:outline-none"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
                 required
               />
             </div>
             <div className="w-1/2">
-              <label className="block text-gray-300 mb-2">Last Name</label>
+              <label className="block text-gray-700 mb-2">Last Name</label>
               <input
                 type="text"
                 placeholder="Enter last name"
-                className="w-full px-4 py-2 rounded-lg bg-zinc-900 text-white border border-yellow-400/20 focus:border-yellow-400 focus:outline-none"
+                className="w-full px-4 py-2 rounded-lg bg-white text-gray-800 border border-gray-300 focus:border-tracer-green focus:outline-none"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
                 required
@@ -146,21 +146,21 @@ export default function Settings() {
           {/* Email and Phone */}
           <div className="flex gap-4">
             <div className="w-1/2">
-              <label className="block text-gray-300 mb-2">Email</label>
+              <label className="block text-gray-700 mb-2">Email</label>
               <input
                 type="text"
                 placeholder="Enter email address"
-                className="w-full px-4 py-2 rounded-lg bg-zinc-900 text-white border border-yellow-400/20 focus:border-yellow-400 focus:outline-none"
+                className="w-full px-4 py-2 rounded-lg bg-white text-gray-800 border border-gray-300 focus:border-tracer-green focus:outline-none"
                 value={email || ""}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div className="w-1/2">
-              <label className="block text-gray-300 mb-2">Phone Number</label>
+              <label className="block text-gray-700 mb-2">Phone Number</label>
               <input
                 type="text"
                 placeholder="Enter phone number"
-                className="w-full px-4 py-2 rounded-lg bg-zinc-900 text-white border border-yellow-400/20 focus:border-yellow-400 focus:outline-none"
+                className="w-full px-4 py-2 rounded-lg bg-white text-gray-800 border border-gray-300 focus:border-tracer-green focus:outline-none"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 required
@@ -171,10 +171,10 @@ export default function Settings() {
           {/* Passwords with Toggle Icons */}
           <div className="flex gap-4">
             <div className="w-1/2 relative">
-              <label className="block text-gray-300 mb-2">New Password</label>
+              <label className="block text-gray-700 mb-2">New Password</label>
               <input
                 type={showPassword ? "text" : "password"}
-                className="w-full px-4 py-2 pr-10 rounded-lg bg-zinc-900 text-white border border-yellow-400/20 focus:border-yellow-400 focus:outline-none"
+                className="w-full px-4 py-2 pr-10 rounded-lg bg-white text-gray-800 border border-gray-300 focus:border-tracer-green focus:outline-none"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="New password"
@@ -188,12 +188,12 @@ export default function Settings() {
             </div>
 
             <div className="w-1/2 relative">
-              <label className="block text-gray-300 mb-2">
+              <label className="block text-gray-700 mb-2">
                 Confirm New Password
               </label>
               <input
                 type={showConfirmPassword ? "text" : "password"}
-                className="w-full px-4 py-2 pr-10 rounded-lg bg-zinc-900 text-white border border-yellow-400/20 focus:border-yellow-400 focus:outline-none"
+                className="w-full px-4 py-2 pr-10 rounded-lg bg-white text-gray-800 border border-gray-300 focus:border-tracer-green focus:outline-none"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Confirm password"

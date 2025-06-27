@@ -81,7 +81,7 @@ interface VendorLoginModalProps {
 function VendorLoginModal({ vendor, onClose }: VendorLoginModalProps) {
   return (
     <div className="fixed inset-0 bg-white bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-zinc-900 p-6 rounded-xl w-full max-w-md relative shadow-2xl border border-tracer-blue/30">
+      <div className="bg-white p-6 rounded-xl w-full max-w-md relative shadow-2xl border border-gray-300">
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-400 hover:text-tracer-green transition-colors"
@@ -109,7 +109,7 @@ function VendorLoginModal({ vendor, onClose }: VendorLoginModalProps) {
               />
             )
           ) : (
-            <div className="w-14 h-14 bg-zinc-800 rounded-full flex items-center justify-center border-2 border-tracer-green">
+            <div className="w-14 h-14 bg-gray-200 rounded-full flex items-center justify-center border-2 border-tracer-green">
               <span className="text-2xl font-bold text-tracer-green">
                 {vendor.vendor_name.charAt(0)}
               </span>
@@ -119,7 +119,7 @@ function VendorLoginModal({ vendor, onClose }: VendorLoginModalProps) {
           {/* Vendor Name */}
           <div className="flex-1 text-center">
             <h2 className="text-2xl font-extrabold text-tracer-green drop-shadow mb-1">{vendor.vendor_name}</h2>
-            <p className="text-gray-400 text-xs tracking-wide">Vendor Portal</p>
+            <p className="text-gray-700 text-xs tracking-wide">Vendor Portal</p>
           </div>
 
           {/* External Link */}
@@ -127,7 +127,7 @@ function VendorLoginModal({ vendor, onClose }: VendorLoginModalProps) {
             href={vendor.login_url}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-green-500 hover:text-green-700 transition-colors bg-zinc-800 p-2 rounded-full border border-green-500 shadow"
+            className="text-green-500 hover:text-green-700 transition-colors bg-gray-100 p-2 rounded-full border border-green-500 shadow"
             title="Open Login URL"
           >
             <ExternalLink className="h-6 w-6" />
@@ -137,57 +137,56 @@ function VendorLoginModal({ vendor, onClose }: VendorLoginModalProps) {
         {/* Vendor Information Section */}
         <div className="space-y-2 mb-4">
           {vendor.vendor_email && (
-            <div className="flex items-center bg-zinc-800/70 rounded px-3 py-2 text-sm">
+            <div className="flex items-center bg-gray-100 rounded px-3 py-2 text-sm">
               <span className="font-semibold text-tracer-green w-28">Email:</span>
-              <span className="text-gray-200">{vendor.vendor_email}</span>
+              <span className="text-gray-800">{vendor.vendor_email}</span>
             </div>
           )}
           {vendor.vendor_phone && (
-            <div className="flex items-center bg-zinc-800/70 rounded px-3 py-2 text-sm">
+            <div className="flex items-center bg-gray-100 rounded px-3 py-2 text-sm">
               <span className="font-semibold text-tracer-green w-28">Phone:</span>
-              <span className="text-gray-200">{vendor.vendor_phone}</span>
+              <span className="text-gray-800">{vendor.vendor_phone}</span>
             </div>
           )}
           {vendor.rep_name && (
-            <div className="flex items-center bg-zinc-800/70 rounded px-3 py-2 text-sm">
+            <div className="flex items-center bg-gray-100 rounded px-3 py-2 text-sm">
               <span className="font-semibold text-tracer-green w-28">Contact Name:</span>
-              <span className="text-gray-200">{vendor.rep_name}</span>
+              <span className="text-gray-800">{vendor.rep_name}</span>
             </div>
           )}
 
-
           {vendor.rep_email && (
-            <div className="flex items-center bg-zinc-800/70 rounded px-3 py-2 text-sm">
+            <div className="flex items-center bg-gray-100 rounded px-3 py-2 text-sm">
               <span className="font-semibold text-tracer-green w-28">Contact Email:</span>
-              <span className="text-gray-200">{vendor.rep_email}</span>
+              <span className="text-gray-800">{vendor.rep_email}</span>
             </div>
           )}
 
           {vendor.support_info && (
-            <div className="flex items-center bg-zinc-800/70 rounded px-3 py-2 text-sm">
+            <div className="flex items-center bg-gray-100 rounded px-3 py-2 text-sm">
               <span className="font-semibold text-tracer-green w-28">Support:</span>
-              <span className="text-gray-200">{vendor.support_info}</span>
+              <span className="text-gray-800">{vendor.support_info}</span>
             </div>
           )}
 
           {vendor.rep_phone && (
-            <div className="flex items-center bg-zinc-800/70 rounded px-3 py-2 text-sm">
+            <div className="flex items-center bg-gray-100 rounded px-3 py-2 text-sm">
               <span className="font-semibold text-tracer-green w-28">Rep Phone:</span>
-              <span className="text-gray-200">{vendor.rep_phone}</span>
+              <span className="text-gray-800">{vendor.rep_phone}</span>
             </div>
           )}
 
           {vendor.notes && (
-            <div className="flex items-center bg-zinc-800/70 rounded px-3 py-2 text-sm">
+            <div className="flex items-center bg-gray-100 rounded px-3 py-2 text-sm">
               <span className="font-semibold text-tracer-green w-28">Notes:</span>
-              <span className="text-gray-200">{vendor.notes}</span>
+              <span className="text-gray-800">{vendor.notes}</span>
             </div>
           )}
         </div>
 
         <div className="bg-tracer-green/10 rounded-lg p-4 mt-4">
           <h3 className="text-lg font-semibold text-tracer-green mb-2 text-center">Important Information</h3>
-          <ul className="text-gray-200 space-y-1 text-sm text-center">
+          <ul className="text-gray-700 space-y-1 text-sm text-center">
             <li>• Make sure you have your login credentials ready</li>
             <li>• Keep your session secure and don't share your access</li>
             <li>• Contact support if you need assistance</li>

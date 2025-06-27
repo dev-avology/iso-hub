@@ -536,7 +536,7 @@ export default function Admin() {
       </div>
 
       <div className="user_data_wrap">
-        <div className="user_dataHead w-full px-5 py-4 rounded bg-gray-700 text-white flex gap-4">
+        <div className="user_dataHead w-full px-5 py-4 rounded bg-gray-100 text-gray-800 flex gap-4 border border-gray-200">
           <div className="userData w-[20%] font-bold">First Name</div>
           <div className="userData w-[20%] font-bold">Last Name</div>
           <div className="userData w-[20%] font-bold">Email</div>
@@ -545,16 +545,16 @@ export default function Admin() {
         </div>
       </div>
 
-      <div className="user_body w-full text-white mt-5">
+      <div className="user_body w-full text-gray-800 mt-5">
         {isLoading ? (
-          <div className="text-center py-4">Loading users...</div>
+          <div className="text-center py-4 text-gray-600">Loading users...</div>
         ) : filteredUsers.length === 0 ? (
-          <div className="text-center py-4">No users found</div>
+          <div className="text-center py-4 text-gray-600">No users found</div>
         ) : (
           filteredUsers.map((user) => (
             <div
               key={user.id}
-              className="UserDataRow group px-5 py-3 rounded flex gap-4 border border-gray-700 mt-4 hover:bg-gray-700 cursor-pointer relative"
+              className="UserDataRow group px-5 py-3 rounded flex gap-4 border border-gray-200 mt-4 hover:bg-gray-50 cursor-pointer relative bg-white"
             >
               <div className="userdata w-[20%]">{user.first_name}</div>
               <div className="userdata w-[20%]">{user.last_name}</div>
@@ -596,26 +596,26 @@ export default function Admin() {
       {/* Add User Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-zinc-900 p-8 rounded-lg w-full max-w-xl relative">
+          <div className="bg-white p-8 rounded-lg w-full max-w-xl relative shadow-xl">
             <button
               onClick={() => setIsModalOpen(false)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-white"
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
             >
               <X className="w-6 h-6" />
             </button>
 
-            <h2 className="text-2xl font-bold text-white mb-6">Add New User</h2>
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">Add New User</h2>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="flex gap-4">
                 <div className="w-1/2">
-                  <label className="block text-gray-300 mb-2">First Name</label>
+                  <label className="block text-gray-700 mb-2">First Name</label>
                   <input
                     type="text"
                     name="first_name"
                     value={formData.first_name}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-tracer-green"
+                    className="w-full px-4 py-2 rounded bg-white border border-gray-300 text-gray-800 focus:outline-none focus:ring-2 focus:ring-tracer-green focus:border-tracer-green"
                     required
                   />
                   {errors.first_name && (
@@ -625,13 +625,13 @@ export default function Admin() {
                   )}
                 </div>
                 <div className="w-1/2">
-                  <label className="block text-gray-300 mb-2">Last Name</label>
+                  <label className="block text-gray-700 mb-2">Last Name</label>
                   <input
                     type="text"
                     name="last_name"
                     value={formData.last_name}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-tracer-green"
+                    className="w-full px-4 py-2 rounded bg-white border border-gray-300 text-gray-800 focus:outline-none focus:ring-2 focus:ring-tracer-green focus:border-tracer-green"
                     required
                   />
                   {errors.last_name && (
@@ -644,13 +644,13 @@ export default function Admin() {
 
               <div className="flex gap-4">
                 <div className="w-1/2">
-                  <label className="block text-gray-300 mb-2">Email</label>
+                  <label className="block text-gray-700 mb-2">Email</label>
                   <input
                     type="email"
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-tracer-green"
+                    className="w-full px-4 py-2 rounded bg-white border border-gray-300 text-gray-800 focus:outline-none focus:ring-2 focus:ring-tracer-green focus:border-tracer-green"
                     required
                   />
 
@@ -661,26 +661,26 @@ export default function Admin() {
                   )}
                 </div>
                 <div className="w-1/2">
-                  <label className="block text-gray-300 mb-2">Date of Birth</label>
+                  <label className="block text-gray-700 mb-2">Date of Birth</label>
                   <input
                     type="date"
                     name="birthday"
                     value={formData.birthday}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-tracer-green"
+                    className="w-full px-4 py-2 rounded bg-white border border-gray-300 text-gray-800 focus:outline-none focus:ring-2 focus:ring-tracer-green focus:border-tracer-green"
                     required
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-gray-300 mb-2">Phone Number</label>
+                <label className="block text-gray-700 mb-2">Phone Number</label>
                 <input
                   type="tel"
                   name="phone"
                   value={formData.phone}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-tracer-green"
+                  className="w-full px-4 py-2 rounded bg-white border border-gray-300 text-gray-800 focus:outline-none focus:ring-2 focus:ring-tracer-green focus:border-tracer-green"
                   required
                 />
                 {errors.phone && (
@@ -689,20 +689,20 @@ export default function Admin() {
               </div>
 
               <div>
-                <label className="block text-gray-300 mb-2">Password</label>
+                <label className="block text-gray-700 mb-2">Password</label>
                 <div className="relative">
                   <input
                     type={showPassword ? "text" : "password"}
                     name="password"
                     value={formData.password}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2 pr-10 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-tracer-green"
+                    className="w-full px-4 py-2 pr-10 rounded bg-white border border-gray-300 text-gray-800 focus:outline-none focus:ring-2 focus:ring-tracer-green focus:border-tracer-green"
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                   >
                     {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                   </button>
@@ -715,12 +715,12 @@ export default function Admin() {
               </div>
 
               <div>
-                <label className="block text-gray-300 mb-2">Role</label>
+                <label className="block text-gray-700 mb-2">Role</label>
                 <select
                   name="role_id"
                   value={formData.role_id}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-tracer-green"
+                  className="w-full px-4 py-2 rounded bg-white border border-gray-300 text-gray-800 focus:outline-none focus:ring-2 focus:ring-tracer-green focus:border-tracer-green"
                   required
                 >
 
@@ -741,7 +741,7 @@ export default function Admin() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-tracer-green hover:bg-tracer-green/90 disabled:bg-tracer-green/70 disabled:cursor-not-allowed text-white py-3 px-5 rounded font-medium uppercase transition duration-200 flex items-center justify-center gap-2"
+                  className="w-full bg-tracer-green hover:bg-tracer-blue disabled:bg-tracer-green/70 disabled:cursor-not-allowed text-white py-3 px-5 rounded font-medium uppercase transition duration-200 flex items-center justify-center gap-2"
                 >
                   {isSubmitting ? (
                     <>
@@ -761,7 +761,7 @@ export default function Admin() {
       {/* Edit User Modal */}
       {isEditModalOpen && selectedUser && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-zinc-900 p-8 rounded-lg w-full max-w-xl relative">
+          <div className="bg-white p-8 rounded-lg w-full max-w-xl relative shadow-xl">
             <button
               onClick={() => {
                 setIsEditModalOpen(false);
@@ -776,34 +776,34 @@ export default function Admin() {
                   birthday: "",
                 });
               }}
-              className="absolute top-4 right-4 text-gray-400 hover:text-white"
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
             >
               <X className="w-6 h-6" />
             </button>
 
-            <h2 className="text-2xl font-bold text-white mb-6">Edit User</h2>
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">Edit User</h2>
 
             <form onSubmit={handleUpdate} className="space-y-4">
               <div className="flex gap-4">
                 <div className="w-1/2">
-                  <label className="block text-gray-300 mb-2">First Name</label>
+                  <label className="block text-gray-700 mb-2">First Name</label>
                   <input
                     type="text"
                     name="first_name"
                     value={formData.first_name}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-tracer-green"
+                    className="w-full px-4 py-2 rounded bg-white border border-gray-300 text-gray-800 focus:outline-none focus:ring-2 focus:ring-tracer-green focus:border-tracer-green"
                     required
                   />
                 </div>
                 <div className="w-1/2">
-                  <label className="block text-gray-300 mb-2">Last Name</label>
+                  <label className="block text-gray-700 mb-2">Last Name</label>
                   <input
                     type="text"
                     name="last_name"
                     value={formData.last_name}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-tracer-green"
+                    className="w-full px-4 py-2 rounded bg-white border border-gray-300 text-gray-800 focus:outline-none focus:ring-2 focus:ring-tracer-green focus:border-tracer-green"
                     required
                   />
                 </div>
@@ -811,43 +811,43 @@ export default function Admin() {
 
               <div className="flex gap-4">
                 <div className="w-1/2">
-                  <label className="block text-gray-300 mb-2">Email</label>
+                  <label className="block text-gray-700 mb-2">Email</label>
                   <input
                     type="email"
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-tracer-green"
+                    className="w-full px-4 py-2 rounded bg-white border border-gray-300 text-gray-800 focus:outline-none focus:ring-2 focus:ring-tracer-green focus:border-tracer-green"
                     required
                   />
                 </div>
                 <div className="w-1/2">
-                  <label className="block text-gray-300 mb-2">Date of Birth</label>
+                  <label className="block text-gray-700 mb-2">Date of Birth</label>
                   <input
                     type="date"
                     name="birthday"
                     value={formData.birthday}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-tracer-green"
+                    className="w-full px-4 py-2 rounded bg-white border border-gray-300 text-gray-800 focus:outline-none focus:ring-2 focus:ring-tracer-green focus:border-tracer-green"
                     required
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-gray-300 mb-2">Phone Number</label>
+                <label className="block text-gray-700 mb-2">Phone Number</label>
                 <input
                   type="tel"
                   name="phone"
                   value={formData.phone}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-tracer-green"
+                  className="w-full px-4 py-2 rounded bg-white border border-gray-300 text-gray-800 focus:outline-none focus:ring-2 focus:ring-tracer-green focus:border-tracer-green"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-gray-300 mb-2">
+                <label className="block text-gray-700 mb-2">
                   Password (leave blank to keep current)
                 </label>
                 <div className="relative">
@@ -856,12 +856,12 @@ export default function Admin() {
                     name="password"
                     value={formData.password}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2 pr-10 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-tracer-green"
+                    className="w-full px-4 py-2 pr-10 rounded bg-white border border-gray-300 text-gray-800 focus:outline-none focus:ring-2 focus:ring-tracer-green focus:border-tracer-green"
                   />
                   <button
                     type="button"
                     onClick={() => setShowEditPassword(!showEditPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                   >
                     {showEditPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                   </button>
@@ -869,12 +869,12 @@ export default function Admin() {
               </div>
 
               <div>
-                <label className="block text-gray-300 mb-2">Role</label>
+                <label className="block text-gray-700 mb-2">Role</label>
                 <select
                   name="role_id"
                   value={formData.role_id}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-tracer-green"
+                  className="w-full px-4 py-2 rounded bg-white border border-gray-300 text-gray-800 focus:outline-none focus:ring-2 focus:ring-tracer-green focus:border-tracer-green"
                   required
                 >
 
@@ -893,7 +893,7 @@ export default function Admin() {
                 <button
                   type="submit"
                   disabled={isUpdating}
-                  className="w-full bg-tracer-green hover:bg-tracer-green/90 disabled:bg-tracer-green/70 disabled:cursor-not-allowed text-white py-3 px-5 rounded font-medium uppercase transition duration-200 flex items-center justify-center gap-2"
+                  className="w-full bg-tracer-green hover:bg-tracer-blue disabled:bg-tracer-green/70 disabled:cursor-not-allowed text-white py-3 px-5 rounded font-medium uppercase transition duration-200 flex items-center justify-center gap-2"
                 >
                   {isUpdating ? (
                     <>
@@ -913,13 +913,13 @@ export default function Admin() {
       {/* Delete Confirmation Modal */}
       {deleteModalOpen && selectedUser && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-zinc-900 p-8 rounded-lg w-full max-w-md relative">
+          <div className="bg-white p-8 rounded-lg w-full max-w-md relative shadow-xl">
             <button
               onClick={() => {
                 setDeleteModalOpen(false);
                 setSelectedUser(null);
               }}
-              className="absolute top-4 right-4 text-gray-400 hover:text-white"
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
             >
               <X className="w-6 h-6" />
             </button>
@@ -929,11 +929,11 @@ export default function Admin() {
                 <Trash className="h-6 w-6 text-red-600" />
               </div>
 
-              <h3 className="text-2xl font-bold text-white mb-2">
+              <h3 className="text-2xl font-bold text-gray-800 mb-2">
                 Delete User
               </h3>
 
-              <p className="text-gray-300 mb-6">
+              <p className="text-gray-600 mb-6">
                 Are you sure you want to delete{" "}
                 <span className="font-semibold">
                   {selectedUser.first_name} {selectedUser.last_name}
@@ -947,7 +947,7 @@ export default function Admin() {
                     setDeleteModalOpen(false);
                     setSelectedUser(null);
                   }}
-                  className="px-4 py-2 rounded bg-gray-700 text-white hover:bg-gray-600 transition duration-200"
+                  className="px-4 py-2 rounded bg-gray-200 text-gray-800 hover:bg-gray-300 transition duration-200"
                 >
                   Cancel
                 </button>

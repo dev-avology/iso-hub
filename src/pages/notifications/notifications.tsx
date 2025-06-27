@@ -98,46 +98,52 @@ export default function Notifications() {
   return (
     <>
     <Toaster position="top-right" reverseOrder={false} />
-      <div className="user_cont my-10">
-        <div className="flex justify-between items-center">
-          <div className="w-full text-center bg-tracer-blue hover:bg-tracer-blue/90 text-white py-5 px-5 rounded font-medium uppercase transition duration-200">
-            All Notifications
-          </div>
-          {adminNotification.length > 0 && (
-            <button
-              onClick={deleteAllNotifications}
-              className="ml-4 p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors flex items-center gap-2"
-            >
-              <Trash className="h-5 w-5" />
-              Delete All
-            </button>
-          )}
-        </div>
-      </div>
-
-      <div className="user_data_wrap mt-10">
-        {isLoading ? (
-          <div className="flex justify-center items-center py-8">
-            <Loader2 className="h-8 w-8 animate-spin text-tracer-green" />
-          </div>
-        ) : adminNotification.length > 0 ? (
-          adminNotification.map((item: any, index: number) => (
-            <div
-              key={index}
-              className="user_dataHead w-full px-5 py-4 rounded bg-gray-700 text-white flex justify-between items-center gap-4 mb-4"
-            >
-              <div className="w-[80%]">{item.message}</div>
-              <button
-                onClick={() => deleteNotification(item.id)}
-                className="p-2 text-red-400 hover:text-red-500 transition-colors"
-              >
-                <Trash2 className="h-5 w-5" />
-              </button>
+      <div className="min-h-screen bg-gray-50 ml-2">
+        <div className="max-w-7xl mx-auto p-6">
+          <div className="user_cont my-10">
+            <div className="flex justify-between items-center">
+              <div className="w-full text-center bg-tracer-blue hover:bg-tracer-blue/90 text-white py-5 px-5 rounded font-medium uppercase transition duration-200">
+                All Notifications
+              </div>
+              {adminNotification.length > 0 && (
+                <button
+                  onClick={deleteAllNotifications}
+                  className="ml-4 p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors flex items-center gap-2"
+                >
+                  <Trash className="h-5 w-5" />
+                  Delete All
+                </button>
+              )}
             </div>
-          ))
-        ) : (
-          <div className="w-full text-center text-gray-400">No notifications available</div>
-        )}
+          </div>
+
+          <div className="user_data_wrap mt-10">
+            {isLoading ? (
+              <div className="flex justify-center items-center py-8">
+                <Loader2 className="h-8 w-8 animate-spin text-tracer-green" />
+              </div>
+            ) : adminNotification.length > 0 ? (
+              adminNotification.map((item: any, index: number) => (
+                <div
+                  key={index}
+                  className="user_dataHead w-full px-5 py-4 rounded bg-white border border-gray-200 text-gray-800 flex justify-between items-center gap-4 mb-4 shadow-sm hover:shadow-md transition-shadow"
+                >
+                  <div className="w-[80%]">{item.message}</div>
+                  <button
+                    onClick={() => deleteNotification(item.id)}
+                    className="p-2 text-red-400 hover:text-red-500 transition-colors"
+                  >
+                    <Trash2 className="h-5 w-5" />
+                  </button>
+                </div>
+              ))
+            ) : (
+              <div className="w-full text-center text-gray-600 bg-white rounded-lg p-8 border border-gray-200 shadow-sm">
+                No notifications available
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </>
   );

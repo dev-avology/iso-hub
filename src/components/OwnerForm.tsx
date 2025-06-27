@@ -154,7 +154,7 @@ const OwnerForm = ({ formData, setFormData }) => {
     <div>
       {/* Owner Selector */}
       <div className="mb-4">
-        <label className="block text-sm font-medium text-white mb-1">
+        <label className="block text-sm font-medium text-gray-700 mb-1">
           Number of Owners with 25% ownership or more
         </label>
         <select
@@ -181,16 +181,16 @@ const OwnerForm = ({ formData, setFormData }) => {
         {formData.slice(0, ownerCount).map((owner, index) => (
           <fieldset
             key={index}
-            className="border border-gray-300 rounded-lg p-6"
+            className="border border-gray-300 rounded-lg p-6 bg-white"
           >
-            <legend className="text-lg font-semibold text-white px-2">
+            <legend className="text-lg font-semibold text-gray-700 px-2">
               {`Owner / Officer Information ${index + 1}`}
             </legend>
 
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-white">
+                  <label className="block text-sm font-medium text-gray-700">
                     First Name
                   </label>
                   <input
@@ -203,7 +203,7 @@ const OwnerForm = ({ formData, setFormData }) => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-white">
+                  <label className="block text-sm font-medium text-gray-700">
                     Last Name
                   </label>
                   <input
@@ -220,7 +220,7 @@ const OwnerForm = ({ formData, setFormData }) => {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                
                 <div>
-                  <label className="block text-sm font-medium text-white">
+                  <label className="block text-sm font-medium text-gray-700">
                     Street Address
                   </label>
                   <input
@@ -233,7 +233,7 @@ const OwnerForm = ({ formData, setFormData }) => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-white">
+                  <label className="block text-sm font-medium text-gray-700">
                     Street Address Line 2
                   </label>
                   <input
@@ -247,7 +247,7 @@ const OwnerForm = ({ formData, setFormData }) => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-white">
+                  <label className="block text-sm font-medium text-gray-700">
                     Phone Number
                   </label>
                   <input
@@ -263,7 +263,7 @@ const OwnerForm = ({ formData, setFormData }) => {
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-white">
+                  <label className="block text-sm font-medium text-gray-700">
                     City
                   </label>
                   <input
@@ -276,7 +276,7 @@ const OwnerForm = ({ formData, setFormData }) => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-white">
+                  <label className="block text-sm font-medium text-gray-700">
                     State
                   </label>
                   <input
@@ -289,7 +289,7 @@ const OwnerForm = ({ formData, setFormData }) => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-white">
+                  <label className="block text-sm font-medium text-gray-700">
                     ZIP
                   </label>
                   <input
@@ -305,7 +305,7 @@ const OwnerForm = ({ formData, setFormData }) => {
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-white">
+                  <label className="block text-sm font-medium text-gray-700">
                     Ownership %
                   </label>
                   <input
@@ -317,7 +317,7 @@ const OwnerForm = ({ formData, setFormData }) => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-white">
+                  <label className="block text-sm font-medium text-gray-700">
                     Title
                   </label>
                   <input
@@ -331,7 +331,7 @@ const OwnerForm = ({ formData, setFormData }) => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-white">
+                  <label className="block text-sm font-medium text-gray-700">
                     Email
                   </label>
                   <input
@@ -347,7 +347,7 @@ const OwnerForm = ({ formData, setFormData }) => {
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-white">
+                  <label className="block text-sm font-medium text-gray-700">
                     Date of Birth
                   </label>
                   <div className="relative">
@@ -357,13 +357,13 @@ const OwnerForm = ({ formData, setFormData }) => {
                       required
                       value={owner.ownership_dob}
                       onChange={(e) => handleInputChange(index, e)}
-                      className="mt-1 block w-full rounded bg-gray-700 text-white border border-gray-600 px-3 py-2"
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
                     />
                     <Calendar className="absolute right-3 top-2.5 h-5 w-5 text-gray-400 pointer-events-none" />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-white">
+                  <label className="block text-sm font-medium text-gray-700">
                     Social Security Number
                   </label>
                   <input
@@ -377,7 +377,7 @@ const OwnerForm = ({ formData, setFormData }) => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-white">
+                  <label className="block text-sm font-medium text-gray-700">
                     Driver Licence Number
                   </label>
                   <input
@@ -392,7 +392,7 @@ const OwnerForm = ({ formData, setFormData }) => {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-white mb-1">
+                <label className="block text-xs font-medium text-gray-700 mb-1">
                   OR Upload a picture of your Driver's License
                 </label>
 
@@ -421,8 +421,8 @@ const OwnerForm = ({ formData, setFormData }) => {
                         alt="Upload icon"
                         className="mx-auto mb-1"
                       />
-                      <p className="text-xs font-semibold">Browse</p>
-                      <small className="text-[10px] text-gray-400">
+                      <p className="text-xs font-semibold text-gray-700">Browse</p>
+                      <small className="text-[10px] text-gray-500">
                         Drag & drop
                       </small>
                     </div>
@@ -435,7 +435,7 @@ const OwnerForm = ({ formData, setFormData }) => {
                     {owner.driver_license_image.map((image, imageIndex) => (
                       <div
                         key={imageIndex}
-                        className="flex items-center space-x-4 py-2 pl-2 pr-2 mt-3 bg-gray-800 rounded-md"
+                        className="flex items-center space-x-4 py-2 pl-2 pr-2 mt-3 bg-gray-100 rounded-md"
                       >
 
                       {isImageFile(image.name) ? (
@@ -458,10 +458,10 @@ const OwnerForm = ({ formData, setFormData }) => {
                           className="w-5 h-5 object-cover rounded"
                         /> */}
                         <div className="flex-1">
-                          <p className="text-sm font-medium text-white">
+                          <p className="text-sm font-medium text-gray-700">
                             {image.name}
                           </p>
-                          <p className="text-xs text-gray-400">{image.size}</p>
+                          <p className="text-xs text-gray-500">{image.size}</p>
                         </div>
                         <button
                           type="button"

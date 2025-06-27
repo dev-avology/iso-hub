@@ -148,98 +148,7 @@ const SecurePortal: React.FC = () => {
     }));
   };
 
-  // const handleSubmit = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   setIsLoading(true);
-
-  //   try {
-  //     const token = localStorage.getItem("auth_token");
-  //     const userData = localStorage.getItem("auth_user");
-
-  //     if (!userData) {
-  //       throw new Error("User data not found");
-  //     }
-
-  //     const user = JSON.parse(userData);
-  //     const userId = user.id;
-
-  //     // Email validation
-  //     const emailRegex = /\S+@\S+\.\S+/;
-  //     if (!formData.email || !emailRegex.test(formData.email)) {
-  //       toast.error("Please enter a valid email address.");
-  //       return;
-  //     }
-
-  //     const formDataToSubmit = {
-  //       user_id: userId.toString(),
-  //       form_id: formData.formId,
-  //       personal_guarantee_required: 'yes',
-  //       clear_signature: 'e-signature',
-  //       email: formData.email,
-  //     };
-
-  //     console.log('Submitting form data:', formDataToSubmit);
-
-  //     const response = await fetch(
-  //       `${import.meta.env.VITE_API_BASE_URL}/user/clear-signature-mail`,
-  //       {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //         body: JSON.stringify(formDataToSubmit),
-  //       }
-  //     );
-
-  //     const responseData = await response.json();
-  //     console.log("API Response:", responseData);
-
-  //     if (!response.ok) {
-  //       if (response.status === 401) {
-  //         localStorage.removeItem("auth_token");
-  //         throw new Error("Session expired. Please login again.");
-  //       }
-  //       if (response.status === 404) {
-  //         throw new Error("API endpoint not found. Please contact support.");
-  //       }
-  //       if (response.status === 422 && responseData.errors) {
-  //         const validationErrors = responseData.errors as {
-  //           [key: string]: string[];
-  //         };
-  //         Object.values(validationErrors).forEach((errors: string[]) => {
-  //           errors.forEach((error) => toast.error(error));
-  //         });
-  //         throw new Error("Validation failed");
-  //       }
-  //       throw new Error(responseData.message || "Failed to send email");
-  //     }
-
-  //     toast.success("We've sent you an email to clear e-signature!");
-  //     setIsModalOpen(false);
-  //     setFormData({ email: "", name: "", formId: "" });
-  //     fetchFiles(); // Refresh the file list after sending email
-  //   } catch (error) {
-  //     console.error("Error sending email:", error);
-  //     if (error instanceof Error) {
-  //       if (error.message.includes("Session expired")) {
-  //         toast.error("Session expired. Please login again.");
-  //         // You might want to add navigation to login page here
-  //       } else if (error.message.includes("API endpoint not found")) {
-  //         toast.error("API endpoint not found. Please contact support.");
-  //       } else {
-  //         toast.error(error.message);
-  //       }
-  //     } else {
-  //       toast.error("An unexpected error occurred. Please try again.");
-  //     }
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
-
-
-   const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
@@ -391,12 +300,18 @@ const SecurePortal: React.FC = () => {
   };
 
   return (
-    <div className="bg-black">
-      <Toaster position="top-right" />
-      <div className="max-w-[100%] flex justify-center m-auto">
-        <div className="sec-wrap w-[100%]">
-          {/* Add Email Button */}
-          <div className="flex mb-6">
+    <div className="min-h-screen bg-gray-50 ml-2">
+      <div className="max-w-7xl mx-auto p-6">
+        <div className="bg-white rounded-lg shadow-lg p-8">
+          <div className="flex justify-between items-center mb-8">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-800 mb-2">
+                Secure File Upload Portal
+              </h1>
+              <p className="text-gray-600">
+                Manage and share secure file upload links with your clients
+              </p>
+            </div>
             <button
               onClick={() => setIsModalOpen(true)}
               className="bg-tracer-green hover:bg-tracer-blue text-white py-2 px-4 rounded flex items-center gap-2"
@@ -406,14 +321,14 @@ const SecurePortal: React.FC = () => {
             </button>
           </div>
 
-          <div className="added-wrap mt-10 text-white">
+          <div className="added-wrap mt-10 text-gray-800">
             {isLoadingFiles ? (
               <div className="text-center py-8">
                 <div className="w-8 h-8 border-2 border-tracer-green border-t-transparent rounded-full animate-spin mx-auto"></div>
-                <p className="mt-4 text-gray-400">Loading files...</p>
+                <p className="mt-4 text-gray-600">Loading files...</p>
               </div>
             ) : files.length === 0 ? (
-              <div className="text-center py-8 text-gray-400">
+              <div className="text-center py-8 text-gray-600">
                 No files uploaded yet
               </div>
             ) : (
@@ -434,7 +349,7 @@ const SecurePortal: React.FC = () => {
                   return (
                     <div
                       key={file.id}
-                      className="group mt-5 w-full px-5 py-3 rounded bg-zinc-900 text-white focus:outline-none focus:ring-2 focus:ring-tracer-green relative"
+                      className="group mt-5 w-full px-5 py-3 rounded bg-white border border-gray-200 text-gray-800 focus:outline-none focus:ring-2 focus:ring-tracer-green relative hover:bg-gray-50"
                       onMouseEnter={() => setHoveredFileId(file.id)}
                       onMouseLeave={() => setHoveredFileId(null)}
                     >
@@ -458,7 +373,7 @@ const SecurePortal: React.FC = () => {
                           </span>
                         </p>
                         {(file.prospect_name || file.email) && (
-                          <p className="text-sm text-gray-400 mt-1">
+                          <p className="text-sm text-gray-600 mt-1">
                             {file.prospect_name &&
                               `Sender: ${file.prospect_name}`}
                             {file.prospect_name && file.email && " • "}
@@ -469,18 +384,18 @@ const SecurePortal: React.FC = () => {
 
                       {/* Preview Popup */}
                       {hoveredFileId === file.id && (
-                        <div className="absolute left-0 top-full mt-2 z-50 bg-zinc-900 border border-tracer-green/40 rounded shadow-lg p-2 min-w-[120px] max-w-[220px] flex flex-col items-center">
+                        <div className="absolute left-0 top-full mt-2 z-50 bg-white border border-tracer-green/40 rounded shadow-lg p-2 min-w-[120px] max-w-[220px] flex flex-col items-center">
                           {isImage ? (
                             <img
                               src={fileUrl}
                               alt={file.file_original_name}
-                              className="max-w-[200px] max-h-[160px] rounded shadow border border-zinc-700"
+                              className="max-w-[200px] max-h-[160px] rounded shadow border border-gray-200"
                               style={{ objectFit: "contain" }}
                             />
                           ) : (
                             <div className="flex flex-col items-center justify-center py-4">
                               <Download className="w-10 h-10 text-tracer-green mb-2" />
-                              <span className="text-xs text-gray-400">
+                              <span className="text-xs text-gray-600">
                                 Preview not available
                               </span>
                             </div>
@@ -520,10 +435,10 @@ const SecurePortal: React.FC = () => {
       {/* Email Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-zinc-900 p-8 rounded-lg w-full max-w-md relative">
+          <div className="bg-white p-8 rounded-lg w-full max-w-md relative shadow-xl">
             <button
               onClick={() => setIsModalOpen(false)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-white"
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
             >
               <span className="sr-only">Close</span>
               <svg
@@ -541,31 +456,31 @@ const SecurePortal: React.FC = () => {
               </svg>
             </button>
 
-            <h2 className="text-2xl font-bold text-white mb-6">
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">
               Send Secure Upload Link
             </h2>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-gray-300 mb-2">Client Name</label>
+                <label className="block text-gray-700 mb-2">Client Name</label>
                 <input
                   type="text"
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-tracer-green"
+                  className="w-full px-4 py-2 rounded bg-white border border-gray-300 text-gray-800 focus:outline-none focus:ring-2 focus:ring-tracer-green focus:border-tracer-green"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-gray-300 mb-2">Client Email</label>
+                <label className="block text-gray-700 mb-2">Client Email</label>
                 <input
                   type="email"
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-tracer-green"
+                  className="w-full px-4 py-2 rounded bg-white border border-gray-300 text-gray-800 focus:outline-none focus:ring-2 focus:ring-tracer-green focus:border-tracer-green"
                   required
                 />
               </div>
@@ -615,13 +530,13 @@ const SecurePortal: React.FC = () => {
       {/* Delete Confirmation Modal */}
       {isDeleteModalOpen && fileToDelete && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-zinc-900 p-8 rounded-lg w-full max-w-md relative">
+          <div className="bg-white p-8 rounded-lg w-full max-w-md relative shadow-xl">
             <button
               onClick={() => {
                 setIsDeleteModalOpen(false);
                 setFileToDelete(null);
               }}
-              className="absolute top-4 right-4 text-gray-400 hover:text-white"
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
             >
               <span className="sr-only">Close</span>
               <svg
@@ -639,10 +554,14 @@ const SecurePortal: React.FC = () => {
               </svg>
             </button>
 
-            <h2 className="text-2xl font-bold text-white mb-6">Delete File</h2>
+            <div className="text-center">
+              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
+                <Trash className="h-6 w-6 text-red-600" />
+              </div>
 
-            <div className="space-y-4">
-              <p className="text-gray-300">
+              <h3 className="text-2xl font-bold text-gray-800 mb-2">Delete File</h3>
+
+              <p className="text-gray-600 mb-6">
                 Are you sure you want to delete this file?
               </p>
               <p className="text-tracer-green font-medium">
@@ -655,7 +574,7 @@ const SecurePortal: React.FC = () => {
                     setIsDeleteModalOpen(false);
                     setFileToDelete(null);
                   }}
-                  className="flex-1 bg-gray-700 hover:bg-gray-600 text-white py-3 px-5 rounded font-medium uppercase transition duration-200"
+                  className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 px-5 rounded font-medium uppercase transition duration-200"
                 >
                   Cancel
                 </button>
