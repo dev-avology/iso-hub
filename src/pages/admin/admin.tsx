@@ -414,7 +414,7 @@ export default function Admin() {
   return (
     <>
       <Toaster position="top-right" reverseOrder={false} />
-      <div className="shortmembers my-10 flex gap-7 items-center w-full text-center bg-yellow-500 py-5 px-5 rounded">
+      <div className="shortmembers my-10 flex gap-7 items-center w-full text-center bg-tracer-blue py-5 px-5 rounded">
 
         {/* {(parsedUser.role_id === 1) && ( this line is for only superadmin need to chnage*/}
         {/* {(parsedUser.role_id === 1) && (parsedUser.role_id === 2) && (
@@ -529,7 +529,7 @@ export default function Admin() {
       <div className="user_cont my-5">
         <button
           onClick={() => setIsModalOpen(true)}
-          className="w-fit bg-yellow-500 hover:bg-yellow-600 text-white py-3 px-5 rounded font-medium uppercase transition duration-200 block"
+          className="w-fit bg-tracer-blue hover:bg-tracer-blue/90 text-white py-3 px-5 rounded font-medium uppercase transition duration-200 block"
         >
           Add User
         </button>
@@ -571,7 +571,7 @@ export default function Admin() {
                 <div className="edit_data flex gap-2 items-center">
                   <button
                     onClick={() => handleEdit(user)}
-                    className="hover:text-yellow-500"
+                    className="hover:text-tracer-green"
                   >
                     <Edit />
                   </button>
@@ -615,7 +615,7 @@ export default function Admin() {
                     name="first_name"
                     value={formData.first_name}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-tracer-green"
                     required
                   />
                   {errors.first_name && (
@@ -631,7 +631,7 @@ export default function Admin() {
                     name="last_name"
                     value={formData.last_name}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-tracer-green"
                     required
                   />
                   {errors.last_name && (
@@ -650,7 +650,7 @@ export default function Admin() {
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-tracer-green"
                     required
                   />
 
@@ -667,7 +667,7 @@ export default function Admin() {
                     name="birthday"
                     value={formData.birthday}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-tracer-green"
                     required
                   />
                 </div>
@@ -680,7 +680,7 @@ export default function Admin() {
                   name="phone"
                   value={formData.phone}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                  className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-tracer-green"
                   required
                 />
                 {errors.phone && (
@@ -696,7 +696,7 @@ export default function Admin() {
                     name="password"
                     value={formData.password}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2 pr-10 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    className="w-full px-4 py-2 pr-10 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-tracer-green"
                     required
                   />
                   <button
@@ -720,7 +720,7 @@ export default function Admin() {
                   name="role_id"
                   value={formData.role_id}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                  className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-tracer-green"
                   required
                 >
 
@@ -741,7 +741,7 @@ export default function Admin() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-yellow-500 hover:bg-yellow-600 disabled:bg-yellow-700 disabled:cursor-not-allowed text-white py-3 px-5 rounded font-medium uppercase transition duration-200 flex items-center justify-center gap-2"
+                  className="w-full bg-tracer-green hover:bg-tracer-green/90 disabled:bg-tracer-green/70 disabled:cursor-not-allowed text-white py-3 px-5 rounded font-medium uppercase transition duration-200 flex items-center justify-center gap-2"
                 >
                   {isSubmitting ? (
                     <>
@@ -792,7 +792,7 @@ export default function Admin() {
                     name="first_name"
                     value={formData.first_name}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-tracer-green"
                     required
                   />
                 </div>
@@ -803,7 +803,7 @@ export default function Admin() {
                     name="last_name"
                     value={formData.last_name}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-tracer-green"
                     required
                   />
                 </div>
@@ -817,7 +817,7 @@ export default function Admin() {
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-tracer-green"
                     required
                   />
                 </div>
@@ -828,7 +828,7 @@ export default function Admin() {
                     name="birthday"
                     value={formData.birthday}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-tracer-green"
                     required
                   />
                 </div>
@@ -841,7 +841,7 @@ export default function Admin() {
                   name="phone"
                   value={formData.phone}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                  className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-tracer-green"
                   required
                 />
               </div>
@@ -856,7 +856,7 @@ export default function Admin() {
                     name="password"
                     value={formData.password}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2 pr-10 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    className="w-full px-4 py-2 pr-10 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-tracer-green"
                   />
                   <button
                     type="button"
@@ -874,7 +874,7 @@ export default function Admin() {
                   name="role_id"
                   value={formData.role_id}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                  className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-tracer-green"
                   required
                 >
 
@@ -893,7 +893,7 @@ export default function Admin() {
                 <button
                   type="submit"
                   disabled={isUpdating}
-                  className="w-full bg-yellow-500 hover:bg-yellow-600 disabled:bg-yellow-700 disabled:cursor-not-allowed text-white py-3 px-5 rounded font-medium uppercase transition duration-200 flex items-center justify-center gap-2"
+                  className="w-full bg-tracer-green hover:bg-tracer-green/90 disabled:bg-tracer-green/70 disabled:cursor-not-allowed text-white py-3 px-5 rounded font-medium uppercase transition duration-200 flex items-center justify-center gap-2"
                 >
                   {isUpdating ? (
                     <>

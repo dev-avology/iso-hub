@@ -46,7 +46,7 @@ const EulaModal: React.FC<EulaModalProps> = ({ onAgree, onCancel }) => {
           <label className="flex items-center text-gray-700">
             <input
               type="checkbox"
-              className="form-checkbox h-5 w-5 text-yellow-600 border-yellow-500 focus:ring-yellow-500 focus:border-yellow-500 rounded"
+              className="form-checkbox h-5 w-5 text-tracer-green border-tracer-green focus:ring-tracer-green focus:border-tracer-green rounded"
               checked={hasConsented}
               onChange={(e) => setHasConsented(e.target.checked)}
             />
@@ -64,8 +64,8 @@ const EulaModal: React.FC<EulaModalProps> = ({ onAgree, onCancel }) => {
               disabled={!hasConsented}
               className={`px-4 py-2 rounded-md transition-colors duration-200 ${
                 hasConsented
-                  ? 'bg-yellow-600 text-white hover:bg-yellow-700'
-                  : 'bg-yellow-400 text-white opacity-50 cursor-not-allowed'
+                  ? 'bg-tracer-green text-white hover:bg-tracer-green/90'
+                  : 'bg-tracer-green/50 text-white opacity-50 cursor-not-allowed'
               }`}
             >
               Agree and Login

@@ -15,7 +15,7 @@ const BirthdayNotify = () => {
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-4">
             <div className="p-3 bg-yellow-500/20 rounded-full">
-              <Gift className="w-8 h-8 text-yellow-400" />
+              <Gift className="w-8 h-8 text-tracer-green" />
             </div>
             <div>
               <h1 className="text-3xl font-bold text-white">Birthday Notifications</h1>
@@ -28,8 +28,8 @@ const BirthdayNotify = () => {
         <div className="bg-zinc-800 rounded-lg p-8 border border-yellow-400/20">
           <div className="text-center">
             <div className="mb-6">
-              <div className="p-4 bg-yellow-500/10 rounded-full inline-block mb-4">
-                <Gift className="w-12 h-12 text-yellow-400" />
+              <div className="p-4 bg-tracer-green/10 rounded-full inline-block mb-4">
+                <Gift className="w-12 h-12 text-tracer-green" />
               </div>
               <h2 className="text-2xl font-bold text-white mb-2">
                 Send Notification to All Users
@@ -41,7 +41,7 @@ const BirthdayNotify = () => {
 
             <button
               onClick={() => setIsBirthdayModalOpen(true)}
-              className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold py-4 px-8 rounded-lg transition-colors flex items-center gap-3 mx-auto"
+              className="bg-tracer-green hover:bg-tracer-green/90 text-white font-semibold py-4 px-8 rounded-lg transition-colors flex items-center gap-3 mx-auto"
             >
               <Send className="w-5 h-5" />
               Create Birthday Notification

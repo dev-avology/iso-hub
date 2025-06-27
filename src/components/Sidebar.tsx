@@ -173,21 +173,21 @@ export default function Sidebar({
   return (
     <div
       className={`
-      fixed inset-y-0 left-0 z-50 w-64 bg-zinc-900 shadow-lg transform border-r border-yellow-400/20
+      fixed inset-y-0 left-0 z-50 w-64 bg-zinc-900 shadow-lg transform border-r border-tracer-green/20
       ${open ? "translate-x-0" : "-translate-x-full"}
       lg:relative lg:translate-x-0 transition-transform duration-300 ease-in-out
     `}
     >
       <div className="h-full flex flex-col">
         {/* Logo */}
-        <div className="p-6 border-b border-yellow-400/20">
+        <div className="p-6 border-b border-tracer-green/20">
           <div className="flex items-center justify-center space-x-2">
-            {/* <Shield className="h-8 w-8 text-yellow-400" /> */}
+            {/* <Shield className="h-8 w-8 text-tracer-green" /> */}
             <div className="text-xl font-bold text-white tracking-tight">
               <img src="ISOHubLOGO.png" alt="" style={{ maxWidth: "71%" }} />
             </div>
           </div>
-          <div className="mt-1 text-xs text-yellow-400/60">
+          <div className="mt-1 text-xs text-tracer-green/60">
             Secure Document Management
           </div>
         </div>
@@ -202,21 +202,21 @@ export default function Sidebar({
                     href={category.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group flex items-center px-3 py-2 text-sm font-medium text-gray-300 rounded-md hover:text-yellow-400 hover:border-l-4 hover:border-yellow-400 relative"
+                    className="group flex items-center px-3 py-2 text-sm font-medium text-gray-300 rounded-md hover:text-tracer-green hover:border-l-4 hover:border-tracer-green relative"
                   >
-                    <category.icon className="h-5 w-5 mr-3 text-gray-400 group-hover:text-yellow-400" />
+                    <category.icon className="h-5 w-5 mr-3 text-gray-400 group-hover:text-tracer-green" />
                     {category.name}
                   </a>
                 ) : category.onClick ? (
                   <button
                     onClick={category.onClick}
-                    className={`group flex items-center w-full px-3 py-2 text-sm font-medium rounded-md hover:text-yellow-400 relative transition-all
+                    className={`group flex items-center w-full px-3 py-2 text-sm font-medium rounded-md hover:text-tracer-green relative transition-all
                       ${
                         isActive(
                           category.href || `/${category.name.toLowerCase()}`
                         )
-                          ? "text-yellow-400 border-l-4 border-yellow-400 pl-2"
-                          : "text-gray-300 hover:border-l-4 hover:border-yellow-400"
+                          ? "text-tracer-green border-l-4 border-tracer-green pl-2"
+                          : "text-gray-300 hover:border-l-4 hover:border-tracer-green"
                       }`}
                   >
                     <category.icon
@@ -224,8 +224,8 @@ export default function Sidebar({
                         isActive(
                           category.href || `/${category.name.toLowerCase()}`
                         )
-                          ? "text-yellow-400"
-                          : "text-gray-400 group-hover:text-yellow-400"
+                          ? "text-tracer-green"
+                          : "text-gray-400 group-hover:text-tracer-green"
                       }`}
                     />
                     {category.name}
@@ -233,13 +233,13 @@ export default function Sidebar({
                 ) : (
                   <Link
                     to={category.href || `/${category.name.toLowerCase()}`}
-                    className={`group flex items-center px-3 py-2 text-sm font-medium rounded-md hover:text-yellow-400 relative transition-all
+                    className={`group flex items-center px-3 py-2 text-sm font-medium rounded-md hover:text-tracer-green relative transition-all
                       ${
                         isActive(
                           category.href || `/${category.name.toLowerCase()}`
                         )
-                          ? "text-yellow-400 border-l-4 border-yellow-400 pl-2"
-                          : "text-gray-300 hover:border-l-4 hover:border-yellow-400"
+                          ? "text-tracer-green border-l-4 border-tracer-green pl-2"
+                          : "text-gray-300 hover:border-l-4 hover:border-tracer-green"
                       }`}
                   >
                     <category.icon
@@ -247,8 +247,8 @@ export default function Sidebar({
                         isActive(
                           category.href || `/${category.name.toLowerCase()}`
                         )
-                          ? "text-yellow-400"
-                          : "text-gray-400 group-hover:text-yellow-400"
+                          ? "text-tracer-green"
+                          : "text-gray-400 group-hover:text-tracer-green"
                       }`}
                     />
                     {category.name}
@@ -280,14 +280,14 @@ export default function Sidebar({
                               className={`flex py-2 px-3 gap-2 items-center text-md rounded-md transition-all
             ${
               location.pathname === item.path
-                ? "bg-black border-l-4 border-yellow-400 text-yellow-400"
-                : "bg-black hover:border-l-4 hover:border-yellow-400 hover:text-yellow-400"
+                ? "bg-black border-l-4 border-tracer-green text-tracer-green"
+                : "bg-black hover:border-l-4 hover:border-tracer-green hover:text-tracer-green"
             }`}
                             >
                               <item.icon
                                 className={`w-5 h-5 ${
                                   location.pathname === item.path
-                                    ? "text-yellow-400"
+                                    ? "text-tracer-green"
                                     : ""
                                 }`}
                               />
@@ -299,14 +299,14 @@ export default function Sidebar({
                               className={`flex py-2 px-3 gap-2 items-center text-md rounded-md transition-all
             ${
               location.pathname === item.path
-                ? "bg-black border-l-4 border-yellow-400 text-yellow-400"
-                : "bg-black hover:border-l-4 hover:border-yellow-400 hover:text-yellow-400"
+                ? "bg-black border-l-4 border-tracer-green text-tracer-green"
+                : "bg-black hover:border-l-4 hover:border-tracer-green hover:text-tracer-green"
             }`}
                             >
                               <item.icon
                                 className={`w-5 h-5 ${
                                   location.pathname === item.path
-                                    ? "text-yellow-400"
+                                    ? "text-tracer-green"
                                     : ""
                                 }`}
                               />
@@ -325,9 +325,9 @@ export default function Sidebar({
               <div className="relative group mt-4">
                 {/* {isUser && <UserRep />} */}
                 {/* <div
-                  className={`group flex items-center px-3 py-2 text-sm font-medium rounded-md hover:text-yellow-400 transition-all text-gray-300 hover:border-l-4 hover:border-yellow-400`}
+                  className={`group flex items-center px-3 py-2 text-sm font-medium rounded-md hover:text-tracer-green transition-all text-gray-300 hover:border-l-4 hover:border-tracer-green`}
                 >
-                  <Users className="h-5 w-5 mr-3 text-gray-400 group-hover:text-yellow-400" />
+                  <Users className="h-5 w-5 mr-3 text-gray-400 group-hover:text-tracer-green" />
                   Users
                 </div> */}
 
@@ -339,10 +339,10 @@ export default function Sidebar({
                           to={item.path}
                           className={`flex py-2 px-3 gap-2 items-center text-md rounded-md transition-all
                 ${location.pathname === item.path
-                              ? 'bg-black border-l-4 border-yellow-400 text-yellow-400'
-                              : 'bg-black hover:border-l-4 hover:border-yellow-400 hover:text-yellow-400'}`}
+                              ? 'bg-black border-l-4 border-tracer-green text-tracer-green'
+                              : 'bg-black hover:border-l-4 hover:border-tracer-green hover:text-tracer-green'}`}
                         >
-                          <item.icon className={`w-5 h-5 ${location.pathname === item.path ? 'text-yellow-400' : ''}`} />
+                          <item.icon className={`w-5 h-5 ${location.pathname === item.path ? 'text-tracer-green' : ''}`} />
                           {item.name}
                         </Link>
                       </li>
@@ -357,7 +357,7 @@ export default function Sidebar({
 
         <button
           onClick={handleLogout}
-          className="absolute bottom-5 left-[50%] translate-x-[-50%] w-[90%] bg-yellow-400 rounded py-3 font-semibold uppercase flex items-center justify-center hover:bg-yellow-600 gap-2 text-black"
+          className="absolute bottom-5 left-[50%] translate-x-[-50%] w-[90%] bg-tracer-green rounded py-3 font-semibold uppercase flex items-center justify-center hover:bg-tracer-green/90 gap-2 text-white"
         >
           <LogOut className="w-5 h-5" />
           Logout

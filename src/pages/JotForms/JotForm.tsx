@@ -533,14 +533,14 @@ export default function JotForm() {
     <div className="min-h-screen bg-zinc-950 py-8 px-4 sm:px-6 lg:px-8">
       <style>{datePickerStyles}</style>
       <div className="max-w-3xl mx-auto">
-        <div className="mb-8 bg-yellow-400 rounded-lg p-6 shadow-lg">
+        <div className="mb-8 bg-tracer-green rounded-lg p-6 shadow-lg">
           <div className="flex items-center space-x-3">
-            <FileText className="h-10 w-10 text-black" />
+            <FileText className="h-10 w-10 text-white" />
             <div>
-              <h1 className="text-3xl font-bold text-black">
+              <h1 className="text-3xl font-bold text-white">
                 Merchant Pre-Application
               </h1>
-              <p className="text-black/80 mt-1">Tracer C2 Financial Services</p>
+              <p className="text-white/80 mt-1">Tracer C2 Financial Services</p>
             </div>
           </div>
         </div>
@@ -719,7 +719,7 @@ export default function JotForm() {
                         checked={formData.business_profile_business_type.includes(
                           value
                         )}
-                        className="h-4 w-4 mr-2 rounded border-gray-300 text-yellow-400 focus:ring-yellow-400"
+                        className="mr-2 h-4 w-4 border-gray-300 text-tracer-green focus:ring-tracer-green"
                       />
                       {label}
                       {/* {errors.business_profile_business_type && (
@@ -761,7 +761,7 @@ export default function JotForm() {
                     required
                     checked={formData.is_same_shipping_address === "1"}
                     onChange={handleInputChange}
-                    className="mr-2"
+                    className="mr-2 h-4 w-4 border-gray-300 text-tracer-green focus:ring-tracer-green"
                   />
                   Shipping Address is the Same
                 </label>
@@ -971,7 +971,7 @@ export default function JotForm() {
                       name="business_start_date"
                       required
                       onChange={handleInputChange}
-                      className="mt-1 block w-full rounded bg-gray-700 text-white border border-gray-600 px-3 py-2"
+                      className="mt-1 block w-full rounded bg-gray-700 text-white border border-gray-600 focus:border-tracer-green focus:ring-tracer-green px-3 py-2"
                     />
                     <Calendar className="absolute right-3 top-2.5 h-5 w-5 text-gray-400 pointer-events-none" />
                   </div>
@@ -1225,7 +1225,7 @@ export default function JotForm() {
                         value={value}
                         checked={formData.business_type === value}
                         onChange={handleInputChange}
-                        className="mr-2 h-4 w-4 border-gray-300 text-yellow-400 focus:ring-yellow-400"
+                        className="mr-2 h-4 w-4 border-gray-300 text-tracer-green focus:ring-tracer-green"
                       />
                       {label}
                     </label>
@@ -1263,7 +1263,7 @@ export default function JotForm() {
           <fieldset className="border border-gray-300 rounded-lg p-6">
             <legend className="text-lg font-semibold text-white px-2">
               PROCESSING SERVICES
-              <span className="ml-2 text-sm font-normal text-yellow-400">
+              <span className="ml-2 text-sm font-normal text-tracer-green">
                 (* Not required — leave blank if unsure)
               </span>
             </legend>
@@ -1305,7 +1305,7 @@ export default function JotForm() {
                           onChange={handleInputChange}
                           value={value}
                           checked={formData.processing_services === value}
-                          className="mr-2 h-4 w-4 border-gray-300 text-yellow-400 focus:ring-yellow-400"
+                          className="mr-2 h-4 w-4 border-gray-300 text-tracer-green focus:ring-tracer-green"
                         />
                         {label}
                       </label>
@@ -1327,7 +1327,7 @@ export default function JotForm() {
           <fieldset className="border border-gray-300 rounded-lg p-6">
             <legend className="text-lg font-semibold text-gray-800 px-2 text-white">
               PROCESSING HARDWARE
-              <span className="ml-2 text-sm font-normal text-yellow-400">
+              <span className="ml-2 text-sm font-normal text-tracer-green">
                 (* Not required — leave blank if unsure)
               </span>
             </legend>
@@ -1355,7 +1355,7 @@ export default function JotForm() {
                           onChange={handleInputChange}
                           value={value}
                           checked={formData.terminal === value}
-                          className="mr-2 h-4 w-4 border-gray-300 text-yellow-400 focus:ring-yellow-400"
+                          className="mr-2 h-4 w-4 border-gray-300 text-tracer-green focus:ring-tracer-green"
                         />
                         {label}
                       </label>
@@ -1431,7 +1431,7 @@ export default function JotForm() {
                           onChange={handleInputChange}
                           value={value}
                           checked={formData.mobile_app === value}
-                          className="mr-2 h-4 w-4 border-gray-300 text-yellow-400 focus:ring-yellow-400"
+                          className="mr-2 h-4 w-4 border-gray-300 text-tracer-green focus:ring-tracer-green"
                         />
                         {label}
                       </label>
@@ -1513,7 +1513,7 @@ export default function JotForm() {
                           value={value}
                           onChange={handleInputChange}
                           checked={formData.pos_point_of_sale === value}
-                          className="mr-2 h-4 w-4 border-gray-300 text-yellow-400 focus:ring-yellow-400"
+                          className="mr-2 h-4 w-4 border-gray-300 text-tracer-green focus:ring-tracer-green"
                         />
                         {label}
                       </label>
@@ -1649,7 +1649,7 @@ export default function JotForm() {
                           onChange={handleInputChange}
                           value={value}
                           checked={formData.virtual_terminal === value}
-                          className="mr-2 h-4 w-4 border-gray-300 text-yellow-400 focus:ring-yellow-400"
+                          className="mr-2 h-4 w-4 border-gray-300 text-tracer-green focus:ring-tracer-green"
                         />
                         {label}
                       </label>
@@ -1702,7 +1702,7 @@ export default function JotForm() {
                           onChange={handleInputChange}
                           value={value}
                           checked={formData.location_description === value}
-                          className="mr-2 h-4 w-4 border-gray-300 text-yellow-400 focus:ring-yellow-400"
+                          className="mr-2 h-4 w-4 border-gray-300 text-tracer-green focus:ring-tracer-green"
                         />
                         {label}
                       </label>
@@ -1882,7 +1882,7 @@ export default function JotForm() {
                     required
                     checked={formData.auto_settle_type === "manual"}
                     onChange={handleInputChange}
-                    className="mr-2"
+                    className="mr-2 h-4 w-4 border-gray-300 text-tracer-green focus:ring-tracer-green"
                   />
                   I will Settle / Batch myself
                 </label>
@@ -1911,7 +1911,7 @@ export default function JotForm() {
                     required
                     checked={formData.add_tips_to_account === "yes"}
                     onChange={handleInputChange}
-                    className="mr-2"
+                    className="mr-2 h-4 w-4 border-gray-300 text-tracer-green focus:ring-tracer-green"
                   />
                   I would like to have the tip function added to my account
                 </label>
@@ -1932,7 +1932,7 @@ export default function JotForm() {
                         value={tip}
                         checked={formData.tip_amounts.includes(tip)}
                         onChange={handleInputChange}
-                        className="mr-2"
+                        className="mr-2 h-4 w-4 border-gray-300 text-tracer-green focus:ring-tracer-green"
                       />
                       {tip}
                     </label>
@@ -1965,7 +1965,7 @@ export default function JotForm() {
                     name="signature_date"
                     value={formData.signature_date}
                     onChange={handleInputChange}
-                    className="mt-1 block w-full rounded bg-gray-700 text-white border border-gray-600 focus:border-yellow-400 focus:ring-yellow-400 px-3 py-2"
+                    className="mt-1 block w-full rounded bg-gray-700 text-white border border-gray-600 focus:border-tracer-green focus:ring-tracer-green px-3 py-2"
                   />
                   <Calendar className="absolute right-3 top-2.5 h-5 w-5 text-gray-400 pointer-events-none" />
                 </div>
@@ -2008,11 +2008,11 @@ export default function JotForm() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className={`px-8 py-3 bg-yellow-400 text-black rounded-lg font-semibold flex items-center space-x-2
+              className={`px-8 py-3 bg-tracer-green text-white rounded-lg font-semibold flex items-center space-x-2
                 ${
                   isSubmitting
                     ? "opacity-50 cursor-not-allowed"
-                    : "hover:bg-yellow-500"
+                    : "hover:bg-tracer-green/90"
                 }`}
             >
               {isSubmitting ? (
