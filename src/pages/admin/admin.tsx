@@ -96,6 +96,7 @@ export default function Admin() {
         throw new Error("Failed to fetch users");
       }
       const data: ApiResponse = await response.json();
+      console.log('data222',data);
       setUsers(data.data);
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -242,7 +243,7 @@ export default function Admin() {
           email: "",
           phone: "",
           password: "",
-          role_id: "5",
+          role_id: "",
           birthday: "",
         });
         setIsModalOpen(false);
@@ -355,7 +356,7 @@ export default function Admin() {
         email: "",
         phone: "",
         password: "",
-        role_id: "5",
+        role_id: "",
         birthday: "",
       });
       toast.success("User updated successfully");
@@ -411,13 +412,15 @@ export default function Admin() {
     return false;
   });
 
+  console.log('parsedUser.role_id',parsedUser.role_id);
+
   return (
     <>
       <Toaster position="top-right" reverseOrder={false} />
       <div className="shortmembers my-10 flex gap-7 items-center w-full text-center bg-yellow-500 py-5 px-5 rounded">
 
-        {/* {(parsedUser.role_id === 1) && ( this line is for only superadmin need to chnage*/}
-        {/* {(parsedUser.role_id === 1) && (parsedUser.role_id === 2) && (
+        {/* {(parsedUser.role_id === 1) && (parsedUser.role_id === 2) && ( */}
+        {(parsedUser.role_id === 1) && ( 
           <div className="short text-white font-medium flex items-center gap-2">
             <input
               type="checkbox"
@@ -429,7 +432,8 @@ export default function Admin() {
           </div>
         )}
 
-        {(parsedUser.role_id === 1) && (parsedUser.role_id === 2) && (
+        {(parsedUser.role_id === 1 || parsedUser.role_id === 2) && (
+
            <div className="short text-white font-medium flex items-center gap-2">
             <input
               type="checkbox"
@@ -441,7 +445,7 @@ export default function Admin() {
            </div>
         )}
 
-        {(parsedUser.role_id === 1) && (parsedUser.role_id === 2) && (parsedUser.role_id === 3) && (
+        {(parsedUser.role_id === 1 || parsedUser.role_id === 2 || parsedUser.role_id === 3) && (
           <div className="short text-white font-medium flex items-center gap-2">
             <input
               type="checkbox"
@@ -453,7 +457,8 @@ export default function Admin() {
         </div>
         )}
 
-        <div className="short text-white font-medium flex items-center gap-2">
+        {(parsedUser.role_id === 1 || parsedUser.role_id === 2 || parsedUser.role_id === 3 || parsedUser.role_id === 4) && (
+         <div className="short text-white font-medium flex items-center gap-2">
           <input
             type="checkbox"
             className="h-[20px] w-[20px]"
@@ -461,59 +466,8 @@ export default function Admin() {
             checked={usersChecked}
           />
           <span>Users/Reps</span>
-        </div>
-
-        <div className="short text-white font-medium flex items-center gap-2">
-          <input
-            type="checkbox"
-            className="h-[20px] w-[20px]"
-            onChange={handleTeamMemberChange}
-            checked={teamMembersChecked}
-          />
-          <span>Team Member</span>
-        </div>
-      </div> */}
-
-
-      <div className="short text-white font-medium flex items-center gap-2">
-        <input
-          type="checkbox"
-          className="h-[20px] w-[20px]"
-          onChange={handleAdminChange}
-          checked={adminChecked}
-        />
-        <span>Admin</span>
-      </div>
-
-        <div className="short text-white font-medium flex items-center gap-2">
-        <input
-          type="checkbox"
-          className="h-[20px] w-[20px]"
-          onChange={handleManagersChange}
-          checked={managersChecked}
-        />
-        <span>Managers</span>
-        </div>
-
-        <div className="short text-white font-medium flex items-center gap-2">
-          <input
-            type="checkbox"
-            className="h-[20px] w-[20px]"
-            onChange={handleTeamLeadersChange}
-            checked={teamLeadersChecked}
-          />
-        <span>Team Leaders</span>
-        </div>
-
-        <div className="short text-white font-medium flex items-center gap-2">
-          <input
-            type="checkbox"
-            className="h-[20px] w-[20px]"
-            onChange={handleUsersChange}
-            checked={usersChecked}
-          />
-          <span>Users/Reps</span>
-        </div>
+         </div>
+        )}
 
         <div className="short text-white font-medium flex items-center gap-2">
           <input
@@ -556,11 +510,11 @@ export default function Admin() {
               key={user.id}
               className="UserDataRow group px-5 py-3 rounded flex gap-4 border border-gray-700 mt-4 hover:bg-gray-700 cursor-pointer relative"
             >
-              <div className="userdata w-[20%]">{user.first_name}</div>
-              <div className="userdata w-[20%]">{user.last_name}</div>
-              <div className="userdata w-[20%]">{user.email}</div>
-              <div className="userdata w-[20%]">{user.phone}</div>
-              <div className="userdata w-[20%]">
+              <div className="userdata w-[20%] break-all">{user.first_name}</div>
+              <div className="userdata w-[20%] break-all">{user.last_name}</div>
+              <div className="userdata w-[20%] break-all">{user.email}</div>
+              <div className="userdata w-[20%] break-all">{user.phone}</div>
+              <div className="userdata w-[20%] break-all">
                 {
                   ROLE_MAPPING[
                     user.role_id.toString() as keyof typeof ROLE_MAPPING
@@ -723,16 +677,18 @@ export default function Admin() {
                   className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
                   required
                 >
+                  <option value="">Select Role</option>
 
-                  {/* {role_id === 1 && <option value="2">Admin</option>}
-                  {(role_id === 1) && (role_id === 2) && <option value="3">Manager</option>}
-                  {(role_id === 1) && (role_id === 2) && (role_id === 3) && <option value="4">Team Leader</option>} */}
+                  {role_id === 1 && <option value="2">Admin</option>}
+                  {(role_id === 1 || role_id === 2) && <option value="3">Manager</option>}
+                  {(role_id === 1 || role_id === 2 || role_id === 3) && <option value="4">Team Leader</option>}
+                  {(role_id === 1 || role_id === 2 || role_id === 3 || role_id === 4) && <option value="5">User</option>}
 
-                  <option value="2">Admin</option>
+                  {/* <option value="2">Admin</option>
                   <option value="3">Manager</option>
-                  <option value="4">Team Leader</option>
+                  <option value="4">Team Leader</option> */}
             
-                  <option value="5">User</option>
+                  {/* <option value="5">User</option> */}
                   <option value="6">Team Member</option>
                 </select>
               </div>
@@ -772,7 +728,7 @@ export default function Admin() {
                   email: "",
                   phone: "",
                   password: "",
-                  role_id: "5",
+                  role_id: "",
                   birthday: "",
                 });
               }}
@@ -877,14 +833,15 @@ export default function Admin() {
                   className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
                   required
                 >
-
-                  {/* {role_id === 1 && <option value="2">Admin</option>}
-                  {(role_id === 1) && (role_id === 2) && <option value="3">Manager</option>}
-                  {(role_id === 1) && (role_id === 2) && (role_id === 3) && <option value="4">Team Leader</option>} */}
-                  <option value="2">Admin</option>
+                  <option value="">Select Role</option>
+                  {role_id === 1 && <option value="2">Admin</option>}
+                  {(role_id === 1 || role_id === 2) && <option value="3">Manager</option>}
+                  {(role_id === 1 || role_id === 2 || role_id === 3) && <option value="4">Team Leader</option>}
+                  {(role_id === 1 || role_id === 2 || role_id === 3 || role_id === 4) && <option value="5">User</option>}
+                  {/* <option value="2">Admin</option>
                   <option value="3">Manager</option>
-                  <option value="4">Team Leader</option>
-                  <option value="5">User</option>
+                  <option value="4">Team Leader</option> */}
+                  {/* <option value="5">User</option> */}
                   <option value="6">Team Member</option>
                 </select>
               </div>
