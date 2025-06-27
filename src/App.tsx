@@ -38,12 +38,12 @@ import IsoAiPage from './pages/IsoAiPage';
 function Dashboard() {
   return (
     <div className="max-w-7xl mx-auto">
-      <div className="mb-8 bg-yellow-400 rounded-lg p-6 shadow-lg">
+      <div className="mb-8 bg-tracer-green rounded-lg p-6 shadow-lg">
         <div className="flex items-center space-x-3">
-          <LayoutDashboard className="h-10 w-10 text-black" />
+          <LayoutDashboard className="h-10 w-10 text-white" />
           <div>
-            <h2 className="text-3xl font-bold text-black">Dashboard</h2>
-            <p className="text-black/80 mt-1">
+            <h2 className="text-3xl font-bold text-white">Dashboard</h2>
+            <p className="text-white/80 mt-1">
               Welcome back! Here's an overview of your ISO Hub.
             </p>
           </div>

@@ -353,23 +353,23 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-zinc-900 rounded-lg p-8 max-w-3xl w-full mx-4 relative max-h-[90vh] overflow-y-auto border border-yellow-400/20">
+      <div className="bg-zinc-900 rounded-lg p-8 max-w-3xl w-full mx-4 relative max-h-[90vh] overflow-y-auto border border-tracer-blue/20">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-yellow-400 transition-colors"
+          className="absolute top-4 right-4 text-gray-400 hover:text-tracer-green transition-colors"
         >
           <X className="h-6 w-6" />
         </button>
 
         <div className="text-center mb-8">
-          <h2 className="text-2xl font-bold text-yellow-400">Form Details</h2>
-          <div className="mt-2 h-1 w-24 bg-yellow-400 mx-auto rounded-full"></div>
+          <h2 className="text-2xl font-bold text-tracer-green">Form Details</h2>
+          <div className="mt-2 h-1 w-24 bg-tracer-green mx-auto rounded-full"></div>
         </div>
 
         <div className="space-y-8">
           {/* Business Information */}
           <div className="bg-zinc-800/50 rounded-lg p-6 border border-zinc-700">
-            <h3 className="text-lg font-semibold text-yellow-400 mb-4">
+            <h3 className="text-lg font-semibold text-tracer-green mb-4">
               Business Information
             </h3>
             <div className="grid grid-cols-2 gap-6">
@@ -448,7 +448,7 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
                       key={value}
                       className={`px-3 py-1 rounded-full text-sm ${
                         isChecked(form.business_profile_business_type, value)
-                          ? "bg-yellow-400 text-black"
+                          ? "bg-tracer-green text-black"
                           : "bg-zinc-700 text-gray-400"
                       }`}
                     >
@@ -473,7 +473,7 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
                         value="1"
                         checked={form.is_same_shipping_address === "1"}
                         readOnly
-                        className="form-radio text-yellow-600"
+                        className="form-radio text-tracer-green"
                       />
                       <span className="ml-2 text-white">
                         Shipping Address (
@@ -487,7 +487,7 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
           </div>
 
           <div className="bg-zinc-800/50 rounded-lg p-6 border border-zinc-700">
-            <h3 className="text-lg font-semibold text-yellow-400 mb-4">
+            <h3 className="text-lg font-semibold text-tracer-green mb-4">
               Corporate Contact Information
             </h3>
             <div className="grid grid-cols-2 gap-6">
@@ -636,7 +636,7 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
                 id={`owner-officer-section-${index}`}
                 className="bg-zinc-800/50 rounded-lg p-6 border border-zinc-700 mb-6"
               >
-                <h3 className="text-lg font-semibold text-yellow-400 mb-4">
+                <h3 className="text-lg font-semibold text-tracer-green mb-4">
                   Owner / Officer Information {index + 1}
                 </h3>
                 <div className="grid grid-cols-2 gap-6">
@@ -744,7 +744,7 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
 
           {/* Additional Business Details
           <div className="bg-zinc-800/50 rounded-lg p-6 border border-zinc-700">
-            <h3 className="text-lg font-semibold text-yellow-400 mb-4">Additional Business Details</h3>
+            <h3 className="text-lg font-semibold text-tracer-blue mb-4">Additional Business Details</h3>
             <div className="grid grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-400">Business Website</label>
@@ -767,7 +767,7 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
 
           {/* Transaction Details */}
           <div className="bg-zinc-800/50 rounded-lg p-6 border border-zinc-700">
-            <h3 className="text-lg font-semibold text-yellow-400 mb-4">
+            <h3 className="text-lg font-semibold text-tracer-green mb-4">
               Credit Card Processing Information
             </h3>
             <div className="grid grid-cols-2 gap-6">
@@ -871,7 +871,7 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
 
           {/* Settlement Details */}
           <div className="bg-zinc-800/50 rounded-lg p-6 border border-zinc-700">
-            <h3 className="text-lg font-semibold text-yellow-400 mb-4">
+            <h3 className="text-lg font-semibold text-tracer-green mb-4">
               Details
             </h3>
             <div className="grid grid-cols-2 gap-6">
@@ -1022,7 +1022,7 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
 
           {/* Documents Section */}
           <div className="bg-zinc-800/50 rounded-lg p-6 border border-zinc-700">
-            <h3 className="text-lg font-semibold text-yellow-400 mb-4">
+            <h3 className="text-lg font-semibold text-tracer-green mb-4">
               Documents
             </h3>
             <div className="space-y-4">
@@ -1058,10 +1058,11 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
                       <a
                         href="#"
                         download
-                        className="text-yellow-400 hover:text-yellow-500"
+                        className="text-tracer-green hover:text-tracer-blue flex items-center gap-1"
                         onClick={() => handleDownload(doc)}
                       >
                         <Download className="h-5 w-5" />
+                        Download
                       </a>
                     </div>
                   ))}
@@ -1090,7 +1091,7 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
 
           {/* Signature Section */}
           <div className="bg-zinc-800/50 rounded-lg p-6 border border-zinc-700">
-            <h3 className="text-yellow-400 mb-4">Signature</h3>
+            <h3 className="text-tracer-green mb-4">Signature</h3>
             <div className="grid grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-400">
@@ -1125,7 +1126,7 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
           
           <form onSubmit={handleEmailSend}>
             <div className="bg-zinc-800/50 rounded-lg p-6 border border-zinc-700">
-              <h3 className="text-yellow-400 mb-4">Clear E-Signature</h3>
+              <h3 className="text-tracer-green mb-4">Clear E-Signature</h3>
 
               <div className="mb-6">
                 <label className="block text-sm font-medium text-gray-400 mb-1">
@@ -1173,7 +1174,7 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
               <button
                 type="submit"
                 disabled={loading}
-                className={`bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-6 py-2 rounded-lg flex items-center justify-center gap-2 ${
+                className={`bg-tracer-green hover:bg-tracer-green/90 text-white font-semibold px-6 py-2 rounded-lg flex items-center justify-center gap-2 ${
                   loading ? "opacity-70 cursor-not-allowed" : ""
                 }`}
               >
@@ -1365,7 +1366,7 @@ function DuplicateFormModal({ form, onClose }: DuplicateFormModalProps) {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-zinc-900 rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="bg-yellow-400 rounded-lg p-4 mb-6">
+        <div className="bg-tracer-green rounded-lg p-4 mb-6">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold text-black">
               Merchant Pre-Application
@@ -1560,7 +1561,7 @@ function DuplicateFormModal({ form, onClose }: DuplicateFormModalProps) {
                           form?.business_profile_business_type,
                           value
                         )}
-                        className="h-4 w-4 rounded border-zinc-600 text-yellow-400 focus:ring-yellow-400 bg-zinc-600 cursor-not-allowed"
+                        className="h-4 w-4 rounded border-zinc-600 text-tracer-green focus:ring-tracer-green bg-zinc-600 cursor-not-allowed"
                       />
                       <span className="ml-2 text-white">{label}</span>
                     </label>
@@ -1800,7 +1801,7 @@ function DuplicateFormModal({ form, onClose }: DuplicateFormModalProps) {
                         name="business_type[]"
                         disabled
                         checked={isChecked(form?.business_type, value)}
-                        className="h-4 w-4 rounded border-zinc-600 text-yellow-400 focus:ring-yellow-400 bg-zinc-600 cursor-not-allowed"
+                        className="h-4 w-4 rounded border-zinc-600 text-tracer-green focus:ring-tracer-green bg-zinc-600 cursor-not-allowed"
                       />
                       <span className="ml-2 text-white">{label}</span>
                     </label>
@@ -1856,7 +1857,7 @@ function DuplicateFormModal({ form, onClose }: DuplicateFormModalProps) {
                       disabled
                       name="processing_services[]"
                       checked={isChecked(form?.processing_services, value)}
-                      className="h-4 w-4 rounded border-zinc-600 text-yellow-400 focus:ring-yellow-400 bg-zinc-600 cursor-not-allowed"
+                      className="h-4 w-4 rounded border-zinc-600 text-tracer-green focus:ring-tracer-green bg-zinc-600 cursor-not-allowed"
                     />
                     <span className="ml-2 text-white">{label}</span>
                   </label>
@@ -1889,7 +1890,7 @@ function DuplicateFormModal({ form, onClose }: DuplicateFormModalProps) {
                         disabled
                         name="terminal[]"
                         checked={isChecked(form?.terminal, value)}
-                        className="h-4 w-4 rounded border-zinc-600 text-yellow-400 focus:ring-yellow-400 bg-zinc-600 cursor-not-allowed"
+                        className="h-4 w-4 rounded border-zinc-600 text-tracer-green focus:ring-tracer-green bg-zinc-600 cursor-not-allowed"
                       />
                       <span className="ml-2 text-white">{label}</span>
                     </label>
@@ -1938,7 +1939,7 @@ function DuplicateFormModal({ form, onClose }: DuplicateFormModalProps) {
                         disabled
                         name="mobile_app[]"
                         checked={isChecked(form?.mobile_app, value)}
-                        className="h-4 w-4 rounded border-zinc-600 text-yellow-400 focus:ring-yellow-400 bg-zinc-600 cursor-not-allowed"
+                        className="h-4 w-4 rounded border-zinc-600 text-tracer-green focus:ring-tracer-green bg-zinc-600 cursor-not-allowed"
                       />
                       <span className="ml-2 text-white">{label}</span>
                     </label>
@@ -1986,7 +1987,7 @@ function DuplicateFormModal({ form, onClose }: DuplicateFormModalProps) {
                         name="pos_point_of_sale[]"
                         disabled
                         checked={isChecked(form?.pos_point_of_sale, value)}
-                        className="h-4 w-4 rounded border-zinc-600 text-yellow-400 focus:ring-yellow-400 bg-zinc-600 cursor-not-allowed"
+                        className="h-4 w-4 rounded border-zinc-600 text-tracer-green focus:ring-tracer-green bg-zinc-600 cursor-not-allowed"
                       />
                       <span className="ml-2 text-white">{label}</span>
                     </label>
@@ -2070,7 +2071,7 @@ function DuplicateFormModal({ form, onClose }: DuplicateFormModalProps) {
                         disabled
                         name="virtual_terminal[]"
                         checked={isChecked(form?.virtual_terminal, value)}
-                        className="h-4 w-4 rounded border-zinc-600 text-yellow-400 focus:ring-yellow-400 bg-zinc-600 cursor-not-allowed"
+                        className="h-4 w-4 rounded border-zinc-600 text-tracer-green focus:ring-tracer-green bg-zinc-600 cursor-not-allowed"
                       />
                       <span className="ml-2 text-white">{label}</span>
                     </label>
@@ -2095,7 +2096,7 @@ function DuplicateFormModal({ form, onClose }: DuplicateFormModalProps) {
                 onChange={(e) => setProspectEmail(e.target.value)}
                 required
                 name="email"
-                className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white focus:border-yellow-400 focus:ring-yellow-400"
+                className="mt-1 block w-full rounded-md bg-zinc-700 border-zinc-600 text-white focus:border-tracer-green focus:ring-tracer-green"
                 placeholder="Enter prospect email"
               />
             </div>
@@ -2113,7 +2114,7 @@ function DuplicateFormModal({ form, onClose }: DuplicateFormModalProps) {
             <button
               type="submit"
               disabled={isSubmitting}
-              className={`px-4 py-2 text-sm font-medium text-black bg-yellow-400 rounded-md hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400 ${
+              className={`px-4 py-2 text-sm font-medium text-white bg-tracer-green rounded-md hover:bg-tracer-green/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-tracer-green ${
                 isSubmitting ? "opacity-50 cursor-not-allowed" : ""
               }`}
             >
@@ -2545,12 +2546,12 @@ export default function PreApplications() {
       <Toaster position="top-right" />
 
       {/* Header */}
-      <div className="mb-8 bg-yellow-400 rounded-lg p-6 shadow-lg">
+      <div className="mb-8 bg-tracer-green rounded-lg p-6 shadow-lg">
         <div className="flex items-center space-x-3">
-          <FormInput className="h-10 w-10 text-black" />
+          <FormInput className="h-10 w-10 text-white" />
           <div>
-            <h1 className="text-3xl font-bold text-black">Pre-Applications</h1>
-            <p className="text-black/80 mt-1">
+            <h1 className="text-3xl font-bold text-white">Pre-Applications</h1>
+            <p className="text-white/80 mt-1">
               Manage and track merchant pre-applications.
             </p>
           </div>
@@ -2558,14 +2559,14 @@ export default function PreApplications() {
       </div>
 
       {/* Pre-Application Link Section */}
-      <div className="bg-zinc-900 rounded-lg shadow-sm p-6 mb-8 border border-yellow-400/20">
+      <div className="bg-zinc-900 rounded-lg shadow-sm p-6 mb-8 border border-tracer-blue/20">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-white">
             Pre-Application Form Link
           </h2>
           <button
             onClick={() => setShowEmailModal(true)}
-            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-yellow-400 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400"
+            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-tracer-green hover:bg-tracer-blue focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-tracer-green"
           >
             <Mail className="h-5 w-5 mr-2" />
             Email
@@ -2577,7 +2578,7 @@ export default function PreApplications() {
               type="text"
               readOnly
               value={preAppLink}
-              className="block pr-10 truncate bg-zinc-800 border-zinc-700 text-white rounded-md focus:ring-yellow-400 focus:border-yellow-400 mr-2"
+              className="block pr-10 truncate bg-zinc-800 border-zinc-700 text-white rounded-md focus:ring-tracer-green focus:border-tracer-green mr-2"
               style={{ width: 'calc(100% - 129px)' }}
             />
             <div className="absolute inset-y-0 right-24 flex items-center pr-9">
@@ -2585,14 +2586,14 @@ export default function PreApplications() {
                 href={preAppLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-400 hover:text-yellow-400"
+                className="text-gray-400 hover:text-tracer-green"
               >
                 <ExternalLink className="h-5 w-5" />
               </a>
             </div>
             <button
               onClick={copyLink}
-              className="absolute right-0 top-1/2 -translate-y-1/2 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-yellow-400 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400"
+              className="absolute right-0 top-1/2 -translate-y-1/2 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-tracer-green hover:bg-tracer-blue focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-tracer-green"
             >
               {copied ? (
                 <>
@@ -2613,12 +2614,12 @@ export default function PreApplications() {
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
             <div className="bg-zinc-900 rounded-lg p-6 w-full max-w-md relative">
               <button
-                className="absolute top-2 right-2 text-gray-400 hover:text-yellow-400"
+                className="absolute top-2 right-2 text-gray-400 hover:text-tracer-green"
                 onClick={() => setShowEmailModal(false)}
               >
                 <X className="h-6 w-6" />
               </button>
-              <h3 className="text-lg font-semibold text-yellow-400 mb-4 flex items-center">
+              <h3 className="text-lg font-semibold text-tracer-green mb-4 flex items-center">
                 <Mail className="h-5 w-5 mr-2" /> Send Pre-Application Link via Email
               </h3>
               <form onSubmit={handleEmailFormSubmit} className="space-y-4">
@@ -2629,7 +2630,7 @@ export default function PreApplications() {
                     name="dba"
                     value={emailForm.dba}
                     onChange={handleEmailInputChange}
-                    className="w-full rounded-md bg-zinc-800 border border-zinc-700 text-white px-3 py-2 focus:ring-yellow-400 focus:border-yellow-400"
+                    className="w-full rounded-md bg-zinc-800 border border-zinc-700 text-white px-3 py-2 focus:ring-tracer-green focus:border-tracer-green"
                     required
                   />
                 </div>
@@ -2640,7 +2641,7 @@ export default function PreApplications() {
                     name="merchantName"
                     value={emailForm.merchantName}
                     onChange={handleEmailInputChange}
-                    className="w-full rounded-md bg-zinc-800 border border-zinc-700 text-white px-3 py-2 focus:ring-yellow-400 focus:border-yellow-400"
+                    className="w-full rounded-md bg-zinc-800 border border-zinc-700 text-white px-3 py-2 focus:ring-tracer-green focus:border-tracer-green"
                     required
                   />
                 </div>
@@ -2651,7 +2652,7 @@ export default function PreApplications() {
                     name="email"
                     value={emailForm.email}
                     onChange={handleEmailInputChange}
-                    className="w-full rounded-md bg-zinc-800 border border-zinc-700 text-white px-3 py-2 focus:ring-yellow-400 focus:border-yellow-400"
+                    className="w-full rounded-md bg-zinc-800 border border-zinc-700 text-white px-3 py-2 focus:ring-tracer-green focus:border-tracer-green"
                     required
                   />
                 </div>
@@ -2662,13 +2663,13 @@ export default function PreApplications() {
                     name="phone"
                     value={emailForm.phone}
                     onChange={handleEmailInputChange}
-                    className="w-full rounded-md bg-zinc-800 border border-zinc-700 text-white px-3 py-2 focus:ring-yellow-400 focus:border-yellow-400"
+                    className="w-full rounded-md bg-zinc-800 border border-zinc-700 text-white px-3 py-2 focus:ring-tracer-green focus:border-tracer-green"
                     required
                   />
                 </div>
                 <button
                   type="submit"
-                  className="w-full mt-2 inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-yellow-400 hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400"
+                  className="w-full mt-2 inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-tracer-green hover:bg-tracer-blue focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-tracer-green"
                   disabled={emailSending}
                 >
                   {emailSending ? (
@@ -2690,7 +2691,7 @@ export default function PreApplications() {
 
         {isLoading ? (
           <div className="flex justify-center items-center py-8">
-            <Loader2 className="h-8 w-8 animate-spin text-yellow-400" />
+            <Loader2 className="h-8 w-8 animate-spin text-tracer-green" />
           </div>
         ) : forms.length === 0 ? (
           <p className="text-gray-400 text-center py-8">
@@ -2741,7 +2742,7 @@ export default function PreApplications() {
 
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`px-2 py-0.5 text-[12px] font-medium rounded-full 
-                        ${form.iso_form_status === 0 ? 'bg-yellow-100 text-yellow-800' :
+                        ${form.iso_form_status === 0 ? 'bg-tracer-green/10 text-tracer-green' :
                           form.iso_form_status === 1 ? 'bg-blue-100 text-blue-800' :
                           form.iso_form_status === 2 ? 'bg-green-100 text-green-800' :
                           form.iso_form_status === 3 ? 'bg-red-100 text-red-800' :
@@ -2766,7 +2767,7 @@ export default function PreApplications() {
                             setSelectedForm(form);
                             setShowDetailsModal(true);
                           }}
-                          className="text-yellow-400 hover:text-yellow-500 flex items-center gap-1"
+                          className="text-tracer-green hover:text-tracer-blue flex items-center gap-1"
                         >
                           <Eye className="h-4 w-4" />
                           {/* View */}
@@ -2776,7 +2777,7 @@ export default function PreApplications() {
                             setSelectedForm(form);
                             setShowDuplicateModal(true);
                           }}
-                          className="text-yellow-400 hover:text-yellow-500 flex items-center gap-1"
+                          className="text-tracer-green hover:text-tracer-blue flex items-center gap-1"
                         >
                           <Duplicate className="h-4 w-4" />
                           Replicate
@@ -2786,7 +2787,7 @@ export default function PreApplications() {
                           onClick={() =>
                             confirmAndDeleteItem(form.id, form.dba)
                           }
-                          className="text-yellow-400 hover:text-yellow-500 flex items-center gap-1"
+                          className="text-tracer-green hover:text-tracer-blue flex items-center gap-1"
                         >
                           <Trash2 className="h-4 w-4" />
                           {/* Delete */}
@@ -2798,15 +2799,15 @@ export default function PreApplications() {
                             disabled={downloadingId === form.id}
                             className={`inline-flex items-center gap-1 text-xs font-medium ${
                               downloadingId === form.id
-                                ? "bg-yellow-200 text-yellow-500"
-                                : "bg-yellow-100 text-yellow-600 hover:bg-yellow-200"
+                                ? "bg-tracer-green/20 text-tracer-green"
+                                : "bg-tracer-green/10 text-tracer-green hover:bg-tracer-green/20"
                             } px-2 py-0.5 rounded-full`}
                             title="Download uploaded documents"
                           >
                             {downloadingId === form.id ? (
                               <>
                                 <svg
-                                  className="animate-spin h-4 w-4 text-yellow-500"
+                                  className="animate-spin h-4 w-4 text-tracer-green"
                                   xmlns="http://www.w3.org/2000/svg"
                                   fill="none"
                                   viewBox="0 0 24 24"
@@ -2837,7 +2838,7 @@ export default function PreApplications() {
                         {/* )} */}
                         {/* <button
                           onClick={() => handleDownloadPDF(form)}
-                          className="text-yellow-400 hover:text-yellow-500 flex items-center gap-1"
+                          className="text-tracer-green hover:text-tracer-blue flex items-center gap-1"
                           title="Download Details as PDF"
                         >
                           <FileText className="h-4 w-4" />
@@ -2845,12 +2846,12 @@ export default function PreApplications() {
                         </button> */}
                         <button
                           onClick={() => handleDownloadDesignPDF(form)}
-                          className="text-yellow-400 hover:text-yellow-500 flex items-center gap-1"
+                          className="text-tracer-green hover:text-tracer-blue flex items-center gap-1"
                           title="Download Design PDF"
                           disabled={downloadingPDFId === form.id}
                         >
                           {downloadingPDFId === form.id ? (
-                            <svg className="animate-spin h-4 w-4 text-yellow-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <svg className="animate-spin h-4 w-4 text-tracer-green" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
@@ -2871,7 +2872,7 @@ export default function PreApplications() {
                       <div className="flex items-center space-x-4">
 
                         {form.mail_status === 1 && (
-                          <span className="inline-flex items-center gap-1 text-xs font-medium text-gray-600 bg-yellow-100 px-2 py-0.5 rounded-full">
+                          <span className="inline-flex items-center gap-1 text-xs font-medium text-gray-600 bg-tracer-green/10 px-2 py-0.5 rounded-full">
                             <i className="fas fa-paper-plane text-white-500 text-sm"></i>
                             Sent
                           </span>

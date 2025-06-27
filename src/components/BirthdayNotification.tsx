@@ -82,8 +82,8 @@ export default function BirthdayNotification({ isOpen, onClose }: BirthdayNotifi
         </button>
 
         <div className="flex items-center gap-3 mb-6">
-          <div className="p-3 bg-yellow-500/20 rounded-full">
-            <Gift className="w-8 h-8 text-yellow-400" />
+          <div className="p-3 bg-tracer-green/20 rounded-full">
+            <Gift className="w-8 h-8 text-tracer-green" />
           </div>
           <div>
             <h2 className="text-2xl font-bold text-white">Birthday Notification</h2>
@@ -136,7 +136,7 @@ export default function BirthdayNotification({ isOpen, onClose }: BirthdayNotifi
             <button
               type="submit"
               disabled={isSubmitting || !message.trim()}
-              className="flex-1 px-6 py-3 rounded-lg bg-yellow-500 hover:bg-yellow-600 disabled:bg-yellow-700 disabled:cursor-not-allowed text-black font-medium transition-colors flex items-center justify-center gap-2"
+              className="flex-1 px-6 py-3 rounded-lg bg-tracer-green hover:bg-tracer-green/90 disabled:bg-tracer-green/70 disabled:cursor-not-allowed text-white font-medium transition-colors flex items-center justify-center gap-2"
             >
               {isSubmitting ? (
                 <>

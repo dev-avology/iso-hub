@@ -51,7 +51,7 @@ export default function LandingPage() {
 
       {/* Hero Section */}
       <div className="relative overflow-hidden">
-        <div className="absolute bg-gradient-to-br from-yellow-400/20 to-transparent"></div>
+        <div className="absolute bg-gradient-to-br from-tracer-blue/20 to-transparent"></div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
           <div className="text-center">
             <div className="flex items-center justify-center mb-6">
@@ -74,14 +74,14 @@ export default function LandingPage() {
             <div className="flex items-center justify-center space-x-4">
               <a
                 href="#calender"
-                className="inline-flex items-center px-6 py-3 text-lg font-medium text-black bg-yellow-400 rounded-lg hover:bg-yellow-500 transition-colors duration-200"
+                className="inline-flex items-center px-6 py-3 text-lg font-medium text-white bg-tracer-green rounded-lg hover:bg-tracer-green/90 transition-colors duration-200"
               >
                 Book a Demo
                 <Calendar className="ml-2 h-5 w-5" />
               </a>
               <button
                 onClick={handleDashboard}
-                className="inline-flex items-center px-6 py-3 text-lg font-medium text-yellow-400 bg-yellow-400/10 rounded-lg hover:bg-yellow-400/20 transition-colors duration-200 border border-yellow-400/20"
+                className="inline-flex items-center px-6 py-3 text-lg font-medium text-tracer-green bg-tracer-green/10 rounded-lg hover:bg-tracer-green/20 transition-colors duration-200 border border-tracer-green/20"
               >
                 Login
               </button>
@@ -144,9 +144,9 @@ export default function LandingPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {/* Document Management */}
-            <div className="bg-zinc-800 rounded-xl p-6 border border-yellow-400/20 hover:bg-zinc-700 transition-colors duration-200">
-              <div className="h-12 w-12 bg-yellow-400/10 rounded-lg flex items-center justify-center mb-4">
-                <FileText className="h-6 w-6 text-yellow-400" />
+            <div className="bg-zinc-800 rounded-xl p-6 border border-tracer-green/20 hover:bg-zinc-700 transition-colors duration-200">
+              <div className="h-12 w-12 bg-tracer-green/10 rounded-lg flex items-center justify-center mb-4">
+                <FileText className="h-6 w-6 text-tracer-green" />
               </div>
               <h3 className="text-xl font-semibold text-white mb-2">
                 Document Management Hub
@@ -157,9 +157,9 @@ export default function LandingPage() {
             </div>
 
             {/* AI Assistant */}
-            <div className="bg-zinc-800 rounded-xl p-6 border border-yellow-400/20 hover:bg-zinc-700 transition-colors duration-200">
-              <div className="h-12 w-12 bg-yellow-400/10 rounded-lg flex items-center justify-center mb-4">
-                <Sparkles className="h-6 w-6 text-yellow-400" />
+            <div className="bg-zinc-800 rounded-xl p-6 border border-tracer-green/20 hover:bg-zinc-700 transition-colors duration-200">
+              <div className="h-12 w-12 bg-tracer-green/10 rounded-lg flex items-center justify-center mb-4">
+                <Sparkles className="h-6 w-6 text-tracer-green" />
               </div>
               <h3 className="text-xl font-semibold text-white mb-2">
                 ISO-AI Assistant Portal
@@ -170,9 +170,9 @@ export default function LandingPage() {
             </div>
 
             {/* Secure Portal */}
-            <div className="bg-zinc-800 rounded-xl p-6 border border-yellow-400/20 hover:bg-zinc-700 transition-colors duration-200">
-              <div className="h-12 w-12 bg-yellow-400/10 rounded-lg flex items-center justify-center mb-4">
-                <Lock className="h-6 w-6 text-yellow-400" />
+            <div className="bg-zinc-800 rounded-xl p-6 border border-tracer-green/20 hover:bg-zinc-700 transition-colors duration-200">
+              <div className="h-12 w-12 bg-tracer-green/10 rounded-lg flex items-center justify-center mb-4">
+                <Lock className="h-6 w-6 text-tracer-green" />
               </div>
               <h3 className="text-xl font-semibold text-white mb-2">
                 Secure Document Upload Portal
@@ -183,9 +183,9 @@ export default function LandingPage() {
             </div>
 
             {/* Pre-Applications */}
-            <div className="bg-zinc-800 rounded-xl p-6 border border-yellow-400/20 hover:bg-zinc-700 transition-colors duration-200">
-              <div className="h-12 w-12 bg-yellow-400/10 rounded-lg flex items-center justify-center mb-4">
-                <Users className="h-6 w-6 text-yellow-400" />
+            <div className="bg-zinc-800 rounded-xl p-6 border border-tracer-green/20 hover:bg-zinc-700 transition-colors duration-200">
+              <div className="h-12 w-12 bg-tracer-green/10 rounded-lg flex items-center justify-center mb-4">
+                <Users className="h-6 w-6 text-tracer-green" />
               </div>
               <h3 className="text-xl font-semibold text-white mb-2">
                 Secure Pre-Application Portal
@@ -196,9 +196,9 @@ export default function LandingPage() {
             </div>
 
             {/* Revenue Tracking */}
-            <div className="bg-zinc-800 rounded-xl p-6 border border-yellow-400/20 hover:bg-zinc-700 transition-colors duration-200">
-              <div className="h-12 w-12 bg-yellow-400/10 rounded-lg flex items-center justify-center mb-4">
-                <DollarSign className="h-6 w-6 text-yellow-400" />
+            <div className="bg-zinc-800 rounded-xl p-6 border border-tracer-green/20 hover:bg-zinc-700 transition-colors duration-200">
+              <div className="h-12 w-12 bg-tracer-green/10 rounded-lg flex items-center justify-center mb-4">
+                <DollarSign className="h-6 w-6 text-tracer-green" />
               </div>
               <h3 className="text-xl font-semibold text-white mb-2">
                 ISO-Residuals Platform
@@ -209,9 +209,9 @@ export default function LandingPage() {
             </div>
 
             {/* Compliance */}
-            <div className="bg-zinc-800 rounded-xl hover:bg-zinc-700 p-6 border border-yellow-400/20">
-              <div className="h-12 w-12 bg-yellow-400/10 rounded-lg flex items-center justify-center mb-4">
-                <Shield className="h-6 w-6 text-yellow-400" />
+            <div className="bg-zinc-800 rounded-xl hover:bg-zinc-700 p-6 border border-tracer-green/20">
+              <div className="h-12 w-12 bg-tracer-green/10 rounded-lg flex items-center justify-center mb-4">
+                <Shield className="h-6 w-6 text-tracer-green" />
               </div>
               <h3 className="text-xl font-semibold text-white mb-2">
                 Vendor Directory
@@ -244,37 +244,37 @@ export default function LandingPage() {
           </div>
 
           <div className="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            <div className="bg-zinc-800 rounded-lg p-6 flex flex-col items-center ring-1 ring-inset ring-yellow-400/20 hover:bg-zinc-700 transition-colors duration-200">
+            <div className="bg-zinc-800 rounded-lg p-6 flex flex-col items-center ring-1 ring-inset ring-tracer-green/20 hover:bg-zinc-700 transition-colors duration-200">
               <img
                 src="/CCPA.jpeg"
                 alt="CCPA Compliance"
                 className="h-24 w-auto object-contain mb-4"
               />
-              <h3 className="text-xl font-semibold text-yellow-400 mb-2">CCPA Compliance</h3>
+              <h3 className="text-xl font-semibold text-tracer-green mb-2">CCPA Compliance</h3>
               <p className="text-gray-400 text-center">
                 Compliant with California Consumer Privacy Act standards
               </p>
             </div>
 
-            <div className="bg-zinc-800 rounded-lg p-6 flex flex-col items-center ring-1 ring-inset ring-yellow-400/20 hover:bg-zinc-700 transition-colors duration-200">
+            <div className="bg-zinc-800 rounded-lg p-6 flex flex-col items-center ring-1 ring-inset ring-tracer-green/20 hover:bg-zinc-700 transition-colors duration-200">
               <img
                 src="/logo-iso-27001.png"
                 alt="ISO 27001 Certification"
                 className="h-24 w-auto object-contain mb-4"
               />
-              <h3 className="text-xl font-semibold text-yellow-400 mb-2">ISO 27001 Certified</h3>
+              <h3 className="text-xl font-semibold text-tracer-green mb-2">ISO 27001 Certified</h3>
               <p className="text-gray-400 text-center">
                 International standard for information security management
               </p>
             </div>
 
-            <div className="bg-zinc-800 rounded-lg p-6 flex flex-col items-center ring-1 ring-inset ring-yellow-400/20 hover:bg-zinc-700 transition-colors duration-200">
+            <div className="bg-zinc-800 rounded-lg p-6 flex flex-col items-center ring-1 ring-inset ring-tracer-green/20 hover:bg-zinc-700 transition-colors duration-200">
               <img
                 src="/png-clipart-computer-security-center-for-internet-security-benchmark-threat-data-analysis-miscellaneous-blue.png"
                 alt="Security Benchmark"
                 className="h-24 w-auto object-contain mb-4"
               />
-              <h3 className="text-xl font-semibold text-yellow-400 mb-2">Security Benchmark</h3>
+              <h3 className="text-xl font-semibold text-tracer-green mb-2">Security Benchmark</h3>
               <p className="text-gray-400 text-center">
                 Industry-leading security standards and practices
               </p>
@@ -308,13 +308,13 @@ export default function LandingPage() {
                 "Access AI-powered support 24/7",
               ].map((benefit, index) => (
                 <div key={index} className="flex items-center">
-                  <CheckCircle className="h-6 w-6 text-yellow-400 flex-shrink-0" />
+                  <CheckCircle className="h-6 w-6 text-tracer-green flex-shrink-0" />
                   <span className="ml-3 text-gray-300">{benefit}</span>
                 </div>
               ))}
             </div>
 
-            <div className="bg-zinc-800 rounded-xl p-8 border border-yellow-400/20">
+            <div className="bg-zinc-800 rounded-xl p-8 border border-tracer-green/20">
               <h3 id="calender" className="text-2xl font-bold text-white mb-4">
                 Schedule a Demo
               </h3>
@@ -430,7 +430,7 @@ export default function LandingPage() {
       <footer className="bg-zinc-900 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-center">
-            <img src="ISOHubLOGO.png" alt="ISOHub Logo" className="h-20 w-auto" />
+            <img src="ISOHubLOGO.png" alt="ISOHub Logo" className="h-28 w-auto" />
             {/* If you want the text ISO Hub next to logo, uncomment below and adjust styling */}
             {/* <span className="ml-2 text-xl font-bold text-white">
               ISO<span className="text-yellow-400">Hub</span>
