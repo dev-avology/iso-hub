@@ -352,8 +352,8 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-zinc-900 rounded-lg p-8 max-w-3xl w-full mx-4 relative max-h-[90vh] overflow-y-auto border border-tracer-blue/20">
+    <div className="fixed inset-0 bg-tracer-themebg bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-tracer-themebg rounded-lg p-8 max-w-3xl w-full mx-4 relative max-h-[90vh] overflow-y-auto border border-tracer-blue/20">
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-400 hover:text-tracer-green transition-colors"
@@ -368,67 +368,67 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
 
         <div className="space-y-8">
           {/* Business Information */}
-          <div className="bg-zinc-800/50 rounded-lg p-6 border border-zinc-700">
+          <div className="bg-tracer-themebg rounded-lg p-6 border border-zinc-300">
             <h3 className="text-lg font-semibold text-tracer-green mb-4">
               Business Information
             </h3>
             <div className="grid grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-400">
+                <label className="block text-sm font-medium text-black">
                   DBA(Doing Business As)
                 </label>
-                <p className="mt-1 text-white font-medium">
+                <p className="mt-1 text-zinc-400 font-medium">
                   {form.business_dba || "-"}
                 </p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-400">
+                <label className="block text-sm font-medium text-black">
                   Street Address
                 </label>
-                <p className="mt-1 text-white font-medium">
+                <p className="mt-1 text-zinc-400 font-medium">
                   {form.get_jotform_details?.[0]?.dba_street_address || "-"}
                 </p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-400">
+                <label className="block text-sm font-medium text-black">
                   Street Address Line 2
                 </label>
-                <p className="mt-1 text-white font-medium">
+                <p className="mt-1 text-zinc-400 font-medium">
                   {form.get_jotform_details?.[0]?.dba_street_address2 || "-"}
                 </p>
               </div>
 
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-400">
+                  <label className="block text-sm font-medium text-black">
                     City
                   </label>
-                  <p className="mt-1 text-white font-medium">
+                  <p className="mt-1 text-zinc-400 font-medium">
                     {form.business_city || "-"}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-400">
+                  <label className="block text-sm font-medium text-black">
                     State
                   </label>
-                  <p className="mt-1 text-white font-medium">
+                  <p className="mt-1 text-zinc-400 font-medium">
                     {form.business_state || "-"}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-400">
+                  <label className="block text-sm font-medium text-black">
                     ZIP
                   </label>
-                  <p className="mt-1 text-white font-medium">
+                  <p className="mt-1 text-zinc-400 font-medium">
                     {form.business_zip || "-"}
                   </p>
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-400">
+                <label className="block text-sm font-medium text-black">
                   Business Type
                 </label>
                 <div className="flex flex-wrap gap-4 mt-2">
@@ -448,8 +448,8 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
                       key={value}
                       className={`px-3 py-1 rounded-full text-sm ${
                         isChecked(form.business_profile_business_type, value)
-                          ? "bg-tracer-green text-black"
-                          : "bg-zinc-700 text-gray-400"
+                          ? "bg-tracer-green text-white"
+                          : "bg-zinc-700 text-white"
                       }`}
                     >
                       {label}
@@ -460,7 +460,7 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
 
               <div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-400">
+                  <label className="block text-sm font-medium text-black">
                     Shipping Address
                   </label>
 
@@ -475,7 +475,7 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
                         readOnly
                         className="form-radio text-tracer-green"
                       />
-                      <span className="ml-2 text-white">
+                      <span className="ml-2 text-black">
                         Shipping Address (
                         {form.is_same_shipping_address === "1" ? "Yes" : form.is_same_shipping_address === "0" ? "No" : "-"})
                       </span>
@@ -486,142 +486,142 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
             </div>
           </div>
 
-          <div className="bg-zinc-800/50 rounded-lg p-6 border border-zinc-700">
+          <div className="bg-tracer-themebg rounded-lg p-6 border border-zinc-300">
             <h3 className="text-lg font-semibold text-tracer-green mb-4">
               Corporate Contact Information
             </h3>
             <div className="grid grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-400">
+                <label className="block text-sm font-medium text-black">
                   Street Address
                 </label>
-                <p className="mt-1 text-white font-medium">
+                <p className="mt-1 text-zinc-400 font-medium">
                   {form.get_jotform_details?.[0]?.corporate_street_address1 || "-"}
                 </p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-400">
+                <label className="block text-sm font-medium text-black">
                   Street Address Line 2
                 </label>
-                <p className="mt-1 text-white font-medium">
+                <p className="mt-1 text-zinc-400 font-medium">
                   {form.get_jotform_details?.[0]?.corporate_street_address2 || "-"}
                 </p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-400">
+                <label className="block text-sm font-medium text-black">
                   Street Address Line 2
                 </label>
-                <p className="mt-1 text-white font-medium">
+                <p className="mt-1 text-zinc-400 font-medium">
                   {form.get_jotform_details?.[0]?.dba_street_address2 || "-"}
                 </p>
               </div>
 
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-400">
+                  <label className="block text-sm font-medium text-black">
                     City
                   </label>
-                  <p className="mt-1 text-white font-medium">
+                  <p className="mt-1 text-zinc-400 font-medium">
                     {form.get_jotform_details?.[0]?.corporate_city || "-"}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-400">
+                  <label className="block text-sm font-medium text-black">
                     State
                   </label>
-                  <p className="mt-1 text-white font-medium">
+                  <p className="mt-1 text-zinc-400 font-medium">
                     {form.get_jotform_details?.[0]?.corporate_state || "-"}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-400">
+                  <label className="block text-sm font-medium text-black">
                     ZIP
                   </label>
-                  <p className="mt-1 text-white font-medium">
+                  <p className="mt-1 text-zinc-400 font-medium">
                     {form.get_jotform_details?.[0]?.corporate_zip || "-"}
                   </p>
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-400">
+                <label className="block text-sm font-medium text-black">
                   Contact Name
                 </label>
-                <p className="mt-1 text-white font-medium">
+                <p className="mt-1 text-zinc-400 font-medium">
                   {form.business_contact_name || "-"}
                 </p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-400">
+                <label className="block text-sm font-medium text-black">
                   Contact Email
                 </label>
-                <p className="mt-1 text-white font-medium">
+                <p className="mt-1 text-zinc-400 font-medium">
                   {form.get_jotform_details?.[0]?.business_contact_mail || "-"}
                 </p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-400">
+                <label className="block text-sm font-medium text-black">
                   Location Phone Number
                 </label>
-                <p className="mt-1 text-white font-medium">
+                <p className="mt-1 text-zinc-400 font-medium">
                   {form.get_jotform_details?.[0]?.business_location_phone_number || "-"}
                 </p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-400">
+                <label className="block text-sm font-medium text-black">
                   Date Business Started
                 </label>
-                <p className="mt-1 text-white font-medium">
+                <p className="mt-1 text-zinc-400 font-medium">
                   {form.business_start_date || "-"}
                 </p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-400">
+                <label className="block text-sm font-medium text-black">
                   Business Website
                 </label>
-                <p className="mt-1 text-white font-medium">
+                <p className="mt-1 text-zinc-400 font-medium">
                   {form.get_jotform_details?.[0]?.business_website || "-"}
                 </p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-400">
+                <label className="block text-sm font-medium text-black">
                   Business Legal Name as appears on tax return
                 </label>
-                <p className="mt-1 text-white font-medium">
+                <p className="mt-1 text-zinc-400 font-medium">
                   {form.get_jotform_details?.[0]?.business_legal_name || "-"}
                 </p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-400">
+                <label className="block text-sm font-medium text-black">
                   Federal Tax ID
                 </label>
-                <p className="mt-1 text-white font-medium">
+                <p className="mt-1 text-zinc-400 font-medium">
                   {form.business_tax_id || "-"}
                 </p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-400">
+                <label className="block text-sm font-medium text-black">
                   Products Sold or Services Provided
                 </label>
-                <p className="mt-1 text-white font-medium">
+                <p className="mt-1 text-zinc-400 font-medium">
                   {form.get_jotform_details?.[0]?.business_products_sold || "-"}
                 </p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-400">
+                <label className="block text-sm font-medium text-black">
                   Return Policy
                 </label>
-                <p className="mt-1 text-white font-medium">
+                <p className="mt-1 text-zinc-400 font-medium">
                   {form.get_jotform_details?.[0]?.business_return_policy || "-"}
                 </p>
               </div>
@@ -634,7 +634,7 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
               <div
                 key={index}
                 id={`owner-officer-section-${index}`}
-                className="bg-zinc-800/50 rounded-lg p-6 border border-zinc-700 mb-6"
+                className="bg-tracer-themebg rounded-lg p-6 border border-zinc-300"
               >
                 <h3 className="text-lg font-semibold text-tracer-green mb-4">
                   Owner / Officer Information {index + 1}
@@ -642,10 +642,10 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
                 <div className="grid grid-cols-2 gap-6">
                   {owner.ownership_first_name && (
                     <div>
-                      <label className="block text-sm font-medium text-gray-400">
+                      <label className="block text-sm font-medium text-black">
                         First Name
                       </label>
-                      <p className="mt-1 text-white font-medium">
+                      <p className="mt-1 text-zinc-400 font-medium">
                         {owner.ownership_first_name}
                       </p>
                     </div>
@@ -653,10 +653,10 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
 
                   {owner.ownership_last_name && (
                     <div>
-                      <label className="block text-sm font-medium text-gray-400">
+                      <label className="block text-sm font-medium text-black">
                         Last Name
                       </label>
-                      <p className="mt-1 text-white font-medium">
+                      <p className="mt-1 text-zinc-400 font-medium">
                         {owner.ownership_last_name}
                       </p>
                     </div>
@@ -664,10 +664,10 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
 
                   {owner.ownership_percent && (
                     <div>
-                      <label className="block text-sm font-medium text-gray-400">
+                      <label className="block text-sm font-medium text-black">
                         Ownership Percent
                       </label>
-                      <p className="mt-1 text-white font-medium">
+                      <p className="mt-1 text-zinc-400 font-medium">
                         {owner.ownership_percent}%
                       </p>
                     </div>
@@ -675,10 +675,10 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
 
                   {owner.ownership_phone_number && (
                     <div>
-                      <label className="block text-sm font-medium text-gray-400">
+                      <label className="block text-sm font-medium text-black">
                         Phone Number
                       </label>
-                      <p className="mt-1 text-white font-medium">
+                      <p className="mt-1 text-zinc-400 font-medium">
                         {owner.ownership_phone_number}
                       </p>
                     </div>
@@ -686,10 +686,10 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
 
                   {owner.ownership_email && (
                     <div>
-                      <label className="block text-sm font-medium text-gray-400">
+                      <label className="block text-sm font-medium text-black">
                         Email
                       </label>
-                      <p className="mt-1 text-white font-medium">
+                      <p className="mt-1 text-zinc-400 font-medium">
                         {owner.ownership_email}
                       </p>
                     </div>
@@ -697,10 +697,10 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
 
                   {owner.ownership_dob && (
                     <div>
-                      <label className="block text-sm font-medium text-gray-400">
+                      <label className="block text-sm font-medium text-black">
                         Date of Birth
                       </label>
-                      <p className="mt-1 text-white font-medium">
+                      <p className="mt-1 text-zinc-400 font-medium">
                         {owner.ownership_dob}
                       </p>
                     </div>
@@ -708,10 +708,10 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
 
                   {owner.ownership_social_security_number && (
                     <div>
-                      <label className="block text-sm font-medium text-gray-400">
+                      <label className="block text-sm font-medium text-black">
                         Social Security Number
                       </label>
-                      <p className="mt-1 text-white font-medium">
+                      <p className="mt-1 text-zinc-400 font-medium">
                         {owner.ownership_social_security_number}
                       </p>
                     </div>
@@ -719,10 +719,10 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
 
                   {owner.ownership_driver_licence_number && (
                     <div>
-                      <label className="block text-sm font-medium text-gray-400">
+                      <label className="block text-sm font-medium text-black">
                         Driver License Number
                       </label>
-                      <p className="mt-1 text-white font-medium">
+                      <p className="mt-1 text-zinc-400 font-medium">
                         {owner.ownership_driver_licence_number}
                       </p>
                     </div>
@@ -730,10 +730,10 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
 
                   {owner.ownership_title && (
                     <div>
-                      <label className="block text-sm font-medium text-gray-400">
+                      <label className="block text-sm font-medium text-black">
                         Title
                       </label>
-                      <p className="mt-1 text-white font-medium">
+                      <p className="mt-1 text-zinc-400 font-medium">
                         {owner.ownership_title}
                       </p>
                     </div>
@@ -766,91 +766,91 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
           </div> */}
 
           {/* Transaction Details */}
-          <div className="bg-zinc-800/50 rounded-lg p-6 border border-zinc-700">
+          <div className="bg-tracer-themebg rounded-lg p-6 border border-zinc-300">
             <h3 className="text-lg font-semibold text-tracer-green mb-4">
               Credit Card Processing Information
             </h3>
             <div className="grid grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-400">
+                <label className="block text-sm font-medium text-black">
                   Card Present Transactions
                 </label>
-                <p className="mt-1 text-white font-medium">
+                <p className="mt-1 text-zinc-400 font-medium">
                   {form.get_jotform_details?.[0]?.transaction_card_present}%
                 </p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-400">
+                <label className="block text-sm font-medium text-black">
                   Keyed-in Transactions
                 </label>
-                <p className="mt-1 text-white font-medium">
+                <p className="mt-1 text-zinc-400 font-medium">
                   {form.get_jotform_details?.[0]?.transaction_keyed_in}%
                 </p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-400">
+                <label className="block text-sm font-medium text-black">
                   Online Transactions
                 </label>
-                <p className="mt-1 text-white font-medium">
+                <p className="mt-1 text-zinc-400 font-medium">
                   {form.get_jotform_details?.[0]?.transaction_all_online}%
                 </p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-400">
+                <label className="block text-sm font-medium text-black">
                   Average Ticket
                 </label>
-                <p className="mt-1 text-white font-medium">
+                <p className="mt-1 text-zinc-400 font-medium">
                   ${form.get_jotform_details?.[0]?.estimated_average_ticket}
                 </p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-400">
+                <label className="block text-sm font-medium text-black">
                   Highest Ticket
                 </label>
-                <p className="mt-1 text-white font-medium">
+                <p className="mt-1 text-zinc-400 font-medium">
                   ${form.get_jotform_details?.[0]?.estimated_highest_ticket}
                 </p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-400">
+                <label className="block text-sm font-medium text-black">
                   Early Mastercard
                 </label>
-                <p className="mt-1 text-white font-medium">
+                <p className="mt-1 text-zinc-400 font-medium">
                   {form.get_jotform_details?.[0]?.estimation_early_master_card}
                 </p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-400">
+                <label className="block text-sm font-medium text-black">
                   Auto Settle / Batch time (Next day funding cutoff time is 8 pm
                   CST)
                 </label>
-                <p className="mt-1 text-white font-medium">
+                <p className="mt-1 text-zinc-400 font-medium">
                   {form.get_jotform_details?.[0]?.auto_settle_time}
                 </p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-400">
+                <label className="block text-sm font-medium text-black">
                   I do not need Auto Settle
                 </label>
-                <p className="mt-1 text-white font-medium">
+                <p className="mt-1 text-zinc-400 font-medium">
                   {form.get_jotform_details?.[0]?.auto_settle_type}
                 </p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-400">
+                <label className="block text-sm font-medium text-black">
                   {" "}
                   Add Tips to my account
                 </label>
-                <p className="mt-1 text-white font-medium">
+                <p className="mt-1 text-zinc-400 font-medium">
                   {form.get_jotform_details?.[0]?.add_tips_to_account}
                 </p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-400">
+                <label className="block text-sm font-medium text-black">
                   Tip Amounts
                 </label>
                 <div className="flex gap-2 mt-1">
@@ -870,25 +870,25 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
           </div>
 
           {/* Settlement Details */}
-          <div className="bg-zinc-800/50 rounded-lg p-6 border border-zinc-700">
+          <div className="bg-tracer-themebg rounded-lg p-6 border border-zinc-300">
             <h3 className="text-lg font-semibold text-tracer-green mb-4">
               Details
             </h3>
             <div className="grid grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-400">
+                <label className="block text-sm font-medium text-black">
                   Business Type
                 </label>
-                <p className="mt-1 text-white font-medium">
+                <p className="mt-1 text-zinc-400 font-medium">
                   {form.business_type}
                 </p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-400">
+                <label className="block text-sm font-medium text-black">
                   Processing Services
                 </label>
-                <p className="mt-1 text-white font-medium">
+                <p className="mt-1 text-zinc-400 font-medium">
                   {form.processing_services}
                 </p>
               </div>
@@ -897,122 +897,122 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
                 <label className="block text-sm font-medium text-gray-400">
                   Terminal
                 </label>
-                <p className="mt-1 text-white font-medium">{form.terminal}</p>
+                <p className="mt-1 text-zinc-400 font-medium">{form.terminal}</p>
               </div> */}
 
               <div>
-                <label className="block text-sm font-medium text-gray-400">
+                <label className="block text-sm font-medium text-black">
                   Terminal
                 </label>
-                <p className="mt-1 text-white font-medium">{form.terminal}</p>
+                <p className="mt-1 text-zinc-400 font-medium">{form.terminal}</p>
               </div>
 
               {form.terminal_special_features && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-400">
+                  <label className="block text-sm font-medium text-black">
                     Terminal Other
                   </label>
-                  <p className="mt-1 text-white font-medium">
+                  <p className="mt-1 text-zinc-400 font-medium">
                     {form.terminal_special_features}
                   </p>
                 </div>
               )}
 
               <div>
-                <label className="block text-sm font-medium text-gray-400">
+                <label className="block text-sm font-medium text-black">
                   Terminal Type/Model
                 </label>
-                <p className="mt-1 text-white font-medium">
+                <p className="mt-1 text-zinc-400 font-medium">
                   {form.terminal_type_or_model}
                 </p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-400">
+                <label className="block text-sm font-medium text-black">
                   Mobile App
                 </label>
-                <p className="mt-1 text-white font-medium">{form.mobile_app}</p>
+                <p className="mt-1 text-zinc-400 font-medium">{form.mobile_app}</p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-400">
+                <label className="block text-sm font-medium text-black">
                   Mobile App Special Features (Optional)
                 </label>
-                <p className="mt-1 text-white font-medium">
+                <p className="mt-1 text-zinc-400 font-medium">
                   {form.mobile_app_special_features}
                 </p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-400">
+                <label className="block text-sm font-medium text-black">
                   Cardreader Type/Model
                 </label>
-                <p className="mt-1 text-white font-medium">
+                <p className="mt-1 text-zinc-400 font-medium">
                   {form.mobile_app_cardreader_type_model}
                 </p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-400">
+                <label className="block text-sm font-medium text-black">
                   {" "}
                   POS (Point of Sale) System
                 </label>
-                <p className="mt-1 text-white font-medium">
+                <p className="mt-1 text-zinc-400 font-medium">
                   {form.pos_point_of_sale}
                 </p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-400">
+                <label className="block text-sm font-medium text-black">
                   POS Special Features
                 </label>
-                <p className="mt-1 text-white font-medium">
+                <p className="mt-1 text-zinc-400 font-medium">
                   {form.pos_special_features}
                 </p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-400">
+                <label className="block text-sm font-medium text-black">
                   System Type Model
                 </label>
-                <p className="mt-1 text-white font-medium">
+                <p className="mt-1 text-zinc-400 font-medium">
                   {form.system_type_model}
                 </p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-400">
+                <label className="block text-sm font-medium text-black">
                   Number of Stations
                 </label>
-                <p className="mt-1 text-white font-medium">
+                <p className="mt-1 text-zinc-400 font-medium">
                   {form.number_of_stations}
                 </p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-400">
+                <label className="block text-sm font-medium text-black">
                   POS other items
                 </label>
-                <p className="mt-1 text-white font-medium">
+                <p className="mt-1 text-zinc-400 font-medium">
                   {form.pos_other_items}
                 </p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-400">
+                <label className="block text-sm font-medium text-black">
                   Virtual Terminal
                 </label>
-                <p className="mt-1 text-white font-medium">
+                <p className="mt-1 text-zinc-400 font-medium">
                   {form.virtual_terminal}
                 </p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-400">
+                <label className="block text-sm font-medium text-black">
                   Location Description
                 </label>
                 {form.get_jotform_details?.[0]?.location_description && (
-                  <p className="mt-1 text-white font-medium">
+                  <p className="mt-1 text-zinc-400 font-medium">
                     {form.get_jotform_details[0].location_description}
                   </p>
                 )}
@@ -1021,20 +1021,20 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
           </div>
 
           {/* Documents Section */}
-          <div className="bg-zinc-800/50 rounded-lg p-6 border border-zinc-700">
+          <div className="bg-tracer-themebg rounded-lg p-6 border border-zinc-300">
             <h3 className="text-lg font-semibold text-tracer-green mb-4">
               Documents
             </h3>
             <div className="space-y-4">
               <div>
-                <h4 className="text-md font-medium text-gray-300 mb-2">
+                <h4 className="text-md font-medium text-black mb-2">
                   Business Documents
                 </h4>
                 <div className="grid grid-cols-2 gap-4">
                   {form.get_jotform_docs?.map((doc) => (
                     <div
                       key={doc.id}
-                      className="flex items-center gap-3 p-3 bg-zinc-700 rounded-lg"
+                      className="flex items-center gap-3 p-3 bg-white rounded-lg"
                     >
                       {isImageFile(doc.file_original_name) ? (
                         <img
@@ -1048,7 +1048,7 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
                         getFileIcon(doc.file_original_name)
                       )}
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm text-white truncate">
+                        <p className="text-sm text-zinc-400 truncate">
                           {doc.file_original_name}
                         </p>
                         <p className="text-xs text-gray-400">
@@ -1090,23 +1090,23 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
           </div>
 
           {/* Signature Section */}
-          <div className="bg-zinc-800/50 rounded-lg p-6 border border-zinc-700">
+          <div className="bg-tracer-themebg rounded-lg p-6 border border-zinc-300">
             <h3 className="text-tracer-green mb-4">Signature</h3>
             <div className="grid grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-400">
+                <label className="block text-sm font-medium text-black">
                   Date
                 </label>
-                <p className="mt-1 text-white font-medium">
+                <p className="mt-1 text-zinc-400 font-medium">
                   {form.signature_date}
                 </p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-400">
+                <label className="block text-sm font-medium text-black">
                   Signature
                 </label>
                 {form.signature ? (
-                  <div className="mt-1 bg-white rounded-lg p-4">
+                  <div className="mt-1 bg-gray-50 rounded-lg p-4">
                     <img
                       src={form.signature}
                       alt="Signature"
@@ -1114,7 +1114,7 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
                     />
                   </div>
                 ) : (
-                  <div className="mt-1 bg-zinc-700 rounded-lg p-4 text-gray-400 text-center">
+                  <div className="mt-1 bg-zinc-700 rounded-lg p-4 text-black text-center">
                     No signature available
                   </div>
                 )}
@@ -1125,15 +1125,15 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
           {(localStoregeUserRole === 1 || localStoregeUserRole === 2) && (
           
           <form onSubmit={handleEmailSend}>
-            <div className="bg-zinc-800/50 rounded-lg p-6 border border-zinc-700">
+            <div className="bg-tracer-themebg rounded-lg p-6 border border-zinc-300">
               <h3 className="text-tracer-green mb-4">Clear E-Signature</h3>
 
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-400 mb-1">
+                <label className="block text-sm font-medium text-black mb-1">
                   Personal Guarantee Required
                 </label>
                 <select
-                  className="w-full rounded-lg border border-zinc-600 bg-zinc-700 text-white px-3 py-2"
+                  className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2"
                   value={guaranteeRequired}
                   onChange={(e) => setGuaranteeRequired(e.target.value)}
                 >
@@ -1144,11 +1144,11 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
 
               <div className="mb-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-400">
+                  <label className="block text-sm font-medium text-black">
                     Signature
                   </label>
                   <select
-                    className="w-full rounded-lg border border-zinc-600 mt-2 bg-zinc-700 text-white px-3 py-2"
+                    className="w-full rounded-lg border mt-2 border-zinc-200 bg-white px-3 py-2"
                     value={signatureType}
                     onChange={(e) => setSignatureType(e.target.value)}
                   >
@@ -1159,14 +1159,14 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
               </div>
 
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-400 mb-1">
+                <label className="block text-sm font-medium text-black mb-1">
                   Email
                 </label>
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full rounded-lg border border-zinc-600 bg-zinc-700 text-white px-3 py-2"
+                  className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2"
                   placeholder="Enter email"
                 />
               </div>
@@ -1174,7 +1174,7 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
               <button
                 type="submit"
                 disabled={loading}
-                className={`bg-tracer-green hover:bg-tracer-green/90 text-white font-semibold px-6 py-2 rounded-lg flex items-center justify-center gap-2 ${
+                className={`bg-tracer-green text-white hover:bg-tracer-green/90 font-semibold px-6 py-2 rounded-lg flex items-center justify-center gap-2 ${
                   loading ? "opacity-70 cursor-not-allowed" : ""
                 }`}
               >
@@ -2559,14 +2559,14 @@ export default function PreApplications() {
       </div>
 
       {/* Pre-Application Link Section */}
-      <div className="bg-zinc-900 rounded-lg shadow-sm p-6 mb-8 border border-tracer-blue/20">
+      <div className="bg-tracer-themebg rounded-lg shadow-sm p-6 mb-8 border border-tracer-blue/20">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-white">
+          <h2 className="text-lg font-semibold text-black">
             Pre-Application Form Link
           </h2>
           <button
             onClick={() => setShowEmailModal(true)}
-            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-tracer-green hover:bg-tracer-blue focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-tracer-green"
+            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-tracer-green hover:bg-tracer-blue focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-tracer-green"
           >
             <Mail className="h-5 w-5 mr-2" />
             Email
@@ -2578,7 +2578,7 @@ export default function PreApplications() {
               type="text"
               readOnly
               value={preAppLink}
-              className="block pr-10 truncate bg-zinc-800 border-zinc-700 text-white rounded-md focus:ring-tracer-green focus:border-tracer-green mr-2"
+              className="block pr-10 truncate bg-white border-stone-100 text-black rounded-md focus:ring-tracer-green focus:border-tracer-green mr-2"
               style={{ width: 'calc(100% - 129px)' }}
             />
             <div className="absolute inset-y-0 right-24 flex items-center pr-9">
@@ -2586,14 +2586,14 @@ export default function PreApplications() {
                 href={preAppLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-400 hover:text-tracer-green"
+                className="text-black hover:text-tracer-green"
               >
                 <ExternalLink className="h-5 w-5" />
               </a>
             </div>
             <button
               onClick={copyLink}
-              className="absolute right-0 top-1/2 -translate-y-1/2 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-tracer-green hover:bg-tracer-blue focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-tracer-green"
+              className="absolute right-0 top-1/2 -translate-y-1/2 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-tracer-green hover:bg-tracer-blue focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-tracer-green"
             >
               {copied ? (
                 <>
@@ -2611,65 +2611,65 @@ export default function PreApplications() {
         </div>
         {/* Email Modal */}
         {showEmailModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-zinc-900 rounded-lg p-6 w-full max-w-md relative">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-tracer-themebg bg-opacity-50">
+            <div className="bg-tracer-themebg rounded-lg p-6 w-full max-w-md relative">
               <button
-                className="absolute top-2 right-2 text-gray-400 hover:text-tracer-green"
+                className="absolute top-2 right-2 text-black hover:text-tracer-green"
                 onClick={() => setShowEmailModal(false)}
               >
                 <X className="h-6 w-6" />
               </button>
-              <h3 className="text-lg font-semibold text-tracer-green mb-4 flex items-center">
+              <h3 className="text-lg font-semibold text-black mb-4 flex items-center">
                 <Mail className="h-5 w-5 mr-2" /> Send Pre-Application Link via Email
               </h3>
               <form onSubmit={handleEmailFormSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">DBA</label>
+                  <label className="block text-sm font-medium text-black mb-1">DBA</label>
                   <input
                     type="text"
                     name="dba"
                     value={emailForm.dba}
                     onChange={handleEmailInputChange}
-                    className="w-full rounded-md bg-zinc-800 border border-zinc-700 text-white px-3 py-2 focus:ring-tracer-green focus:border-tracer-green"
+                    className="w-full rounded-md bg-tracer-themebg border border-zinc-700 text-muted-300 px-3 py-2 focus:ring-tracer-green focus:border-tracer-green"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">Merchant Name</label>
+                  <label className="block text-sm font-medium text-black mb-1">Merchant Name</label>
                   <input
                     type="text"
                     name="merchantName"
                     value={emailForm.merchantName}
                     onChange={handleEmailInputChange}
-                    className="w-full rounded-md bg-zinc-800 border border-zinc-700 text-white px-3 py-2 focus:ring-tracer-green focus:border-tracer-green"
+                    className="w-full rounded-md bg-tracer-themebg border border-zinc-700 text-muted-300 px-3 py-2 focus:ring-tracer-green focus:border-tracer-green"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">Email</label>
+                  <label className="block text-sm font-medium text-black mb-1">Email</label>
                   <input
                     type="email"
                     name="email"
                     value={emailForm.email}
                     onChange={handleEmailInputChange}
-                    className="w-full rounded-md bg-zinc-800 border border-zinc-700 text-white px-3 py-2 focus:ring-tracer-green focus:border-tracer-green"
+                    className="w-full rounded-md bg-tracer-themebg border border-zinc-700 text-muted-300 px-3 py-2 focus:ring-tracer-green focus:border-tracer-green"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">Phone</label>
+                  <label className="block text-sm font-medium text-black mb-1">Phone</label>
                   <input
                     type="tel"
                     name="phone"
                     value={emailForm.phone}
                     onChange={handleEmailInputChange}
-                    className="w-full rounded-md bg-zinc-800 border border-zinc-700 text-white px-3 py-2 focus:ring-tracer-green focus:border-tracer-green"
+                    className="w-full rounded-md bg-tracer-themebg border border-zinc-700 text-muted-300 px-3 py-2 focus:ring-tracer-green focus:border-tracer-green"
                     required
                   />
                 </div>
                 <button
                   type="submit"
-                  className="w-full mt-2 inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-tracer-green hover:bg-tracer-blue focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-tracer-green"
+                  className="w-full mt-2 inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-tracer-green hover:bg-tracer-blue focus:outline-none"
                   disabled={emailSending}
                 >
                   {emailSending ? (
@@ -2684,8 +2684,8 @@ export default function PreApplications() {
       </div>
 
       {/* Pre-Application List */}
-      <div className="bg-zinc-900 rounded-lg shadow-sm p-6 mb-8">
-        <h2 className="text-lg font-semibold text-white mb-4">
+      <div className="bg-tracer-themebg rounded-lg shadow-[0_0_10px_rgba(0,0,0,0.08)] p-6 mb-8">
+        <h2 className="text-lg font-semibold text-black mb-4">
           Pre-Application List
         </h2>
 
@@ -2702,40 +2702,40 @@ export default function PreApplications() {
             <table className="min-w-full divide-y divide-gray-700">
               <thead>
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">
                     DBA
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">
                     Business Contact Name
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">
                     Email
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">
                     Phone
                   </th>
 
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Status</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Status</th>
 
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">
                     Actions
                   </th>
                   
                 </tr>
               </thead>
-              <tbody className="bg-zinc-900 divide-y divide-gray-700">
+              <tbody className="bg-tracer-themebg divide-y divide-gray-700">
                 {forms.map((form) => (
-                  <tr key={form.id} className="hover:bg-zinc-800">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                  <tr key={form.id} className="">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
                       {form.business_dba || "-"}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
                       {form.business_contact_name || "-"}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
                       {form.get_jotform_details?.[0]?.business_contact_mail || "-"}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
                       {/* {form.phone || "-"} */}
                      {form.get_jotform_details?.[0]?.business_location_phone_number || "-"}
                     </td>

@@ -18,6 +18,13 @@ export default function LandingPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // useEffect(() => {
+  // const builderForm = document.getElementById('_builder-form');
+  //   if (builderForm) {
+  //     builderForm.style.backgroundColor = '#00304F';
+  //   }
+  // }, []);
+
   useEffect(() => {
     // Only redirect if we're on the landing page (/) and have a token
     const token = localStorage.getItem("auth_token");
@@ -36,7 +43,7 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-white">
       {/* Version Toggle - for demo purposes */}
       <div className="fixed top-4 right-4 flex space-x-2 z-50">
         {/* <button
@@ -63,10 +70,10 @@ export default function LandingPage() {
                 
               </h1> */}
             </div>
-            <h2 className="text-4xl sm:text-5xl font-bold text-white mb-6">
+            <h2 className="text-4xl sm:text-5xl font-bold text-black mb-6">
               Streamline Your ISO Operations
             </h2>
-            <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
+            <p className="text-xl text-black mb-8 max-w-3xl mx-auto">
               The all-in-one platform for Independent Sales Organizations to
               manage documents, process applications, and grow their merchant
               portfolio.
@@ -127,16 +134,16 @@ export default function LandingPage() {
 
 
       {/* Spacer Section */}
-      <div className="h-16 bg-black"></div>
+      {/* <div className="h-16 bg-black"></div> */}
 
       {/* Features Grid */}
-      <div className="py-24 bg-zinc-900">
+      <div className="py-24 bg-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-white mb-4">
+            <h2 className="text-3xl font-bold text-black mb-4">
               Secured File Gateway
             </h2>
-            <p className="text-gray-400 max-w-2xl mx-auto">
+            <p className="text-tracer-green max-w-2xl mx-auto">
               Powerful tools and features designed specifically for ISOs and
               merchant services providers.
             </p>
@@ -144,11 +151,11 @@ export default function LandingPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {/* Document Management */}
-            <div className="bg-zinc-800 rounded-xl p-6 border border-tracer-green/20 hover:bg-zinc-700 transition-colors duration-200">
+            <div className="bg-white rounded-xl p-6 border border-tracer-green/20  transition-colors duration-200">
               <div className="h-12 w-12 bg-tracer-green/10 rounded-lg flex items-center justify-center mb-4">
                 <FileText className="h-6 w-6 text-tracer-green" />
               </div>
-              <h3 className="text-xl font-semibold text-white mb-2">
+              <h3 className="text-xl font-semibold text-black mb-2">
                 Document Management Hub
               </h3>
               <p className="text-gray-400">
@@ -157,11 +164,11 @@ export default function LandingPage() {
             </div>
 
             {/* AI Assistant */}
-            <div className="bg-zinc-800 rounded-xl p-6 border border-tracer-green/20 hover:bg-zinc-700 transition-colors duration-200">
+            <div className="bg-white rounded-xl p-6 border border-tracer-green/20  transition-colors duration-200">
               <div className="h-12 w-12 bg-tracer-green/10 rounded-lg flex items-center justify-center mb-4">
                 <Sparkles className="h-6 w-6 text-tracer-green" />
               </div>
-              <h3 className="text-xl font-semibold text-white mb-2">
+              <h3 className="text-xl font-semibold text-black mb-2">
                 ISO-AI Assistant Portal
               </h3>
               <p className="text-gray-400">
@@ -170,11 +177,11 @@ export default function LandingPage() {
             </div>
 
             {/* Secure Portal */}
-            <div className="bg-zinc-800 rounded-xl p-6 border border-tracer-green/20 hover:bg-zinc-700 transition-colors duration-200">
+            <div className="bg-white rounded-xl p-6 border border-tracer-green/20  transition-colors duration-200">
               <div className="h-12 w-12 bg-tracer-green/10 rounded-lg flex items-center justify-center mb-4">
                 <Lock className="h-6 w-6 text-tracer-green" />
               </div>
-              <h3 className="text-xl font-semibold text-white mb-2">
+              <h3 className="text-xl font-semibold text-black mb-2">
                 Secure Document Upload Portal
               </h3>
               <p className="text-gray-400">
@@ -183,11 +190,11 @@ export default function LandingPage() {
             </div>
 
             {/* Pre-Applications */}
-            <div className="bg-zinc-800 rounded-xl p-6 border border-tracer-green/20 hover:bg-zinc-700 transition-colors duration-200">
+            <div className="bg-white rounded-xl p-6 border border-tracer-green/20  transition-colors duration-200">
               <div className="h-12 w-12 bg-tracer-green/10 rounded-lg flex items-center justify-center mb-4">
                 <Users className="h-6 w-6 text-tracer-green" />
               </div>
-              <h3 className="text-xl font-semibold text-white mb-2">
+              <h3 className="text-xl font-semibold text-black mb-2">
                 Secure Pre-Application Portal
               </h3>
               <p className="text-gray-400">
@@ -196,11 +203,11 @@ export default function LandingPage() {
             </div>
 
             {/* Revenue Tracking */}
-            <div className="bg-zinc-800 rounded-xl p-6 border border-tracer-green/20 hover:bg-zinc-700 transition-colors duration-200">
+            <div className="bg-white rounded-xl p-6 border border-tracer-green/20  transition-colors duration-200">
               <div className="h-12 w-12 bg-tracer-green/10 rounded-lg flex items-center justify-center mb-4">
                 <DollarSign className="h-6 w-6 text-tracer-green" />
               </div>
-              <h3 className="text-xl font-semibold text-white mb-2">
+              <h3 className="text-xl font-semibold text-black mb-2">
                 ISO-Residuals Platform
               </h3>
               <p className="text-gray-400">
@@ -209,11 +216,11 @@ export default function LandingPage() {
             </div>
 
             {/* Compliance */}
-            <div className="bg-zinc-800 rounded-xl hover:bg-zinc-700 p-6 border border-tracer-green/20">
+            <div className="bg-white rounded-xl  p-6 border border-tracer-green/20">
               <div className="h-12 w-12 bg-tracer-green/10 rounded-lg flex items-center justify-center mb-4">
                 <Shield className="h-6 w-6 text-tracer-green" />
               </div>
-              <h3 className="text-xl font-semibold text-white mb-2">
+              <h3 className="text-xl font-semibold text-black mb-2">
                 Vendor Directory
               </h3>
               <p className="text-gray-400">
@@ -225,26 +232,26 @@ export default function LandingPage() {
       </div>
 
      {/* Black Background Spacer */}
-    <section className="py-12 bg-black">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      </div>
-    </section>
+      {/* <section className="py-12 bg-black">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        </div>
+      </section> */}
 
 
       {/* Security Certifications Section */}
-      <section className="py-16 bg-zinc-900">
+      <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h2 className="text-3xl font-bold text-white sm:text-4xl">
+            <h2 className="text-3xl font-bold text-black sm:text-4xl">
               Security & Compliance
             </h2>
-            <p className="mt-4 text-lg text-gray-300">
+            <p className="mt-4 text-base text-tracer-green">
               Your data security is our top priority. We maintain the highest standards of security and compliance.
             </p>
           </div>
 
           <div className="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            <div className="bg-zinc-800 rounded-lg p-6 flex flex-col items-center ring-1 ring-inset ring-tracer-green/20 hover:bg-zinc-700 transition-colors duration-200">
+            <div className="bg-[#eeeeee17] rounded-lg p-6 flex flex-col items-center ring-1 ring-inset ring-tracer-green/20  transition-colors duration-200">
               <img
                 src="/CCPA.jpeg"
                 alt="CCPA Compliance"
@@ -256,7 +263,7 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="bg-zinc-800 rounded-lg p-6 flex flex-col items-center ring-1 ring-inset ring-tracer-green/20 hover:bg-zinc-700 transition-colors duration-200">
+            <div className="bg-[#eeeeee17] rounded-lg p-6 flex flex-col items-center ring-1 ring-inset ring-tracer-green/20  transition-colors duration-200">
               <img
                 src="/logo-iso-27001.png"
                 alt="ISO 27001 Certification"
@@ -268,7 +275,7 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="bg-zinc-800 rounded-lg p-6 flex flex-col items-center ring-1 ring-inset ring-tracer-green/20 hover:bg-zinc-700 transition-colors duration-200">
+            <div className="bg-[#eeeeee17] rounded-lg p-6 flex flex-col items-center ring-1 ring-inset ring-tracer-green/20  transition-colors duration-200">
               <img
                 src="/png-clipart-computer-security-center-for-internet-security-benchmark-threat-data-analysis-miscellaneous-blue.png"
                 alt="Security Benchmark"
@@ -285,13 +292,13 @@ export default function LandingPage() {
 
 
       {/* Benefits Section with Calendar */}
-      <div className="py-24">
+      <div className="py-24 bg-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-white mb-4">
+            <h2 className="text-3xl font-bold text-black mb-4">
               Why Choose ISOHub?
             </h2>
-            <p className="text-gray-400 max-w-2xl mx-auto">
+            <p className="text-tracer-green text-base max-w-2xl mx-auto">
               Built specifically for ISOs, our platform helps you save time,
               reduce costs, and grow your business.
             </p>
@@ -309,22 +316,22 @@ export default function LandingPage() {
               ].map((benefit, index) => (
                 <div key={index} className="flex items-center">
                   <CheckCircle className="h-6 w-6 text-tracer-green flex-shrink-0" />
-                  <span className="ml-3 text-gray-300">{benefit}</span>
+                  <span className="ml-3 text-black">{benefit}</span>
                 </div>
               ))}
             </div>
 
-            <div className="bg-zinc-800 rounded-xl p-8 border border-tracer-green/20">
+            <div className="bg-[#0b3956] rounded-xl p-8 border border-tracer-green/20">
               <h3 id="calender" className="text-2xl font-bold text-white mb-4">
                 Schedule a Demo
               </h3>
-              <p className="text-gray-400 mb-6">
+              <p className="text-white mb-6">
                 See how ISOHub can transform your operations with a personalized
                 demo.
               </p>
 
               {/* Calendar Embed Container */}
-              <div className="w-full bg-zinc-900/50 rounded-lg mb-6">
+              <div className="w-full bg-[#0b3956] rounded-lg mb-6">
                 {/* <iframe
                   src="https://api.leadconnectorhq.com/widget/booking/w81N45IZKBMP1TwyhPbW"
                   style={{
@@ -356,17 +363,17 @@ export default function LandingPage() {
       </div>
 
       {/* Contact Us Section */}
-      <div className="py-24 bg-zinc-900/50">
+      <div className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-white mb-4">Contact Us</h2>
-            <p className="text-gray-400 max-w-2xl mx-auto">
+            <h2 className="text-3xl font-bold text-black mb-4">Contact Us</h2>
+            <p className="text-tracer-green max-w-2xl mx-auto">
               Have questions? We're here to help. Fill out the form below and
               we'll get back to you as soon as possible.
             </p>
           </div>
 
-          <div className="max-w-3xl mx-auto bg-zinc-800 rounded-xl overflow-hidden shadow-2xl">
+          <div className="max-w-3xl mx-auto bg-white rounded-xl overflow-hidden shadow-2xl h-[550px] p-0 m-0">
             {/* <iframe
               src="https://api.leadconnectorhq.com/widget/form/XlJsv8aFfLYN18CDgQub"
               scrolling="no"
@@ -427,20 +434,20 @@ export default function LandingPage() {
 
 
       {/* Footer */}
-      <footer className="bg-zinc-900 py-8">
+      <footer className="bg-gray-100 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-center">
-            <img src="ISOHubLOGO.png" alt="ISOHub Logo" className="h-28 w-auto" />
+            <img src="ISOHubLOGO.png" alt="ISOHub Logo" className="h-10 w-auto" />
             {/* If you want the text ISO Hub next to logo, uncomment below and adjust styling */}
             {/* <span className="ml-2 text-xl font-bold text-white">
               ISO<span className="text-yellow-400">Hub</span>
             </span> */}
           </div>
-          <div className="flex flex-wrap justify-center sm:justify-end items-center gap-2 sm:gap-4 text-sm text-gray-400 mt-4 sm:mt-0">
-            <Link to="/privacy-policy" className="hover:text-white transition-colors duration-200">
+          <div className="flex flex-wrap justify-center sm:justify-end items-center gap-2 sm:gap-4 text-sm text-black mt-4 sm:mt-0">
+            <Link to="/privacy-policy" className="hover:text-tracer-green transition-colors duration-200">
               Privacy Policy
             </Link>
-            <span>
+            <span className="text-black hover:text-tracer-green">
               &copy; {new Date().getFullYear()} ISOHub. All rights reserved.
             </span>
           </div>

@@ -173,7 +173,7 @@ export default function Sidebar({
   return (
     <div
       className={`
-      fixed inset-y-0 left-0 z-50 w-64 bg-zinc-900 shadow-lg transform border-r border-tracer-green/20
+      fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform border-r border-tracer-green/20
       ${open ? "translate-x-0" : "-translate-x-full"}
       lg:relative lg:translate-x-0 transition-transform duration-300 ease-in-out
     `}
@@ -183,7 +183,7 @@ export default function Sidebar({
         <div className="p-6 border-b border-tracer-green/20">
           <div className="flex items-center justify-center space-x-2">
             {/* <Shield className="h-8 w-8 text-tracer-green" /> */}
-            <div className="text-xl font-bold text-white tracking-tight">
+            <div className="text-xl font-bold text-black tracking-tight">
               <img src="ISOHubLOGO.png" alt="" style={{ maxWidth: "71%" }} />
             </div>
           </div>
@@ -193,7 +193,7 @@ export default function Sidebar({
         </div>
 
         <div className="px-4 py-6">
-          <h2 className="text-lg font-semibold text-white">Categories</h2>
+          <h2 className="text-lg font-semibold text-black">Categories</h2>
           <nav className="mt-6 navi-links">
             {categories.map((category) => (
               <div key={category.name} className="relative group">
@@ -202,9 +202,9 @@ export default function Sidebar({
                     href={category.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group flex items-center px-3 py-2 text-sm font-medium text-gray-300 rounded-md hover:text-tracer-green hover:border-l-4 hover:border-tracer-green relative"
+                    className="group flex items-center px-3 py-2 text-sm font-medium text-black rounded-md hover:text-tracer-green hover:border-l-4 hover:border-tracer-green relative"
                   >
-                    <category.icon className="h-5 w-5 mr-3 text-gray-400 group-hover:text-tracer-green" />
+                    <category.icon className="h-5 w-5 mr-3 text-black group-hover:text-tracer-green" />
                     {category.name}
                   </a>
                 ) : category.onClick ? (
@@ -216,7 +216,7 @@ export default function Sidebar({
                           category.href || `/${category.name.toLowerCase()}`
                         )
                           ? "text-tracer-green border-l-4 border-tracer-green pl-2"
-                          : "text-gray-300 hover:border-l-4 hover:border-tracer-green"
+                          : "text-black hover:border-l-4 hover:border-tracer-green"
                       }`}
                   >
                     <category.icon
@@ -225,7 +225,7 @@ export default function Sidebar({
                           category.href || `/${category.name.toLowerCase()}`
                         )
                           ? "text-tracer-green"
-                          : "text-gray-400 group-hover:text-tracer-green"
+                          : "text-black group-hover:text-tracer-green"
                       }`}
                     />
                     {category.name}
@@ -239,7 +239,7 @@ export default function Sidebar({
                           category.href || `/${category.name.toLowerCase()}`
                         )
                           ? "text-tracer-green border-l-4 border-tracer-green pl-2"
-                          : "text-gray-300 hover:border-l-4 hover:border-tracer-green"
+                          : "text-black hover:border-l-4 hover:border-tracer-green"
                       }`}
                   >
                     <category.icon
@@ -248,7 +248,7 @@ export default function Sidebar({
                           category.href || `/${category.name.toLowerCase()}`
                         )
                           ? "text-tracer-green"
-                          : "text-gray-400 group-hover:text-tracer-green"
+                          : "text-black group-hover:text-tracer-green"
                       }`}
                     />
                     {category.name}
@@ -257,7 +257,7 @@ export default function Sidebar({
 
                 {category.name === "Admin" && (
                   <div
-                    className={`sub_menu absolute top-full left-0 w-full bg-zinc-800 px-2 z-[9] py-5 rounded 
+                    className={`sub_menu absolute top-full left-0 w-full bg-gray-100 px-2 z-[9] py-5 rounded 
                     ${
                       adminSubMenu.some(
                         (item) => location.pathname === item.path
@@ -270,7 +270,7 @@ export default function Sidebar({
                       {adminSubMenu.map((item) => (
                         <li
                           key={item.path}
-                          className="text-white mt-2 first:mt-0"
+                          className="text-black mt-2 first:mt-0"
                         >
                           {item.external ? (
                             <a
@@ -280,8 +280,8 @@ export default function Sidebar({
                               className={`flex py-2 px-3 gap-2 items-center text-md rounded-md transition-all
             ${
               location.pathname === item.path
-                ? "bg-black border-l-4 border-tracer-green text-tracer-green"
-                : "bg-black hover:border-l-4 hover:border-tracer-green hover:text-tracer-green"
+                ? "bg-white border-l-4 border-tracer-green text-tracer-green"
+                : "bg-white hover:border-l-4 hover:border-tracer-green hover:text-tracer-green"
             }`}
                             >
                               <item.icon
@@ -299,8 +299,8 @@ export default function Sidebar({
                               className={`flex py-2 px-3 gap-2 items-center text-md rounded-md transition-all
             ${
               location.pathname === item.path
-                ? "bg-black border-l-4 border-tracer-green text-tracer-green"
-                : "bg-black hover:border-l-4 hover:border-tracer-green hover:text-tracer-green"
+                ? "bg-white border-l-4 border-tracer-green text-tracer-green"
+                : "bg-white hover:border-l-4 hover:border-tracer-green hover:text-tracer-green"
             }`}
                             >
                               <item.icon
@@ -334,7 +334,7 @@ export default function Sidebar({
                 {/* <div className="sub_menu w-full px-2 z-[9] py-1 rounded">
                   <ul>
                     {userSubMenu.map((item) => (
-                      <li key={item.path} className="text-white mt-2 first:mt-0">
+                      <li key={item.path} className="text-black mt-2 first:mt-0">
                         <Link
                           to={item.path}
                           className={`flex py-2 px-3 gap-2 items-center text-md rounded-md transition-all

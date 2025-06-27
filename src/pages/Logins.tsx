@@ -80,7 +80,7 @@ interface VendorLoginModalProps {
 
 function VendorLoginModal({ vendor, onClose }: VendorLoginModalProps) {
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-white bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-zinc-900 p-6 rounded-xl w-full max-w-md relative shadow-2xl border border-tracer-blue/30">
         <button
           onClick={onClose}
@@ -848,10 +848,10 @@ export default function Logins() {
             const items = filterItems(vendors[category.id] || []);
             const isOpen = openCategories[category.id];
             return (
-              <div key={category.id} className="bg-white rounded-lg shadow-sm overflow-hidden">
+              <div key={category.id} className="bg-white rounded-lg shadow  overflow-hidden">
                 <div className="px-6 py-4 flex items-center justify-between">
                   <button
-                    className="flex items-center space-x-3 text-left focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-inset"
+                    className="flex items-center space-x-3 text-left focus:outline-none"
                     onClick={() => toggleCategory(category.id)}
                   >
                     <CategoryIcon className="h-6 w-6 text-gray-400" />

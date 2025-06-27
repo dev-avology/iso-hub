@@ -9,6 +9,7 @@ module.exports = {
         tracer: {
           blue: '#00304F',
           green: '#69932F',
+          themebg:'#fff',
         }
       }
     },

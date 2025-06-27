@@ -32,12 +32,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-white">
       <div className="flex h-screen overflow-hidden">
         {/* Mobile sidebar */}
         <div className="lg:hidden">
           <button
-            className="fixed top-4 left-4 p-2 rounded-md bg-zinc-900 shadow-lg border border-yellow-400/20"
+            className="fixed top-4 left-4 p-2 rounded-md bg-white shadow-lg border border-yellow-400/20"
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
             <Menu className="h-6 w-6 text-yellow-400" />
