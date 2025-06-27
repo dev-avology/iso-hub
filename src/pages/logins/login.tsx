@@ -156,20 +156,20 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black">
-      <div className="bg-zinc-900 p-10 rounded-lg shadow-lg w-full max-w-md ">
-        <div className="pb-6 mb-6 border-b border-yellow-400/20">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="bg-white p-10 rounded-lg shadow-lg w-full max-w-md">
+        <div className="pb-6 mb-6 border-b border-gray-200">
           <div className="flex items-center justify-center space-x-2">
              <img src="ISOHubLOGO.png" alt="" style={{ maxWidth: '40%' }} />
           </div>
-          <div className="mt-1 text-center text-xs text-yellow-400/60">
+          <div className="mt-1 text-center text-xs text-gray-600">
             Secure Document Management
           </div>
         </div>
 
         <form onSubmit={handleSubmit}>
           {error && (
-            <div className="mb-4 p-3 bg-red-500/10 border border-red-500 rounded text-red-500 text-sm">
+            <div className="mb-4 p-3 bg-red-50 border border-red-500 rounded text-red-500 text-sm">
               {error}
             </div>
           )}
@@ -177,7 +177,7 @@ export default function Login() {
           <div className="mb-4">
             <label
               htmlFor="email"
-              className="block font-medium text-gray-300 mb-2"
+              className="block font-medium text-gray-700 mb-2"
             >
               Username
             </label>
@@ -187,14 +187,14 @@ export default function Login() {
               value={email}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
               placeholder=""
-              className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
+              className="w-full px-4 py-2 rounded border border-gray-300 text-gray-900 focus:outline-none focus:ring-2 focus:ring-tracer-blue focus:border-transparent"
               required
             />
           </div>
           <div className="mb-6">
             <label
               htmlFor="password"
-              className="block font-medium text-gray-300 mb-2"
+              className="block font-medium text-gray-700 mb-2"
             >
               Password
             </label>
@@ -205,13 +205,13 @@ export default function Login() {
                 value={password}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
                 placeholder=""
-                className="w-full px-4 py-2 pr-10 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                className="w-full px-4 py-2 pr-10 rounded border border-gray-300 text-gray-900 focus:outline-none focus:ring-2 focus:ring-tracer-blue focus:border-transparent"
                 required
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 px-3 flex items-center text-gray-400 hover:text-yellow-400 focus:outline-none"
+                className="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500 hover:text-tracer-blue focus:outline-none"
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
@@ -220,7 +220,7 @@ export default function Login() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-tracer-blue hover:bg-tracer-blue/90 text-white py-3 rounded font-medium uppercase transition duration-200 dsabled:opacity-50"
+            className="w-full bg-tracer-blue hover:bg-tracer-blue/90 text-white py-3 rounded font-medium uppercase transition duration-200 disabled:opacity-50"
           >
             {isLoading ? "Signing in..." : "Login"}
           </button>
