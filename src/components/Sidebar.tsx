@@ -85,6 +85,20 @@ export default function Sidebar({
     newEncryptedKey
   )}&secY=${encodeURIComponent(iv)}`;
 
+    // Get role_id from auth_user in localStorage
+  const authUser = JSON.parse(localStorage.getItem("auth_user") || "{}");
+
+  const getRoleName = (role_id: number) => {
+    switch (role_id) {
+      case 1: return "Super Admin";
+      case 2: return "Admin";
+      case 3: return "Manager";
+      case 4: return "Team Leader";
+      case 5: return "Users/Rep";
+      default: return "Unknown Role";
+    }
+  };
+
   // const iv = encodeURIComponent("3jdtvH6MNd1V0PvakGs5VA==");
   const nonAdminCategories: Category[] = [
     // { name: 'Processors', icon: CreditCard },
@@ -114,7 +128,7 @@ export default function Sidebar({
 
   const adminCategories = [
     ...nonAdminCategories,
-    { name: "Admin", icon: User, href: "#" },
+    { name: getRoleName(role_id), icon: User, href: "#" },
   ];
 
   const adminSubMenu = [
@@ -139,14 +153,12 @@ export default function Sidebar({
     { name: "User Notification", icon: Bell, path: "/user-notification" },
   ];
 
-  // Get role_id from auth_user in localStorage
-  const authUser = JSON.parse(localStorage.getItem("auth_user") || "{}");
-  // const isAdmin = authUser?.role_id === 1 || authUser?.role_id === 2 || authUser?.role_id === 3 || authUser?.role_id === 4;
+  const isAdmin = authUser?.role_id === 1 || authUser?.role_id === 2 || authUser?.role_id === 3 || authUser?.role_id === 4 || authUser?.role_id === 5;
 
-  const isAdmin = authUser?.role_id === 1 || authUser?.role_id === 2;
+  // const isAdmin = authUser?.role_id === 1 || authUser?.role_id === 2;
 
   const isUser = authUser?.role_id === 5;
-  const isUserNotification = ![1, 2].includes(authUser?.role_id ?? 0);
+  const isUserNotification = authUser?.role_id === 6;
 
   const handleLogout = async () => {
     try {
@@ -255,7 +267,8 @@ export default function Sidebar({
                   </Link>
                 )}
 
-                {category.name === "Admin" && (
+                {category.name === getRoleName(role_id) && [1, 2, 3, 4, 5].includes(role_id) && (
+
                   <div
                     className={`sub_menu absolute top-full left-0 w-full bg-zinc-800 px-2 z-[9] py-5 rounded 
                     ${
@@ -324,14 +337,14 @@ export default function Sidebar({
             {isUserNotification && (
               <div className="relative group mt-4">
                 {/* {isUser && <UserRep />} */}
-                {/* <div
+                <div
                   className={`group flex items-center px-3 py-2 text-sm font-medium rounded-md hover:text-yellow-400 transition-all text-gray-300 hover:border-l-4 hover:border-yellow-400`}
                 >
                   <Users className="h-5 w-5 mr-3 text-gray-400 group-hover:text-yellow-400" />
-                  Users
-                </div> */}
+                  Team Member
+                </div>
 
-                {/* <div className="sub_menu w-full px-2 z-[9] py-1 rounded">
+                <div className="sub_menu w-full px-2 z-[9] py-1 rounded">
                   <ul>
                     {userSubMenu.map((item) => (
                       <li key={item.path} className="text-white mt-2 first:mt-0">
@@ -349,7 +362,7 @@ export default function Sidebar({
 
                     ))}
                   </ul>
-                </div> */}
+                </div>
               </div>
             )}
           </nav>
