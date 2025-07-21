@@ -703,6 +703,8 @@ export default function Logins() {
 
       if (response.ok && data?.status === "success") {
         toast.success("Vendor template saved successfully.");
+        // Refresh the dropdown vendor list for the selected category
+        await fetchAdminVendors(selectedCategory);
         setShowAddVendorModal(false);
         // categories.forEach((category) => fetchVendors(category.id));
 
