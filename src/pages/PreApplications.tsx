@@ -82,6 +82,11 @@ interface FormData {
   merchant_name: string;
   email: string;
   phone: string;
+  shipping_street_address?: string;
+  shipping_street_address2?: string;
+  shipping_city?: string;
+  shipping_state?: string;
+  shipping_zip?: string;
 
   // Additional fields from API response
   get_jotform_details?: Array<{
@@ -476,12 +481,46 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
                         className="form-radio text-tracer-green"
                       />
                       <span className="ml-2 text-black">
-                        Shipping Address (
+                        Same Shipping Address (
                         {form.is_same_shipping_address === "1" ? "Yes" : form.is_same_shipping_address === "0" ? "No" : "-"})
                       </span>
                     </label>
                   </div>
                 </div>
+                {form.is_same_shipping_address === "0" && (
+                  <div className="relative mt-6">
+                    {/* Floating label */}
+                    <div className="absolute -top-4 left-6 flex items-center gap-2 bg-white px-2 py-0.5 rounded shadow-sm z-10">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-tracer-green" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2a2 2 0 012-2h6a2 2 0 012 2v2m-2 0a2 2 0 11-4 0m4 0a2 2 0 11-4 0M5 11V7a2 2 0 012-2h10a2 2 0 012 2v4M5 11h14M5 11l-1.293 1.293a1 1 0 000 1.414l1.293 1.293M19 11l1.293 1.293a1 1 0 010 1.414L19 15.293" />
+                      </svg>
+                      <span className="text-xs font-bold text-tracer-green uppercase tracking-wide">Different Shipping Address</span>
+                    </div>
+                    {/* Box */}
+                    <div className="border border-tracer-green bg-green-50 rounded-lg p-4 pt-4 mb-2 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+                      <div>
+                        <label className="block text-xs font-medium text-gray-700">Street address</label>
+                        <p className="mt-1 text-xs text-tracer-green font-semibold lowercase">{form.shipping_street_address || "-"}</p>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-700">Street address line 2</label>
+                        <p className="mt-1 text-xs text-tracer-green font-semibold lowercase">{form.shipping_street_address2 || "-"}</p>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-700">City</label>
+                        <p className="mt-1 text-xs text-tracer-green font-semibold lowercase">{form.shipping_city || "-"}</p>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-700">State</label>
+                        <p className="mt-1 text-xs text-tracer-green font-semibold lowercase">{form.shipping_state || "-"}</p>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-700">ZIP</label>
+                        <p className="mt-1 text-xs text-tracer-green font-semibold lowercase">{form.shipping_zip || "-"}</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -1122,7 +1161,7 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
             </div>
           </div>
 
-          {(localStoregeUserRole === 1 || localStoregeUserRole === 2) && (
+          {/* {(localStoregeUserRole === 1 || localStoregeUserRole === 2) && (
           
           <form onSubmit={handleEmailSend}>
             <div className="bg-tracer-themebg rounded-lg p-6 border border-zinc-300">
@@ -1187,7 +1226,7 @@ function FormDetailsModal({ form, onClose }: FormDetailsModalProps) {
           </form>
 
             
-          )}
+          )} */}
 
         </div>
       </div>

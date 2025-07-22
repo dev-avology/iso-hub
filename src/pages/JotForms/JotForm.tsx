@@ -80,6 +80,13 @@ interface FormData {
   business_products_sold: string;
   business_return_policy: string;
   terminal_other: string;
+
+  // New fields for shipping address
+  shipping_street_address: string;
+  shipping_street_address2: string;
+  shipping_city: string;
+  shipping_state: string;
+  shipping_zip: string;
 }
 
 // Put this outside your component
@@ -150,12 +157,19 @@ const blankFormData: FormData = {
   auto_settle_type: "auto",
   add_tips_to_account: "no",
   tip_amounts: [],
-  is_same_shipping_address: "0",
+  is_same_shipping_address: "1",
   business_website: "",
   business_legal_name: "",
   business_products_sold: "",
   business_return_policy: "",
   terminal_other: "",
+
+  // New fields for shipping address
+  shipping_street_address: "",
+  shipping_street_address2: "",
+  shipping_city: "",
+  shipping_state: "",
+  shipping_zip: "",
 };
 
 // Add this CSS at the top of the file
@@ -374,13 +388,16 @@ export default function JotForm() {
     }
 
      // ✅ Validate business_profile_business_type (must have at least one selected)
-    if (
-      !formData.tip_amounts ||
-      formData.tip_amounts.length === 0
-    ) {
-      toast.error("Please select at least one Tip Amount.");
-      return;
-    }
+
+     if(formData.add_tips_to_account === "yes"){
+       if (
+         !formData.tip_amounts ||
+         formData.tip_amounts.length === 0 
+       ) {
+         toast.error("Please select at least one Tip Amount.");
+         return;
+       }
+     }
 
     const signaturePad = signatureRef.current;
     const signatureData =
@@ -611,7 +628,6 @@ export default function JotForm() {
                 <input
                   type="text"
                   name="dba_street_address2"
-                  required
                   onChange={handleInputChange}
                   className={`mt-1 block w-full rounded-md shadow-sm ${
                     errors.dba_street_address2
@@ -751,7 +767,7 @@ export default function JotForm() {
                   Shipping Address
                 </label>
 
-                <label className="inline-flex items-center text-gray-700">
+                {/* <label className="inline-flex items-center text-gray-700">
                   <input
                     type="radio"
                     name="is_same_shipping_address"
@@ -762,7 +778,85 @@ export default function JotForm() {
                     className="mr-2 h-4 w-4 border-gray-300 text-tracer-green focus:ring-tracer-green"
                   />
                   Shipping Address is the Same
+                </label> */}
+
+
+                <label className="inline-flex items-center text-gray-700">
+                  <input
+                    type="checkbox"
+                    name="is_same_shipping_address"
+                    checked={formData.is_same_shipping_address === "1"}
+                    onChange={e => {
+                      setFormData(prev => ({
+                        ...prev,
+                        is_same_shipping_address: e.target.checked ? "1" : "0"
+                      }));
+                    }}
+                    className="mr-2 h-4 w-4 border-gray-300 text-tracer-green focus:ring-tracer-green"
+                  />
+                  Shipping Address is the Same
                 </label>
+
+
+                {formData.is_same_shipping_address === "0" && (
+                  <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4 bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <div className="md:col-span-3">
+                      <label className="block text-sm font-medium text-gray-700">Street Address</label>
+                      <input
+                        type="text"
+                        name="shipping_street_address"
+                        value={formData.shipping_street_address || ""}
+                        required
+                        onChange={handleInputChange}
+                        className={`mt-1 block w-full rounded-md shadow-sm ${errors.shipping_street_address ? "border-red-500" : "border-gray-300"}`}
+                      />
+                    </div>
+                    <div className="md:col-span-3">
+                      <label className="block text-sm font-medium text-gray-700">Street Address Line 2</label>
+                      <input
+                        type="text"
+                        name="shipping_street_address2"
+                        value={formData.shipping_street_address2 || ""}
+                        onChange={handleInputChange}
+                        className={`mt-1 block w-full rounded-md shadow-sm ${errors.shipping_street_address2 ? "border-red-500" : "border-gray-300"}`}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">City</label>
+                      <input
+                        type="text"
+                        name="shipping_city"
+                        required
+                        value={formData.shipping_city || ""}
+                        onChange={handleInputChange}
+                        className={`mt-1 block w-full rounded-md shadow-sm ${errors.shipping_city ? "border-red-500" : "border-gray-300"}`}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">State</label>
+                      <input
+                        type="text"
+                        name="shipping_state"
+                        required
+                        value={formData.shipping_state || ""}
+                        onChange={handleInputChange}
+                        className={`mt-1 block w-full rounded-md shadow-sm ${errors.shipping_state ? "border-red-500" : "border-gray-300"}`}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">ZIP</label>
+                      <input
+                        type="text"
+                        name="shipping_zip"
+                        required
+                        value={formData.shipping_zip || ""}
+                        onChange={handleInputChange}
+                        className={`mt-1 block w-full rounded-md shadow-sm ${errors.shipping_zip ? "border-red-500" : "border-gray-300"}`}
+                      />
+                    </div>
+                  </div>
+                )}
+
               </div>
             </div>
           </fieldset>
@@ -1727,6 +1821,7 @@ export default function JotForm() {
                 (*Required)
               </span>
             </legend>
+            <p className="text-xs text-gray-500 italic mt-2 mb-4">Use your best judgment and aim high - It's better to over estimate than under estimate.</p>
             <div className="space-y-6">
 
 
@@ -1802,7 +1897,7 @@ export default function JotForm() {
                       <input
                         type="range"
                         required
-                        min="50"
+                        min="0"
                         max="100"
                         name="transaction_card_present"
                         value={formData.transaction_card_present}
@@ -1819,7 +1914,7 @@ export default function JotForm() {
                     <div className="flex items-center gap-2">
                       <input
                         type="range"
-                        min="50"
+                        min="0"
                         required
                         max="100"
                         name="transaction_keyed_in"
@@ -1839,7 +1934,7 @@ export default function JotForm() {
                     <div className="flex items-center gap-2">
                       <input
                         type="range"
-                        min="50"
+                        min="0"
                         max="100"
                         required
                         name="transaction_all_online"
@@ -1868,51 +1963,47 @@ export default function JotForm() {
                   className="w-40 rounded-md border-gray-300"
                 />
               </div>
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-1 mt-2 mb-4">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   I do not need Auto Settle
                 </label>
-                <label className="inline-flex items-center text-gray-700">
+                <div className="flex items-center gap-2">
                   <input
-                    type="radio"
+                    type="checkbox"
+                    id="auto_settle_type"
                     name="auto_settle_type"
-                    value="manual"
-                    required
-                    checked={formData.auto_settle_type === "manual"}
-                    onChange={handleInputChange}
-                    className="mr-2 h-4 w-4 border-gray-300 text-tracer-green focus:ring-tracer-green"
-                  />
-                  I will Settle / Batch myself
-                </label>
-                {/* <label className="inline-flex items-center text-gray-700">
-                  <input
-                    type="radio"
-                    name="auto_settle_type"
-                    value="auto"
                     checked={formData.auto_settle_type === "auto"}
-                    onChange={handleInputChange}
-                    className="mr-2"
+                    onChange={e => setFormData(prev => ({
+                      ...prev,
+                      auto_settle_type: e.target.checked ? "auto" : "manual"
+                    }))}
+                    className="h-4 w-4 border-gray-300 text-tracer-green focus:ring-tracer-green"
                   />
-                  Auto Settle
-                </label> */}
+                  <label htmlFor="auto_settle_type" className="text-sm text-gray-700 select-none">
+                    I will Settle / Batch myself
+                  </label>
+                </div>
               </div>
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-1 mt-2 mb-4">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Add Tips to my account
                 </label>
-
-                <label className="inline-flex items-center text-gray-700">
+                <div className="flex items-center gap-2">
                   <input
-                    type="radio"
+                    type="checkbox"
+                    id="add_tips_to_account"
                     name="add_tips_to_account"
-                    value="yes"
-                    required
                     checked={formData.add_tips_to_account === "yes"}
-                    onChange={handleInputChange}
-                    className="mr-2 h-4 w-4 border-gray-300 text-tracer-green focus:ring-tracer-green"
+                    onChange={e => setFormData(prev => ({
+                      ...prev,
+                      add_tips_to_account: e.target.checked ? "yes" : "no"
+                    }))}
+                    className="h-4 w-4 border-gray-300 text-tracer-green focus:ring-tracer-green"
                   />
-                  I would like to have the tip function added to my account
-                </label>
+                  <label htmlFor="add_tips_to_account" className="text-sm text-gray-700 select-none">
+                    I would like to have the tip function added to my account
+                  </label>
+                </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
