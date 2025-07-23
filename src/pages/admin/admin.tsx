@@ -556,11 +556,11 @@ export default function Admin() {
               key={user.id}
               className="UserDataRow group px-5 py-3 rounded flex gap-4 border border-gray-200 mt-4 hover:bg-gray-50 cursor-pointer relative bg-white"
             >
-              <div className="userdata w-[20%]">{user.first_name}</div>
-              <div className="userdata w-[20%]">{user.last_name}</div>
-              <div className="userdata w-[20%]">{user.email}</div>
-              <div className="userdata w-[20%]">{user.phone}</div>
-              <div className="userdata w-[20%]">
+              <div className="userdata w-[20%] whitespace-normal break-all">{user.first_name}</div>
+              <div className="userdata w-[20%] whitespace-normal break-all">{user.last_name}</div>
+              <div className="userdata w-[20%] whitespace-normal break-all">{user.email}</div>
+              <div className="userdata w-[20%] whitespace-normal break-all">{user.phone}</div>
+              <div className="userdata w-[20%] whitespace-normal break-all">
                 {
                   ROLE_MAPPING[
                     user.role_id.toString() as keyof typeof ROLE_MAPPING

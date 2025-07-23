@@ -350,6 +350,8 @@ export default function Logins() {
     categories.push({ id: "internal", name: "Internal", icon: Shield });
   }
 
+  console.log('adminVendors',adminVendors)
+
   // Add remaining item
   categories.push({ id: "processors", name: "Processors", icon: CreditCard });
 
@@ -451,6 +453,7 @@ export default function Logins() {
         }
       );
       const responseData = await response.json();
+      console.log('responseData from admin',responseData)
       if (responseData.status === "success") {
         setAdminVendors((prev) => ({
           ...prev,
@@ -464,14 +467,20 @@ export default function Logins() {
 
   const fetchVendorTemplate = async (
     vendorName: string,
-    vendorType: string
+    vendorType: string,
+    vendorId?: number
   ) => {
     try {
-      const showVendorTemplateData = {
+      const showVendorTemplateData: any = {
         vendor_name: vendorName,
         vendor_type: vendorType,
         user_id: 2,
       };
+      if (vendorId) {
+        showVendorTemplateData.vendor_id = vendorId;
+      }
+
+      console.log('showVendorTemplateData',showVendorTemplateData);
 
       const accessToken = localStorage.getItem("auth_token");
       if (!accessToken) {
@@ -589,7 +598,7 @@ export default function Logins() {
     setVendorCards((cards) => cards.filter((_, i) => i !== idx));
   };
 
-  const handleVendorSelect = async (idx: number, vendorName: string) => {
+  const handleVendorSelect = async (idx: number, vendorName: string, vendorId?: number) => {
     if (vendorName === "Other") {
       // Reset the card to empty state
       setVendorCards((cards) =>
@@ -618,7 +627,7 @@ export default function Logins() {
     }
 
     // Fetch template for selected vendor
-    const template = await fetchVendorTemplate(vendorName, selectedCategory);
+    const template = await fetchVendorTemplate(vendorName, selectedCategory, vendorId);
 
     if (template) {
       setVendorCards((cards) =>
@@ -815,8 +824,8 @@ export default function Logins() {
     }
   };
 
-  console.log('items',categories);
-  console.log('vendors222',vendors);
+  // console.log('items',categories);
+  // console.log('vendors222',vendors);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -978,11 +987,15 @@ export default function Logins() {
                     <select
                       className="block w-48 rounded border-gray-300 text-xs py-1 px-2"
                       value={card.vendor_name}
-                      onChange={(e) => handleVendorSelect(idx, e.target.value)}
+                      onChange={(e) => {
+                        const selectedOption = e.target.options[e.target.selectedIndex];
+                        const vendorId = selectedOption.getAttribute('data-id');
+                        handleVendorSelect(idx, e.target.value, vendorId ? Number(vendorId) : undefined);
+                      }}
                     >
                       <option value="">Select Vendor</option>
                       {adminVendors[selectedCategory]?.map((v) => (
-                        <option key={v.id} value={v.vendor_name}>
+                        <option key={v.id} value={v.vendor_name} data-id={v.id}>
                           {v.vendor_name}
                         </option>
                       ))}
