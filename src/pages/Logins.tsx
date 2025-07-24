@@ -705,7 +705,11 @@ export default function Logins() {
       if (response.ok && data?.status === "success") {
         toast.success("Vendor template saved successfully.");
         setShowAddVendorModal(false);
-        categories.forEach((category) => fetchVendors(category.id));
+        // categories.forEach((category) => fetchVendors(category.id));
+        categories.forEach((category) => {
+          fetchVendors(category.id);
+          fetchAdminVendors(category.id);
+        });
       } else {
         const errorMessage = data?.message || "Something went wrong.";
         const errorDetails = Array.isArray(data?.errors)
@@ -747,7 +751,13 @@ export default function Logins() {
       const data = await response.json();
       if (data.status === "success") {
         toast.success("Vendor deleted successfully");
-        categories.forEach((category) => fetchVendors(category.id));
+        // categories.forEach((category) => fetchVendors(category.id));
+
+        categories.forEach((category) => {
+          fetchVendors(category.id);
+          fetchAdminVendors(category.id);
+        });
+
       } else {
         toast.error(data.message || "Failed to delete vendor");
       }
@@ -1162,7 +1172,11 @@ export default function Logins() {
           onClose={() => setEditVendorId(null)}
           onUpdated={() => {
             setEditVendorId(null);
-            categories.forEach((category) => fetchVendors(category.id));
+            // Refresh both vendors list and admin vendors (dropdown data)
+            categories.forEach((category) => {
+              fetchVendors(category.id);
+              fetchAdminVendors(category.id);
+            });
           }}
         />
       )}
