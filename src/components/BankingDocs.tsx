@@ -76,13 +76,13 @@ const BankingDocs = ({ onFilesChange }) => {
 
   return (
     <div>
-      <label className="block text-xs font-medium text-white mb-2">
+      <label className="block text-xs font-medium text-gray-700 mb-2">
         Upload your Banking Documents
       </label>
 
       {/* Upload area */}
       <div
-        className="border border-dashed border-gray-500 p-4 text-center rounded-md cursor-pointer bg-gray-900 hover:bg-gray-800"
+        className="border border-dashed border-gray-300 p-4 text-center rounded-md cursor-pointer bg-gray-50 hover:bg-gray-100"
         onClick={() => document.getElementById("banking-docs-input").click()}
       >
         <input
@@ -100,8 +100,8 @@ const BankingDocs = ({ onFilesChange }) => {
             alt="Upload"
             className="mx-auto mb-1"
           />
-          <p className="text-sm font-semibold text-white">Browse</p>
-          <p className="text-xs text-gray-400">or drag & drop your files</p>
+          <p className="text-sm font-semibold text-gray-700">Browse</p>
+          <p className="text-xs text-gray-500">or drag & drop your files</p>
         </div>
       </div>
 
@@ -111,7 +111,7 @@ const BankingDocs = ({ onFilesChange }) => {
           {bankingDocs.map((doc, index) => (
             <div
               key={index}
-              className="flex items-center space-x-4 bg-gray-800 px-3 py-2 rounded-md"
+              className="flex items-center space-x-4 bg-gray-100 px-3 py-2 rounded-md"
             >
               {/* <img
                 src={doc.url}
@@ -134,8 +134,8 @@ const BankingDocs = ({ onFilesChange }) => {
               )}
 
               <div className="flex-1">
-                <p className="text-sm text-white">{doc.name}</p>
-                <p className="text-xs text-gray-400">{doc.size}</p>
+                <p className="text-sm text-gray-700">{doc.name}</p>
+                <p className="text-xs text-gray-500">{doc.size}</p>
               </div>
               <button
                 type="button"

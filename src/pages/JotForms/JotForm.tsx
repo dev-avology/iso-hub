@@ -80,6 +80,13 @@ interface FormData {
   business_products_sold: string;
   business_return_policy: string;
   terminal_other: string;
+
+  // New fields for shipping address
+  shipping_street_address: string;
+  shipping_street_address2: string;
+  shipping_city: string;
+  shipping_state: string;
+  shipping_zip: string;
 }
 
 // Put this outside your component
@@ -150,12 +157,19 @@ const blankFormData: FormData = {
   auto_settle_type: "auto",
   add_tips_to_account: "no",
   tip_amounts: [],
-  is_same_shipping_address: "0",
+  is_same_shipping_address: "1",
   business_website: "",
   business_legal_name: "",
   business_products_sold: "",
   business_return_policy: "",
   terminal_other: "",
+
+  // New fields for shipping address
+  shipping_street_address: "",
+  shipping_street_address2: "",
+  shipping_city: "",
+  shipping_state: "",
+  shipping_zip: "",
 };
 
 // Add this CSS at the top of the file
@@ -374,13 +388,16 @@ export default function JotForm() {
     }
 
      // ✅ Validate business_profile_business_type (must have at least one selected)
-    if (
-      !formData.tip_amounts ||
-      formData.tip_amounts.length === 0
-    ) {
-      toast.error("Please select at least one Tip Amount.");
-      return;
-    }
+
+     if(formData.add_tips_to_account === "yes"){
+       if (
+         !formData.tip_amounts ||
+         formData.tip_amounts.length === 0 
+       ) {
+         toast.error("Please select at least one Tip Amount.");
+         return;
+       }
+     }
 
     const signaturePad = signatureRef.current;
     const signatureData =
@@ -501,11 +518,11 @@ export default function JotForm() {
 
   if (isCheckingLink) {
     return (
-      <div className="min-h-screen bg-black flex flex-col items-center justify-center p-4">
+      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
         <Toaster position="top-right" />
-        <div className="bg-zinc-900 rounded-lg shadow-xl p-8 border border-yellow-400/20 text-center max-w-md w-full">
+        <div className="bg-white rounded-lg shadow-xl p-8 border border-yellow-400/20 text-center max-w-md w-full">
           <div className="w-8 h-8 border-2 border-yellow-400 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-400">Validating ISO Form link...</p>
+          <p className="text-gray-600">Validating ISO Form link...</p>
         </div>
       </div>
     );
@@ -513,14 +530,14 @@ export default function JotForm() {
 
   if (!isValidLink) {
     return (
-      <div className="min-h-screen bg-black flex flex-col items-center justify-center p-4">
+      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
         <Toaster position="top-right" />
-        <div className="bg-zinc-900 rounded-lg shadow-xl p-8 border border-yellow-400/20 text-center max-w-md w-full">
+        <div className="bg-white rounded-lg shadow-xl p-8 border border-yellow-400/20 text-center max-w-md w-full">
           <AlertCircle className="h-16 w-16 text-red-500 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-white mb-4">
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">
             Invalid ISO Form Link
           </h1>
-          <p className="text-gray-400 mb-6">
+          <p className="text-gray-600 mb-6">
             This ISO Form link is invalid or has expired. Please contact your
             administrator to request a new secure ISO Form link.
           </p>
@@ -530,7 +547,7 @@ export default function JotForm() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-950 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
       <style>{datePickerStyles}</style>
       <div className="max-w-3xl mx-auto">
         <div className="mb-8 bg-tracer-green rounded-lg p-6 shadow-lg">
@@ -552,8 +569,8 @@ export default function JotForm() {
 
           <input type="hidden" name="form_id" value={formId} />
           {/* BUSINESS PROFILE */}
-          <fieldset className="border border-gray-300 rounded-lg p-6">
-            <legend className="text-lg font-semibold text-gray-800 px-2 text-white">
+          <fieldset className="border border-gray-300 rounded-lg p-6 bg-white shadow-sm">
+            <legend className="text-lg font-semibold text-gray-800 px-2">
               BUSINESS PROFILE
               <span className="ml-2 text-sm text-red-400 font-normal">
                 (*Required)
@@ -561,7 +578,7 @@ export default function JotForm() {
             </legend>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-white">
+                <label className="block text-sm font-medium text-gray-700">
                   Doing Business As (DBA)
                 </label>
                 <input
@@ -582,7 +599,7 @@ export default function JotForm() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-white">
+                <label className="block text-sm font-medium text-gray-700">
                   Street Address
                 </label>
                 <input
@@ -605,13 +622,12 @@ export default function JotForm() {
                 )} */}
               </div>
               <div>
-                <label className="block text-sm font-medium text-white">
+                <label className="block text-sm font-medium text-gray-700">
                   Street Address Line 2
                 </label>
                 <input
                   type="text"
                   name="dba_street_address2"
-                  required
                   onChange={handleInputChange}
                   className={`mt-1 block w-full rounded-md shadow-sm ${
                     errors.dba_street_address2
@@ -627,7 +643,7 @@ export default function JotForm() {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-white">
+                  <label className="block text-sm font-medium text-gray-700">
                     City
                   </label>
                   <input
@@ -649,7 +665,7 @@ export default function JotForm() {
                   )} */}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-white">
+                  <label className="block text-sm font-medium text-gray-700">
                     State
                   </label>
                   <input
@@ -671,7 +687,7 @@ export default function JotForm() {
                   )} */}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-white">
+                  <label className="block text-sm font-medium text-gray-700">
                     ZIP
                   </label>
                   <input
@@ -685,15 +701,13 @@ export default function JotForm() {
                     }`}
                   />
                   {/* {errors.business_zip && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.business_zip[0]}
-                    </p>
+                    <p className="text-red-500 text-sm mt-1">{errors.business_zip[0]}</p>
                   )} */}
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-white mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Business Type
                 </label>
                 <div className="flex flex-wrap gap-4">
@@ -708,7 +722,7 @@ export default function JotForm() {
                   ].map(({ value, label }) => (
                     <label
                       key={value}
-                      className="inline-flex items-center text-white"
+                      className="inline-flex items-center text-gray-700"
                     >
                       <input
                         type="checkbox" 
@@ -732,7 +746,7 @@ export default function JotForm() {
                 </div>
                 {formData.business_profile_business_type.includes("Other") && (
                   <div className="mt-4">
-                    {/* <label className="block text-sm font-medium text-white">Other</label> */}
+                    {/* <label className="block text-sm font-medium text-gray-700">Other</label> */}
                     <input
                       type="text"
                       placeholder="Please type another option here"
@@ -749,11 +763,11 @@ export default function JotForm() {
               </div>
 
               <div className="flex flex-col gap-2">
-                <label className="block text-sm font-medium text-white mb-1">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
                   Shipping Address
                 </label>
 
-                <label className="inline-flex items-center text-white">
+                {/* <label className="inline-flex items-center text-gray-700">
                   <input
                     type="radio"
                     name="is_same_shipping_address"
@@ -764,14 +778,92 @@ export default function JotForm() {
                     className="mr-2 h-4 w-4 border-gray-300 text-tracer-green focus:ring-tracer-green"
                   />
                   Shipping Address is the Same
+                </label> */}
+
+
+                <label className="inline-flex items-center text-gray-700">
+                  <input
+                    type="checkbox"
+                    name="is_same_shipping_address"
+                    checked={formData.is_same_shipping_address === "1"}
+                    onChange={e => {
+                      setFormData(prev => ({
+                        ...prev,
+                        is_same_shipping_address: e.target.checked ? "1" : "0"
+                      }));
+                    }}
+                    className="mr-2 h-4 w-4 border-gray-300 text-tracer-green focus:ring-tracer-green"
+                  />
+                  Shipping Address is the Same
                 </label>
+
+
+                {formData.is_same_shipping_address === "0" && (
+                  <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4 bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <div className="md:col-span-3">
+                      <label className="block text-sm font-medium text-gray-700">Street Address</label>
+                      <input
+                        type="text"
+                        name="shipping_street_address"
+                        value={formData.shipping_street_address || ""}
+                        required
+                        onChange={handleInputChange}
+                        className={`mt-1 block w-full rounded-md shadow-sm ${errors.shipping_street_address ? "border-red-500" : "border-gray-300"}`}
+                      />
+                    </div>
+                    <div className="md:col-span-3">
+                      <label className="block text-sm font-medium text-gray-700">Street Address Line 2</label>
+                      <input
+                        type="text"
+                        name="shipping_street_address2"
+                        value={formData.shipping_street_address2 || ""}
+                        onChange={handleInputChange}
+                        className={`mt-1 block w-full rounded-md shadow-sm ${errors.shipping_street_address2 ? "border-red-500" : "border-gray-300"}`}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">City</label>
+                      <input
+                        type="text"
+                        name="shipping_city"
+                        required
+                        value={formData.shipping_city || ""}
+                        onChange={handleInputChange}
+                        className={`mt-1 block w-full rounded-md shadow-sm ${errors.shipping_city ? "border-red-500" : "border-gray-300"}`}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">State</label>
+                      <input
+                        type="text"
+                        name="shipping_state"
+                        required
+                        value={formData.shipping_state || ""}
+                        onChange={handleInputChange}
+                        className={`mt-1 block w-full rounded-md shadow-sm ${errors.shipping_state ? "border-red-500" : "border-gray-300"}`}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">ZIP</label>
+                      <input
+                        type="text"
+                        name="shipping_zip"
+                        required
+                        value={formData.shipping_zip || ""}
+                        onChange={handleInputChange}
+                        className={`mt-1 block w-full rounded-md shadow-sm ${errors.shipping_zip ? "border-red-500" : "border-gray-300"}`}
+                      />
+                    </div>
+                  </div>
+                )}
+
               </div>
             </div>
           </fieldset>
 
           {/* Corporate Contact */}
-          <fieldset className="border border-gray-300 rounded-lg p-6">
-            <legend className="text-lg font-semibold text-gray-800 px-2 text-white">
+          <fieldset className="border border-gray-300 rounded-lg p-6 bg-white shadow-sm">
+            <legend className="text-lg font-semibold text-gray-800 px-2">
               Corporate Contact Information
               <span className="ml-2 text-sm text-red-400 font-normal">
                 (*Required)
@@ -779,7 +871,7 @@ export default function JotForm() {
             </legend>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-white">
+                <label className="block text-sm font-medium text-gray-700">
                   Street Address
                 </label>
                 <input
@@ -800,7 +892,7 @@ export default function JotForm() {
                 )} */}
               </div>
               <div>
-                <label className="block text-sm font-medium text-white">
+                <label className="block text-sm font-medium text-gray-700">
                   Street Address Line 2
                 </label>
                 <input
@@ -824,7 +916,7 @@ export default function JotForm() {
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-white">
+                  <label className="block text-sm font-medium text-gray-700">
                     City
                   </label>
                   <input
@@ -845,7 +937,7 @@ export default function JotForm() {
                   )} */}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-white">
+                  <label className="block text-sm font-medium text-gray-700">
                     State
                   </label>
                   <input
@@ -866,7 +958,7 @@ export default function JotForm() {
                   )} */}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-white">
+                  <label className="block text-sm font-medium text-gray-700">
                     ZIP
                   </label>
                   <input
@@ -890,7 +982,7 @@ export default function JotForm() {
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-white">
+                  <label className="block text-sm font-medium text-gray-700">
                     Contact Name
                   </label>
                   <input
@@ -914,7 +1006,7 @@ export default function JotForm() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-white">
+                  <label className="block text-sm font-medium text-gray-700">
                     Contact Email
                   </label>
                   <input
@@ -938,7 +1030,7 @@ export default function JotForm() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-white">
+                  <label className="block text-sm font-medium text-gray-700">
                     Location Phone Number
                   </label>
                   <input
@@ -962,7 +1054,7 @@ export default function JotForm() {
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-white">
+                  <label className="block text-sm font-medium text-gray-700">
                     Date Business Started
                   </label>
                   <div className="relative">
@@ -971,14 +1063,14 @@ export default function JotForm() {
                       name="business_start_date"
                       required
                       onChange={handleInputChange}
-                      className="mt-1 block w-full rounded bg-gray-700 text-white border border-gray-600 focus:border-tracer-green focus:ring-tracer-green px-3 py-2"
+                      className="mt-1 block w-full rounded bg-white text-gray-700 border border-gray-300 focus:border-tracer-green focus:ring-tracer-green px-3 py-2"
                     />
                     <Calendar className="absolute right-3 top-2.5 h-5 w-5 text-gray-400 pointer-events-none" />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-white">
+                  <label className="block text-sm font-medium text-gray-700">
                     Business Website
                   </label>
                   <input
@@ -1001,7 +1093,7 @@ export default function JotForm() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-white">
+                  <label className="block text-sm font-medium text-gray-700">
                     Business Legal Name as appears on tax return
                   </label>
                   <input
@@ -1025,7 +1117,7 @@ export default function JotForm() {
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-white">
+                  <label className="block text-sm font-medium text-gray-700">
                     Federal Tax ID
                   </label>
                   <input
@@ -1048,7 +1140,7 @@ export default function JotForm() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-white">
+                  <label className="block text-sm font-medium text-gray-700">
                     Products Sold or Services Provided
                   </label>
                   <input
@@ -1072,7 +1164,7 @@ export default function JotForm() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-white">
+                  <label className="block text-sm font-medium text-gray-700">
                     Return Policy
                   </label>
                   <input
@@ -1099,8 +1191,8 @@ export default function JotForm() {
 
           {/* OWNERSHIP */}
 
-          <fieldset className="border border-gray-300 rounded-lg p-6">
-            <legend className="text-lg font-semibold text-gray-800 px-2 text-white">
+          <fieldset className="border border-gray-300 rounded-lg p-6 bg-white shadow-sm">
+            <legend className="text-lg font-semibold text-gray-800 px-2">
               Owner / Officer Information
               <span className="ml-2 text-sm text-red-400 font-normal">
                 (*Required)
@@ -1115,8 +1207,8 @@ export default function JotForm() {
 
           {/* BANKING INFORMATION */}
 
-          <fieldset className="border border-gray-300 rounded-lg p-6">
-            <legend className="text-lg font-semibold text-gray-800 px-2 text-white">
+          <fieldset className="border border-gray-300 rounded-lg p-6 bg-white shadow-sm">
+            <legend className="text-lg font-semibold text-gray-800 px-2">
               BANKING INFORMATION
               <span className="ml-2 text-sm text-red-400 font-normal">
                 (*Required)
@@ -1126,7 +1218,7 @@ export default function JotForm() {
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-white">
+                  <label className="block text-sm font-medium text-gray-700">
                     Bank Name
                   </label>
                   <input
@@ -1146,7 +1238,7 @@ export default function JotForm() {
                   )} */}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-white">
+                  <label className="block text-sm font-medium text-gray-700">
                     TransitABARouting Number
                   </label>
                   <input
@@ -1167,7 +1259,7 @@ export default function JotForm() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-white">
+                  <label className="block text-sm font-medium text-gray-700">
                     Deposit Account Number
                   </label>
                   <input
@@ -1191,8 +1283,8 @@ export default function JotForm() {
 
           {/* BUSINESS TYPE */}
 
-          <fieldset className="border border-gray-300 rounded-lg p-6">
-            <legend className="text-lg font-semibold text-white px-2">
+          <fieldset className="border border-gray-300 rounded-lg p-6 bg-white shadow-sm">
+            <legend className="text-lg font-semibold text-gray-800 px-2">
               BUSINESS TYPE
 
               <span className="ml-2 text-sm text-red-400 font-normal">
@@ -1203,7 +1295,7 @@ export default function JotForm() {
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-white mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Business Type
                 </label>
                 <div className="flex flex-wrap gap-4">
@@ -1216,7 +1308,7 @@ export default function JotForm() {
                   ].map(({ value, label }) => (
                     <label
                       key={value}
-                      className="inline-flex items-center text-white"
+                      className="inline-flex items-center text-gray-700"
                     >
                       <input
                         type="radio"
@@ -1260,8 +1352,8 @@ export default function JotForm() {
           </fieldset>
 
           {/* PROCESSING SERVICES */}
-          <fieldset className="border border-gray-300 rounded-lg p-6">
-            <legend className="text-lg font-semibold text-white px-2">
+          <fieldset className="border border-gray-300 rounded-lg p-6 bg-white shadow-sm">
+            <legend className="text-lg font-semibold text-gray-800 px-2">
               PROCESSING SERVICES
               <span className="ml-2 text-sm font-normal text-tracer-green">
                 (* Not required — leave blank if unsure)
@@ -1271,7 +1363,7 @@ export default function JotForm() {
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-white mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Processing Services
                   </label>
                   <div className="flex flex-wrap gap-4">
@@ -1297,7 +1389,7 @@ export default function JotForm() {
                     ].map(({ value, label }) => (
                       <label
                         key={value}
-                        className="inline-flex items-center text-white"
+                        className="inline-flex items-center text-gray-700"
                       >
                         <input
                           type="radio"
@@ -1324,8 +1416,8 @@ export default function JotForm() {
 
           {/* PROCESSING HARDWARE */}
 
-          <fieldset className="border border-gray-300 rounded-lg p-6">
-            <legend className="text-lg font-semibold text-gray-800 px-2 text-white">
+          <fieldset className="border border-gray-300 rounded-lg p-6 bg-white shadow-sm">
+            <legend className="text-lg font-semibold text-gray-800 px-2">
               PROCESSING HARDWARE
               <span className="ml-2 text-sm font-normal text-tracer-green">
                 (* Not required — leave blank if unsure)
@@ -1334,7 +1426,7 @@ export default function JotForm() {
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-white mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Terminal
                   </label>
                   <div className="flex flex-wrap gap-4">
@@ -1347,7 +1439,7 @@ export default function JotForm() {
                     ].map(({ value, label }) => (
                       <label
                         key={value}
-                        className="inline-flex items-center text-white"
+                        className="inline-flex items-center text-gray-700"
                       >
                         <input
                           type="radio"
@@ -1389,7 +1481,7 @@ export default function JotForm() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-white">
+                  <label className="block text-sm font-medium text-gray-700">
                     Terminal Type/Model
                   </label>
                   <input
@@ -1413,7 +1505,7 @@ export default function JotForm() {
 
               <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-white mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Mobile App
                   </label>
                   <div className="flex flex-wrap gap-4">
@@ -1423,7 +1515,7 @@ export default function JotForm() {
                     ].map(({ value, label }) => (
                       <label
                         key={value}
-                        className="inline-flex items-center text-white"
+                        className="inline-flex items-center text-gray-700"
                       >
                         <input
                           type="radio"
@@ -1447,7 +1539,7 @@ export default function JotForm() {
 
                 <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-white">
+                    <label className="block text-sm font-medium text-gray-700">
                       Mobile App Special Features (Optional)
                     </label>
                     <input
@@ -1468,7 +1560,7 @@ export default function JotForm() {
                     )} */}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-white">
+                    <label className="block text-sm font-medium text-gray-700">
                       Cardreader Type/Model
                     </label>
                     <input
@@ -1493,7 +1585,7 @@ export default function JotForm() {
 
               <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-white mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     POS (Point of Sale) System
                   </label>
                   <div className="flex flex-wrap gap-4">
@@ -1504,7 +1596,7 @@ export default function JotForm() {
                     ].map(({ value, label }) => (
                       <label
                         key={value}
-                        className="inline-flex items-center text-white"
+                        className="inline-flex items-center text-gray-700"
                       >
                         <input
                           type="radio"
@@ -1529,7 +1621,7 @@ export default function JotForm() {
 
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-white">
+                    <label className="block text-sm font-medium text-gray-700">
                       POS Special Features
                     </label>
                     <input
@@ -1550,7 +1642,7 @@ export default function JotForm() {
                     )} */}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-white">
+                    <label className="block text-sm font-medium text-gray-700">
                       System Type Model
                     </label>
                     <input
@@ -1571,7 +1663,7 @@ export default function JotForm() {
                     )} */}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-white">
+                    <label className="block text-sm font-medium text-gray-700">
                       Number of Stations
                     </label>
                     <input
@@ -1592,7 +1684,7 @@ export default function JotForm() {
                     )} */}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-white">
+                    <label className="block text-sm font-medium text-gray-700">
                       POS other items
                     </label>
                     <input
@@ -1617,7 +1709,7 @@ export default function JotForm() {
 
               <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-white mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Virtual Terminal
                   </label>
                   <div className="flex flex-wrap gap-4">
@@ -1641,7 +1733,7 @@ export default function JotForm() {
                     ].map(({ value, label }) => (
                       <label
                         key={value}
-                        className="inline-flex items-center text-white"
+                        className="inline-flex items-center text-gray-700"
                       >
                         <input
                           type="radio"
@@ -1666,7 +1758,7 @@ export default function JotForm() {
 
               <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-white mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Location Description
                   </label>
                   <div className="flex flex-wrap gap-4">
@@ -1694,7 +1786,7 @@ export default function JotForm() {
                     ].map(({ value, label }) => (
                       <label
                         key={value}
-                        className="inline-flex items-center text-white"
+                        className="inline-flex items-center text-gray-700"
                       >
                         <input
                           type="radio"
@@ -1722,19 +1814,20 @@ export default function JotForm() {
           </fieldset>
 
           {/* CREDIT CARD PROCESSING INFORMATION */}
-          <fieldset className="border border-gray-300 rounded-lg p-6">
-            <legend className="text-lg font-semibold text-gray-800 px-2 text-white">
+          <fieldset className="border border-gray-300 rounded-lg p-6 bg-white shadow-sm">
+            <legend className="text-lg font-semibold text-gray-800 px-2">
               Credit Card Processing Information
               <span className="ml-2 text-sm text-red-400 font-normal">
                 (*Required)
               </span>
             </legend>
+            <p className="text-xs text-gray-500 italic mt-2 mb-4">Use your best judgment and aim high - It's better to over estimate than under estimate.</p>
             <div className="space-y-6">
 
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-white">
+                  <label className="block text-sm font-medium text-gray-700">
                     Estimated Yearly VisaMastercardAMEXDiscover
                   </label>
                   <input
@@ -1755,7 +1848,7 @@ export default function JotForm() {
                   )} */}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-white">
+                  <label className="block text-sm font-medium text-gray-700">
                     Estimated Average Ticket
                   </label>
                   <input
@@ -1779,7 +1872,7 @@ export default function JotForm() {
 
 
               <div>
-                <label className="block text-sm font-medium text-white">
+                <label className="block text-sm font-medium text-gray-700">
                   Estimated Highest ticket you will process
                 </label>
                 <input
@@ -1792,36 +1885,36 @@ export default function JotForm() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-white mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Transaction Types
                 </label>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-xs text-white">
+                    <label className="block text-xs text-gray-700">
                       Card Present / Swiped
                     </label>
                     <div className="flex items-center gap-2">
                       <input
                         type="range"
                         required
-                        min="50"
+                        min="0"
                         max="100"
                         name="transaction_card_present"
                         value={formData.transaction_card_present}
                         onChange={handleInputChange}
                         className="w-full accent-green-400"
                       />
-                      <span className="text-white w-8 text-right">
+                      <span className="text-gray-700 w-8 text-right">
                         {formData.transaction_card_present || 0}%
                       </span>
                     </div>
                   </div>
                   <div>
-                    <label className="block text-xs text-white">Keyed In</label>
+                    <label className="block text-xs text-gray-700">Keyed In</label>
                     <div className="flex items-center gap-2">
                       <input
                         type="range"
-                        min="50"
+                        min="0"
                         required
                         max="100"
                         name="transaction_keyed_in"
@@ -1829,19 +1922,19 @@ export default function JotForm() {
                         onChange={handleInputChange}
                         className="w-full accent-green-400"
                       />
-                      <span className="text-white w-8 text-right">
+                      <span className="text-gray-700 w-8 text-right">
                         {formData.transaction_keyed_in || 0}%
                       </span>
                     </div>
                   </div>
                   <div>
-                    <label className="block text-xs text-white">
+                    <label className="block text-xs text-gray-700">
                       All Online
                     </label>
                     <div className="flex items-center gap-2">
                       <input
                         type="range"
-                        min="50"
+                        min="0"
                         max="100"
                         required
                         name="transaction_all_online"
@@ -1849,7 +1942,7 @@ export default function JotForm() {
                         onChange={handleInputChange}
                         className="w-full accent-green-400"
                       />
-                      <span className="text-white w-8 text-right">
+                      <span className="text-gray-700 w-8 text-right">
                         {formData.transaction_all_online || 0}%
                       </span>
                     </div>
@@ -1857,7 +1950,7 @@ export default function JotForm() {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-white mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Auto Settle / Batch time (Next day funding cutoff time is 8 pm
                   CST)
                 </label>
@@ -1870,61 +1963,57 @@ export default function JotForm() {
                   className="w-40 rounded-md border-gray-300"
                 />
               </div>
-              <div className="flex flex-col gap-2">
-                <label className="block text-sm font-medium text-white mb-1">
+              <div className="flex flex-col gap-1 mt-2 mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
                   I do not need Auto Settle
                 </label>
-                <label className="inline-flex items-center text-white">
+                <div className="flex items-center gap-2">
                   <input
-                    type="radio"
+                    type="checkbox"
+                    id="auto_settle_type"
                     name="auto_settle_type"
-                    value="manual"
-                    required
-                    checked={formData.auto_settle_type === "manual"}
-                    onChange={handleInputChange}
-                    className="mr-2 h-4 w-4 border-gray-300 text-tracer-green focus:ring-tracer-green"
-                  />
-                  I will Settle / Batch myself
-                </label>
-                {/* <label className="inline-flex items-center text-white">
-                  <input
-                    type="radio"
-                    name="auto_settle_type"
-                    value="auto"
                     checked={formData.auto_settle_type === "auto"}
-                    onChange={handleInputChange}
-                    className="mr-2"
+                    onChange={e => setFormData(prev => ({
+                      ...prev,
+                      auto_settle_type: e.target.checked ? "auto" : "manual"
+                    }))}
+                    className="h-4 w-4 border-gray-300 text-tracer-green focus:ring-tracer-green"
                   />
-                  Auto Settle
-                </label> */}
+                  <label htmlFor="auto_settle_type" className="text-sm text-gray-700 select-none">
+                    I will Settle / Batch myself
+                  </label>
+                </div>
               </div>
-              <div className="flex flex-col gap-2">
-                <label className="block text-sm font-medium text-white mb-1">
+              <div className="flex flex-col gap-1 mt-2 mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
                   Add Tips to my account
                 </label>
-
-                <label className="inline-flex items-center text-white">
+                <div className="flex items-center gap-2">
                   <input
-                    type="radio"
+                    type="checkbox"
+                    id="add_tips_to_account"
                     name="add_tips_to_account"
-                    value="yes"
-                    required
                     checked={formData.add_tips_to_account === "yes"}
-                    onChange={handleInputChange}
-                    className="mr-2 h-4 w-4 border-gray-300 text-tracer-green focus:ring-tracer-green"
+                    onChange={e => setFormData(prev => ({
+                      ...prev,
+                      add_tips_to_account: e.target.checked ? "yes" : "no"
+                    }))}
+                    className="h-4 w-4 border-gray-300 text-tracer-green focus:ring-tracer-green"
                   />
-                  I would like to have the tip function added to my account
-                </label>
+                  <label htmlFor="add_tips_to_account" className="text-sm text-gray-700 select-none">
+                    I would like to have the tip function added to my account
+                  </label>
+                </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-white mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Select Tip Amounts to be added to the receipts
                 </label>
                 <div className="flex flex-col gap-2">
                   {["15%", "18%", "20%", "25%"].map((tip) => (
                     <label
                       key={tip}
-                      className="inline-flex items-center text-white"
+                      className="inline-flex items-center text-gray-700"
                     >
                       <input
                         type="checkbox"
@@ -1942,8 +2031,8 @@ export default function JotForm() {
             </div>
           </fieldset>
 
-          <fieldset className="border border-gray-300 rounded-lg p-6">
-            <legend className="text-lg font-semibold text-gray-800 px-2 text-white">
+          <fieldset className="border border-gray-300 rounded-lg p-6 bg-white shadow-sm">
+            <legend className="text-lg font-semibold text-gray-800 px-2">
               Signature
               <span className="ml-2 text-sm text-red-400 font-normal">
                 (*Required)
@@ -1953,7 +2042,7 @@ export default function JotForm() {
               <div>
                 <label
                   htmlFor="signature_date"
-                  className="block text-sm font-medium text-gray-300"
+                  className="block text-sm font-medium text-gray-700"
                 >
                   Date
                 </label>
@@ -1965,7 +2054,7 @@ export default function JotForm() {
                     name="signature_date"
                     value={formData.signature_date}
                     onChange={handleInputChange}
-                    className="mt-1 block w-full rounded bg-gray-700 text-white border border-gray-600 focus:border-tracer-green focus:ring-tracer-green px-3 py-2"
+                    className="mt-1 block w-full rounded border-gray-300 focus:border-tracer-green focus:ring-tracer-green px-3 py-2"
                   />
                   <Calendar className="absolute right-3 top-2.5 h-5 w-5 text-gray-400 pointer-events-none" />
                 </div>
@@ -1977,10 +2066,10 @@ export default function JotForm() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Signature
                 </label>
-                <div className="border border-gray-600 rounded bg-gray-700 p-2">
+                <div className="border border-gray-300 rounded p-2">
                   <SignaturePad
                     ref={signatureRef}
                     canvasProps={{
@@ -1991,7 +2080,7 @@ export default function JotForm() {
                 <button
                   type="button"
                   onClick={clearSignature}
-                  className="mt-2 px-4 py-2 text-sm text-gray-300 hover:text-white"
+                  className="mt-2 px-4 py-2 text-sm text-gray-700 hover:text-gray-900"
                 >
                   Clear Signature
                 </button>

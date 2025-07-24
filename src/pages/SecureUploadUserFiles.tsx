@@ -122,11 +122,11 @@ const SecureUploadUserFiles: React.FC = () => {
     try {
       setIsUploading(true);
       const formData = new FormData();
-      formData.append('unique_string', user_new_data);
+      formData.append('unique_string', user_new_data || '');
       
       if (signatureType === "e-signature") {
         formData.append('signature_date', signatureDate);
-        formData.append('signature', signaturePad.toDataURL());
+        formData.append('signature', signaturePad && !signaturePad.isEmpty() ? signaturePad.toDataURL() : '');
       } else {
         formData.append('signature_date', '');
         formData.append('signature', '');
@@ -174,11 +174,11 @@ const SecureUploadUserFiles: React.FC = () => {
 
   if (isCheckingLink) {
     return (
-      <div className="min-h-screen bg-black flex flex-col items-center justify-center p-4">
+      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
         <Toaster position="top-right" />
-        <div className="bg-zinc-900 rounded-lg shadow-xl p-8 border border-yellow-400/20 text-center max-w-md w-full">
-          <div className="w-8 h-8 border-2 border-yellow-400 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-400">
+        <div className="bg-white rounded-lg shadow-xl p-8 border border-gray-200 text-center max-w-md w-full">
+          <div className="w-8 h-8 border-2 border-tracer-green border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">
             Validating upload link...
           </p>
         </div>
@@ -188,17 +188,17 @@ const SecureUploadUserFiles: React.FC = () => {
 
   if (!isValidLink) {
     return (
-      <div className="min-h-screen bg-black flex flex-col items-center justify-center p-4">
+      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
         <Toaster position="top-right" />
-        <div className="bg-zinc-900 rounded-lg shadow-xl p-8 border border-yellow-400/20 text-center max-w-md w-full">
+        <div className="bg-white rounded-lg shadow-xl p-8 border border-gray-200 text-center max-w-md w-full">
           <AlertCircle className="h-16 w-16 text-red-500 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-white mb-4">
+          <h1 className="text-2xl font-bold text-gray-800 mb-4">
             Invalid Upload Link
           </h1>
-          <p className="text-gray-400 mb-6">
+          <p className="text-gray-600 mb-6">
             This upload link is invalid or has expired. Please contact your administrator to request a new secure upload link.
           </p>
-          <div className="flex items-center justify-center gap-2 text-yellow-400/60 text-sm">
+          <div className="flex items-center justify-center gap-2 text-tracer-green/60 text-sm">
             <Shield className="w-4 h-4" />
             <span>Secure Document Exchange</span>
           </div>
@@ -208,18 +208,19 @@ const SecureUploadUserFiles: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black flex flex-col">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       <Toaster position="top-right" />
       {/* Header */}
-      <header className="bg-zinc-900 border-b border-yellow-400/20 py-4">
+      <header className="bg-white border-b border-gray-200 py-4">
         <div className="max-w-7xl mx-auto px-4 flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <Shield className="h-8 w-8 text-yellow-400" />
-            <div className="text-xl font-bold text-white tracking-tight">
-              ISO<span className="text-yellow-400">Hub</span>
+            {/* <Shield className="h-8 w-8 text-tracer-green" /> */}
+            <div className="text-xl font-bold text-gray-800 tracking-tight">
+              {/* ISO<span className="text-tracer-green">Hub</span> */}
+              <img src="/ISOHubLOGO.png" alt="" style={{ maxWidth: "13%" }} />
             </div>
           </div>
-          <div className="text-sm text-yellow-400/60">
+          <div className="text-sm text-tracer-green/60 whitespace-nowrap pr-2">
             Secure Document Exchange
           </div>
         </div>
@@ -228,41 +229,41 @@ const SecureUploadUserFiles: React.FC = () => {
       {/* Main Content */}
       <main className="flex-1 py-12">
         <div className="max-w-3xl mx-auto px-4">
-          <div className="bg-zinc-900 rounded-lg shadow-xl p-8 border border-yellow-400/20">
+          <div className="bg-white rounded-lg shadow-xl p-8 border border-gray-200">
             <div className="text-center mb-8">
-              <h1 className="text-2xl font-bold text-white mb-4">
+              <h1 className="text-2xl font-bold text-gray-800 mb-4">
                 Upload Your Documents
               </h1>
-              <p className="text-gray-400 mb-6">
+              <p className="text-gray-600 mb-6">
                 Your documents will be securely transferred and automatically deleted after 180 days.
               </p>
             </div>
 
             {/* Security Features */}
             <div className="space-y-4 mb-8">
-              <div className="flex items-center gap-3 text-gray-300">
-                <Shield className="w-5 h-5 text-yellow-400" />
+              <div className="flex items-center gap-3 text-gray-700">
+                <Shield className="w-5 h-5 text-tracer-green" />
                 <span>End-to-end encrypted file transfer</span>
               </div>
-              <div className="flex items-center gap-3 text-gray-300">
-                <Clock className="w-5 h-5 text-yellow-400" />
+              <div className="flex items-center gap-3 text-gray-700">
+                <Clock className="w-5 h-5 text-tracer-green" />
                 <span>Files automatically deleted after 180 days</span>
               </div>
             </div>
 
             {/* Upload Area */}
             <div
-              className="border-2 border-dashed border-yellow-400/20 rounded-lg p-8 text-center mb-6"
+              className="border-2 border-dashed border-tracer-green/40 rounded-lg p-8 text-center mb-6 bg-gray-50"
               onDragOver={handleDragOver}
               onDrop={handleDrop}
             >
-              <FileIcon className="h-12 w-12 text-yellow-400 mx-auto mb-4" />
-              <p className="text-gray-400 mb-4">
+              <FileIcon className="h-12 w-12 text-tracer-green mx-auto mb-4" />
+              <p className="text-gray-600 mb-4">
                 Drag and drop your files here, or click to select files
               </p>
               <button
                 onClick={handleBrowseClick}
-                className="bg-tracer-green rounded py-2 px-6 font-semibold text-white hover:bg-tracer-green/90 transition-colors"
+                className="bg-tracer-green/90 rounded py-2 px-6 font-semibold text-white hover:bg-tracer-green transition-colors"
               >
                 Select Files
               </button>
@@ -279,47 +280,47 @@ const SecureUploadUserFiles: React.FC = () => {
             {/* Selected Files */}
             {uploadedFiles.length > 0 && (
               <div className="mb-6">
-                <h2 className="text-lg font-semibold text-white mb-4">Selected Files</h2>
+                <h2 className="text-lg font-semibold text-gray-800 mb-4">Selected Files</h2>
                 <div className="space-y-2 relative">
                   {uploadedFiles.map((file, idx) => {
-                    const ext = file.name.split('.').pop()?.toLowerCase() || '';
+                    const ext = file.name.split('.')?.pop()?.toLowerCase() || '';
                     const isImage = imageTypes.includes(ext);
                     return (
                       <div
                         key={idx}
-                        className="flex items-center justify-between bg-zinc-800 rounded p-3 relative"
+                        className="flex items-center justify-between bg-gray-100 rounded p-3 relative"
                         onMouseEnter={() => setHoveredFileIdx(idx)}
                         onMouseLeave={() => setHoveredFileIdx(null)}
                       >
                         <div className="flex items-center gap-3">
-                          <FileIcon className="w-5 h-5 text-yellow-400" />
-                          <span className="text-white">{file.name}</span>
+                          <FileIcon className="w-5 h-5 text-tracer-green" />
+                          <span className="text-gray-800">{file.name}</span>
                         </div>
                         <div className="flex items-center gap-4">
-                          <span className="text-sm text-gray-400">
+                          <span className="text-sm text-gray-600">
                             {formatFileSize(file.size)}
                           </span>
                           <button
                             onClick={() => handleRemoveFile(idx)}
-                            className="text-gray-400 hover:text-red-500"
+                            className="text-gray-500 hover:text-red-500"
                           >
                             Remove
                           </button>
                         </div>
                         {/* Preview Popup */}
                         {hoveredFileIdx === idx && (
-                          <div className="absolute left-0 top-full mt-2 z-50 bg-zinc-900 border border-yellow-400/40 rounded shadow-lg p-2 min-w-[120px] max-w-[220px] flex flex-col items-center">
+                          <div className="absolute left-0 top-full mt-2 z-50 bg-white border border-tracer-green/40 rounded shadow-lg p-2 min-w-[120px] max-w-[220px] flex flex-col items-center">
                             {isImage ? (
                               <img
                                 src={URL.createObjectURL(file)}
                                 alt={file.name}
-                                className="max-w-[200px] max-h-[160px] rounded shadow border border-zinc-700"
+                                className="max-w-[200px] max-h-[160px] rounded shadow border border-gray-200"
                                 style={{ objectFit: 'contain' }}
                               />
                             ) : (
                               <div className="flex flex-col items-center justify-center py-4">
-                                <FileIcon className="w-10 h-10 text-yellow-400 mb-2" />
-                                <span className="text-xs text-gray-400">Preview not available</span>
+                                <FileIcon className="w-10 h-10 text-tracer-green mb-2" />
+                                <span className="text-xs text-gray-500">Preview not available</span>
                               </div>
                             )}
                           </div>
@@ -409,11 +410,11 @@ const SecureUploadUserFiles: React.FC = () => {
               <button
                 onClick={handleUpload}
                 disabled={isUploading}
-                className="w-full bg-tracer-green rounded py-2.5 font-semibold text-white hover:bg-tracer-green/90 disabled:opacity-50 flex items-center justify-center gap-2 text-sm"
+                className="w-full bg-tracer-green/90 rounded py-2.5 font-semibold text-white hover:bg-tracer-green disabled:opacity-50 flex items-center justify-center gap-2 text-sm"
               >
                 {isUploading ? (
                   <>
-                    <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                    <div className="w-4 h-4 border-2 border-tracer-green border-t-transparent rounded-full animate-spin" />
                     <span>Uploading...</span>
                   </>
                 ) : (

@@ -129,7 +129,7 @@ export default function TopNav({
   };
 
   return (
-    <header className="bg-zinc-900 border-b border-tracer-green/20">
+    <header className="bg-white border-b border-gray-200">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex">
@@ -140,9 +140,9 @@ export default function TopNav({
                   href={item.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center px-4 py-2 border-b-2 border-transparent hover:border-tracer-green text-sm font-medium text-gray-300 hover:text-tracer-green relative group"
+                  className="inline-flex items-center px-4 py-2 border-b-2 border-transparent hover:border-tracer-green text-sm font-medium text-gray-600 hover:text-tracer-green relative group"
                 >
-                  <item.icon className="h-5 w-5 mr-2 text-gray-400 group-hover:text-tracer-green" />
+                  <item.icon className="h-5 w-5 mr-2 text-gray-600 group-hover:text-tracer-green" />
                   {item.name}
                 </a>
               ) : (
@@ -152,9 +152,9 @@ export default function TopNav({
                   className={`inline-flex items-center px-4 py-2 mx-1 border-b-2 text-sm font-medium relative group transition-all
                     ${isActive(item.href)
                       ? 'border-tracer-green text-tracer-green'
-                      : 'border-transparent text-gray-300 hover:border-tracer-green hover:text-tracer-green'}`}
+                      : 'border-transparent text-gray-600 hover:border-tracer-green hover:text-tracer-green'}`}
                 >
-                  <item.icon className={`h-5 w-5 mr-2 ${isActive(item.href) ? 'text-tracer-green' : 'text-gray-400 group-hover:text-tracer-green'}`} />
+                  <item.icon className={`h-5 w-5 mr-2 ${isActive(item.href) ? 'text-tracer-green' : 'text-gray-600 group-hover:text-tracer-green'}`} />
                   {item.name}
                 </Link>
               )
@@ -163,7 +163,7 @@ export default function TopNav({
           <div className="flex items-center gap-4">
             <button
               onClick={updateNotificationCount}
-              className="p-2 rounded-full bg-zinc-800 hover:bg-zinc-700 border border-tracer-green/20"
+              className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 border border-gray-200"
             >
               <span className="sr-only">View notifications</span>
               <div className="relative">
@@ -172,7 +172,7 @@ export default function TopNav({
                     {userNotificationCount}
                   </div>
                 )}
-                <svg className="h-6 w-6 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -185,7 +185,7 @@ export default function TopNav({
 
             <button
               onClick={handleLogout}
-              className="p-2 rounded-full bg-zinc-800 hover:bg-zinc-700 border border-tracer-green/20 text-white hover:text-tracer-green transition-colors"
+              className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 border border-gray-200 text-gray-600 hover:text-tracer-green transition-colors"
             >
               <div className="relative">
                 <LogOut className='w-[20px] h-[20px]' />

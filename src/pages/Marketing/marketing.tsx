@@ -267,7 +267,7 @@ export default function Marketing() {
     <>
       <div className="relative">
         {/* Blur overlay and Coming Soon watermark - fixed to main content area only */}
-        <div className="fixed top-16 left-[16rem] w-[calc(100vw-16rem)] h-full bg-black/10 backdrop-blur-[2px] z-50 flex items-center justify-center pointer-events-none">
+        <div className="fixed top-16 left-[16rem] w-[calc(100vw-16rem)] h-full bg-white/10 backdrop-blur-[2px] z-50 flex items-center justify-center pointer-events-none">
           <div className="text-4xl font-bold text-tracer-green transform -rotate-12">
             Coming Soon
           </div>
@@ -298,17 +298,17 @@ export default function Marketing() {
         </div>
 
         {loading ? (
-          <p className="text-white mt-4 text-center text-sm">Loading...</p>
+          <p className="text-gray-700 mt-4 text-center text-sm">Loading...</p>
         ) : categories.length === 0 ? (
           <div className="flex justify-center items-center mt-8">
-            <p className="text-white text-center text-sm">No marketing categories found.</p>
+            <p className="text-gray-700 text-center text-sm">No marketing categories found.</p>
           </div>
         ) : (
           categories.map((category) => (
             <div key={category.id} className="markiting-wrap mt-8">
               <div className="marketing-heading flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <h3 className="text-white text-base font-semibold">{category.name}</h3>
+                  <h3 className="text-gray-800 text-base font-semibold">{category.name}</h3>
                   <button
                     onClick={() => confirmAndDeleteCat(category.id, category.name)}
                     className="text-red-500 hover:text-red-700"
@@ -318,7 +318,7 @@ export default function Marketing() {
 
                   <button
                     onClick={() => handleEditCatClick(category.id)}
-                    className="text-white hover:text-gray-300"
+                    className="text-gray-600 hover:text-gray-800"
                   >
                     <Edit className="w-4 h-4" />
                   </button>
@@ -338,9 +338,9 @@ export default function Marketing() {
               </div>
               {category.items.map((item, index) => (
                 <div key={index} className="markiting-list-wrap">
-                  <div className="markiting-list group px-4 py-3 rounded border border-gray-700 mt-3 bg-gray-700 cursor-pointer relative text-white">
+                  <div className="markiting-list group px-4 py-3 rounded border border-gray-200 mt-3 bg-gray-50 cursor-pointer relative text-gray-800">
                     <h4 className="font-medium text-sm">{item.title}</h4>
-                    <p className="text-xs text-gray-300 mt-0.5">
+                    <p className="text-xs text-gray-600 mt-0.5">
                       {item.description}
                     </p>
                     <div className="edit-delete-btn absolute right-4 top-3 hidden group-hover:block">
@@ -527,13 +527,13 @@ export default function Marketing() {
       {/* Delete Confirmation Modal */}
       {showDeleteModal && selectedRep && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-zinc-900 p-8 rounded-lg w-full max-w-md relative">
+          <div className="bg-white p-8 rounded-lg w-full max-w-md relative">
             <button
               onClick={() => {
                 setShowDeleteModal(false);
                 setSelectedRep(null);
               }}
-              className="absolute top-4 right-4 text-gray-400 hover:text-white"
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
             >
               <X className="w-6 h-6" />
             </button>
@@ -543,11 +543,11 @@ export default function Marketing() {
                 <Trash2 className="h-6 w-6 text-red-600" />
               </div>
 
-              <h3 className="text-2xl font-bold text-white mb-2">
+              <h3 className="text-2xl font-bold text-gray-800 mb-2">
                 Delete {deleteType === "category" ? "Category" : "Item"}
               </h3>
 
-              <p className="text-gray-300 mb-6">
+              <p className="text-gray-600 mb-6">
                 Are you sure you want to delete <span className="font-semibold">{selectedRep.name}</span>?
                 This action cannot be undone.
               </p>
@@ -558,7 +558,7 @@ export default function Marketing() {
                     setShowDeleteModal(false);
                     setSelectedRep(null);
                   }}
-                  className="px-4 py-2 rounded bg-gray-700 text-white hover:bg-gray-600 transition duration-200"
+                  className="px-4 py-2 rounded bg-gray-200 text-gray-800 hover:bg-gray-300 transition duration-200"
                 >
                   Cancel
                 </button>

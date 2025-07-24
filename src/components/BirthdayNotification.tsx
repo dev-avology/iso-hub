@@ -73,10 +73,10 @@ export default function BirthdayNotification({ isOpen, onClose }: BirthdayNotifi
     <>
     <Toaster position="top-right" reverseOrder={false} />
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-zinc-900 p-8 rounded-lg w-full max-w-2xl relative">
+      <div className="bg-white p-8 rounded-lg w-full max-w-2xl relative shadow-xl">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
         >
           <X className="w-6 h-6" />
         </button>
@@ -86,36 +86,36 @@ export default function BirthdayNotification({ isOpen, onClose }: BirthdayNotifi
             <Gift className="w-8 h-8 text-tracer-green" />
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-white">Birthday Notification</h2>
-            <p className="text-gray-400 text-sm">Send birthday wishes to all users</p>
+            <h2 className="text-2xl font-bold text-gray-800">Birthday Notification</h2>
+            <p className="text-gray-600 text-sm">Send birthday wishes to all users</p>
           </div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-gray-300 mb-3 text-lg font-medium">
+            <label className="block text-gray-700 mb-3 text-lg font-medium">
               Birthday Message
             </label>
             <textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               placeholder="Enter your birthday message here... (e.g., Hello all, today is Mac trets birthday. Let's celebrate all!)"
-              className="w-full h-32 px-4 py-3 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500 resize-none"
+              className="w-full h-32 px-4 py-3 rounded-lg bg-white border border-gray-300 text-gray-800 focus:outline-none focus:ring-2 focus:ring-tracer-green focus:border-tracer-green resize-none"
               required
             />
-            <p className="text-gray-400 text-sm mt-2">
+            <p className="text-gray-600 text-sm mt-2">
               This message will be sent to all users via email notification.
             </p>
           </div>
 
-          {/* <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4">
+          {/* <div className="bg-tracer-green/10 border border-tracer-green/20 rounded-lg p-4">
             <div className="flex items-start gap-3">
-              <div className="p-2 bg-yellow-500/20 rounded-full">
-                <Send className="w-4 h-4 text-yellow-400" />
+              <div className="p-2 bg-tracer-green/20 rounded-full">
+                <Send className="w-4 h-4 text-tracer-green" />
               </div>
               <div>
-                <h4 className="text-yellow-400 font-medium mb-1">Notification Preview</h4>
-                <p className="text-gray-300 text-sm">
+                <h4 className="text-tracer-green font-medium mb-1">Notification Preview</h4>
+                <p className="text-gray-600 text-sm">
                   {message || "Your birthday message will appear here..."}
                 </p>
               </div>
@@ -129,14 +129,14 @@ export default function BirthdayNotification({ isOpen, onClose }: BirthdayNotifi
                 setMessage("");
                 onClose();
               }}
-              className="flex-1 px-6 py-3 rounded-lg bg-gray-700 text-white hover:bg-gray-600 transition-colors font-medium"
+              className="flex-1 px-6 py-3 rounded-lg bg-gray-200 text-gray-800 hover:bg-gray-300 transition-colors font-medium"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting || !message.trim()}
-              className="flex-1 px-6 py-3 rounded-lg bg-tracer-green hover:bg-tracer-green/90 disabled:bg-tracer-green/70 disabled:cursor-not-allowed text-white font-medium transition-colors flex items-center justify-center gap-2"
+              className="flex-1 px-6 py-3 rounded-lg bg-tracer-green hover:bg-tracer-blue disabled:bg-tracer-green/70 disabled:cursor-not-allowed text-white font-medium transition-colors flex items-center justify-center gap-2"
             >
               {isSubmitting ? (
                 <>

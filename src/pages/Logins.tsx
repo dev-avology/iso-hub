@@ -80,8 +80,8 @@ interface VendorLoginModalProps {
 
 function VendorLoginModal({ vendor, onClose }: VendorLoginModalProps) {
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-zinc-900 p-6 rounded-xl w-full max-w-md relative shadow-2xl border border-tracer-blue/30">
+    <div className="fixed inset-0 bg-white bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white p-6 rounded-xl w-full max-w-md relative shadow-2xl border border-gray-300">
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-400 hover:text-tracer-green transition-colors"
@@ -109,7 +109,7 @@ function VendorLoginModal({ vendor, onClose }: VendorLoginModalProps) {
               />
             )
           ) : (
-            <div className="w-14 h-14 bg-zinc-800 rounded-full flex items-center justify-center border-2 border-tracer-green">
+            <div className="w-14 h-14 bg-gray-200 rounded-full flex items-center justify-center border-2 border-tracer-green">
               <span className="text-2xl font-bold text-tracer-green">
                 {vendor.vendor_name.charAt(0)}
               </span>
@@ -119,7 +119,7 @@ function VendorLoginModal({ vendor, onClose }: VendorLoginModalProps) {
           {/* Vendor Name */}
           <div className="flex-1 text-center">
             <h2 className="text-2xl font-extrabold text-tracer-green drop-shadow mb-1">{vendor.vendor_name}</h2>
-            <p className="text-gray-400 text-xs tracking-wide">Vendor Portal</p>
+            <p className="text-gray-700 text-xs tracking-wide">Vendor Portal</p>
           </div>
 
           {/* External Link */}
@@ -127,7 +127,7 @@ function VendorLoginModal({ vendor, onClose }: VendorLoginModalProps) {
             href={vendor.login_url}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-green-500 hover:text-green-700 transition-colors bg-zinc-800 p-2 rounded-full border border-green-500 shadow"
+            className="text-green-500 hover:text-green-700 transition-colors bg-gray-100 p-2 rounded-full border border-green-500 shadow"
             title="Open Login URL"
           >
             <ExternalLink className="h-6 w-6" />
@@ -137,57 +137,56 @@ function VendorLoginModal({ vendor, onClose }: VendorLoginModalProps) {
         {/* Vendor Information Section */}
         <div className="space-y-2 mb-4">
           {vendor.vendor_email && (
-            <div className="flex items-center bg-zinc-800/70 rounded px-3 py-2 text-sm">
+            <div className="flex items-center bg-gray-100 rounded px-3 py-2 text-sm">
               <span className="font-semibold text-tracer-green w-28">Email:</span>
-              <span className="text-gray-200">{vendor.vendor_email}</span>
+              <span className="text-gray-800">{vendor.vendor_email}</span>
             </div>
           )}
           {vendor.vendor_phone && (
-            <div className="flex items-center bg-zinc-800/70 rounded px-3 py-2 text-sm">
+            <div className="flex items-center bg-gray-100 rounded px-3 py-2 text-sm">
               <span className="font-semibold text-tracer-green w-28">Phone:</span>
-              <span className="text-gray-200">{vendor.vendor_phone}</span>
+              <span className="text-gray-800">{vendor.vendor_phone}</span>
             </div>
           )}
           {vendor.rep_name && (
-            <div className="flex items-center bg-zinc-800/70 rounded px-3 py-2 text-sm">
+            <div className="flex items-center bg-gray-100 rounded px-3 py-2 text-sm">
               <span className="font-semibold text-tracer-green w-28">Contact Name:</span>
-              <span className="text-gray-200">{vendor.rep_name}</span>
+              <span className="text-gray-800">{vendor.rep_name}</span>
             </div>
           )}
 
-
           {vendor.rep_email && (
-            <div className="flex items-center bg-zinc-800/70 rounded px-3 py-2 text-sm">
+            <div className="flex items-center bg-gray-100 rounded px-3 py-2 text-sm">
               <span className="font-semibold text-tracer-green w-28">Contact Email:</span>
-              <span className="text-gray-200">{vendor.rep_email}</span>
+              <span className="text-gray-800">{vendor.rep_email}</span>
             </div>
           )}
 
           {vendor.support_info && (
-            <div className="flex items-center bg-zinc-800/70 rounded px-3 py-2 text-sm">
+            <div className="flex items-center bg-gray-100 rounded px-3 py-2 text-sm">
               <span className="font-semibold text-tracer-green w-28">Support:</span>
-              <span className="text-gray-200">{vendor.support_info}</span>
+              <span className="text-gray-800">{vendor.support_info}</span>
             </div>
           )}
 
           {vendor.rep_phone && (
-            <div className="flex items-center bg-zinc-800/70 rounded px-3 py-2 text-sm">
+            <div className="flex items-center bg-gray-100 rounded px-3 py-2 text-sm">
               <span className="font-semibold text-tracer-green w-28">Rep Phone:</span>
-              <span className="text-gray-200">{vendor.rep_phone}</span>
+              <span className="text-gray-800">{vendor.rep_phone}</span>
             </div>
           )}
 
           {vendor.notes && (
-            <div className="flex items-center bg-zinc-800/70 rounded px-3 py-2 text-sm">
+            <div className="flex items-center bg-gray-100 rounded px-3 py-2 text-sm">
               <span className="font-semibold text-tracer-green w-28">Notes:</span>
-              <span className="text-gray-200">{vendor.notes}</span>
+              <span className="text-gray-800">{vendor.notes}</span>
             </div>
           )}
         </div>
 
         <div className="bg-tracer-green/10 rounded-lg p-4 mt-4">
           <h3 className="text-lg font-semibold text-tracer-green mb-2 text-center">Important Information</h3>
-          <ul className="text-gray-200 space-y-1 text-sm text-center">
+          <ul className="text-gray-700 space-y-1 text-sm text-center">
             <li>• Make sure you have your login credentials ready</li>
             <li>• Keep your session secure and don't share your access</li>
             <li>• Contact support if you need assistance</li>
@@ -351,6 +350,8 @@ export default function Logins() {
     categories.push({ id: "internal", name: "Internal", icon: Shield });
   }
 
+  console.log('adminVendors',adminVendors)
+
   // Add remaining item
   categories.push({ id: "processors", name: "Processors", icon: CreditCard });
 
@@ -452,6 +453,7 @@ export default function Logins() {
         }
       );
       const responseData = await response.json();
+      console.log('responseData from admin',responseData)
       if (responseData.status === "success") {
         setAdminVendors((prev) => ({
           ...prev,
@@ -465,14 +467,20 @@ export default function Logins() {
 
   const fetchVendorTemplate = async (
     vendorName: string,
-    vendorType: string
+    vendorType: string,
+    vendorId?: number
   ) => {
     try {
-      const showVendorTemplateData = {
+      const showVendorTemplateData: any = {
         vendor_name: vendorName,
         vendor_type: vendorType,
         user_id: 2,
       };
+      if (vendorId) {
+        showVendorTemplateData.vendor_id = vendorId;
+      }
+
+      console.log('showVendorTemplateData',showVendorTemplateData);
 
       const accessToken = localStorage.getItem("auth_token");
       if (!accessToken) {
@@ -590,7 +598,7 @@ export default function Logins() {
     setVendorCards((cards) => cards.filter((_, i) => i !== idx));
   };
 
-  const handleVendorSelect = async (idx: number, vendorName: string) => {
+  const handleVendorSelect = async (idx: number, vendorName: string, vendorId?: number) => {
     if (vendorName === "Other") {
       // Reset the card to empty state
       setVendorCards((cards) =>
@@ -619,7 +627,7 @@ export default function Logins() {
     }
 
     // Fetch template for selected vendor
-    const template = await fetchVendorTemplate(vendorName, selectedCategory);
+    const template = await fetchVendorTemplate(vendorName, selectedCategory, vendorId);
 
     if (template) {
       setVendorCards((cards) =>
@@ -704,8 +712,17 @@ export default function Logins() {
 
       if (response.ok && data?.status === "success") {
         toast.success("Vendor template saved successfully.");
+        // Refresh the dropdown vendor list for the selected category
+        await fetchAdminVendors(selectedCategory);
         setShowAddVendorModal(false);
-        categories.forEach((category) => fetchVendors(category.id));
+        // categories.forEach((category) => fetchVendors(category.id));
+
+        categories.forEach((category) => {
+          fetchVendors(category.id);
+          fetchAdminVendors(category.id);
+        });
+
+
       } else {
         const errorMessage = data?.message || "Something went wrong.";
         const errorDetails = Array.isArray(data?.errors)
@@ -747,7 +764,11 @@ export default function Logins() {
       const data = await response.json();
       if (data.status === "success") {
         toast.success("Vendor deleted successfully");
-        categories.forEach((category) => fetchVendors(category.id));
+        // Refresh both vendors list and admin vendors (dropdown data)
+        categories.forEach((category) => {
+          fetchVendors(category.id);
+          fetchAdminVendors(category.id);
+        });
       } else {
         toast.error(data.message || "Failed to delete vendor");
       }
@@ -803,8 +824,8 @@ export default function Logins() {
     }
   };
 
-  console.log('items',categories);
-  console.log('vendors222',vendors);
+  // console.log('items',categories);
+  // console.log('vendors222',vendors);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -848,10 +869,10 @@ export default function Logins() {
             const items = filterItems(vendors[category.id] || []);
             const isOpen = openCategories[category.id];
             return (
-              <div key={category.id} className="bg-white rounded-lg shadow-sm overflow-hidden">
+              <div key={category.id} className="bg-white rounded-lg shadow  overflow-hidden">
                 <div className="px-6 py-4 flex items-center justify-between">
                   <button
-                    className="flex items-center space-x-3 text-left focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-inset"
+                    className="flex items-center space-x-3 text-left focus:outline-none"
                     onClick={() => toggleCategory(category.id)}
                   >
                     <CategoryIcon className="h-6 w-6 text-gray-400" />
@@ -966,11 +987,15 @@ export default function Logins() {
                     <select
                       className="block w-48 rounded border-gray-300 text-xs py-1 px-2"
                       value={card.vendor_name}
-                      onChange={(e) => handleVendorSelect(idx, e.target.value)}
+                      onChange={(e) => {
+                        const selectedOption = e.target.options[e.target.selectedIndex];
+                        const vendorId = selectedOption.getAttribute('data-id');
+                        handleVendorSelect(idx, e.target.value, vendorId ? Number(vendorId) : undefined);
+                      }}
                     >
                       <option value="">Select Vendor</option>
                       {adminVendors[selectedCategory]?.map((v) => (
-                        <option key={v.id} value={v.vendor_name}>
+                        <option key={v.id} value={v.vendor_name} data-id={v.id}>
                           {v.vendor_name}
                         </option>
                       ))}
@@ -1162,7 +1187,11 @@ export default function Logins() {
           onClose={() => setEditVendorId(null)}
           onUpdated={() => {
             setEditVendorId(null);
-            categories.forEach((category) => fetchVendors(category.id));
+            // Refresh both vendors list and admin vendors (dropdown data)
+            categories.forEach((category) => {
+              fetchVendors(category.id);
+              fetchAdminVendors(category.id);
+            });
           }}
         />
       )}
