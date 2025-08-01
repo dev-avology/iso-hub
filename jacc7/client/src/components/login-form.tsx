@@ -1,0 +1,88 @@
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useAuth } from "@/hooks/useAuth";
+import { Eye, EyeOff, User, Users, Shield } from "lucide-react";
+
+export function LoginForm() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const { loginMutation } = useAuth();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log('Login form submitting with:', { email, password: '***' });
+    loginMutation.mutate({ email, password });
+  };
+
+
+
+  return (
+    <div className="w-full max-w-md mx-auto space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>Sign In to JACC</CardTitle>
+          <CardDescription>
+            Enter your credentials to access your merchant services assistant
+          </CardDescription>
+          <div className="bg-blue-50 p-3 rounded-md text-sm text-blue-700">
+            <p className="font-medium">Test Credentials:</p>
+            <p>Admin: <code className="bg-blue-100 px-1 rounded">admin</code> / <code className="bg-blue-100 px-1 rounded">admin123</code></p>
+            <p>Sales: <code className="bg-blue-100 px-1 rounded">cburnell</code> / <code className="bg-blue-100 px-1 rounded">cburnell123</code></p>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Username</Label>
+              <Input
+                id="email"
+                type="text"
+                placeholder="Enter your username (e.g., cburnell, admin)"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </Button>
+              </div>
+            </div>
+
+            <Button 
+              type="submit" 
+              className="w-full"
+              disabled={loginMutation.isPending}
+            >
+              {loginMutation.isPending ? "Signing in..." : "Sign In"}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+
+
+    </div>
+  );
+}
