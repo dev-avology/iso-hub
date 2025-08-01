@@ -2,6 +2,7 @@ import React from 'react';
 import { LayoutDashboard, Key, FileText, FormInput, Shield, Menu, Megaphone } from 'lucide-react';
 import Sidebar from './Sidebar';
 import TopNav from './TopNav';
+import { useLocation } from 'react-router-dom';
 
 const topMenuItems = [
   // { name: 'Dashboard', href: '/', icon: LayoutDashboard },
@@ -10,8 +11,7 @@ const topMenuItems = [
 // { name: 'ISO-AI', icon: Cpu, href: 'https://02aa0592-869c-416a-869f-4cb3baafbabd-00-17ngv8bepjtga.picard.replit.dev' , external: true},
 
   { name: 'Logins', href: '/logins', icon: Key },
-  // { name: 'Document Center', href: '/documents', icon: FileText },
-  { name: 'Document Center', href: 'https://02aa0592-869c-416a-869f-4cb3baafbabd-00-17ngv8bepjtga.picard.replit.dev', icon: FileText, external: true },
+  { name: 'Document Center', href: '/jacc/documents', icon: FileText },
   { name: 'Pre-Applications', href: '/applications', icon: FormInput },
   { name: 'Secured Doc Portal', href: '/secure', icon: Shield },
   { name: 'Marketing', href: '/marketing', icon: Megaphone },
@@ -21,6 +21,10 @@ const topMenuItems = [
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = React.useState(false);
+  const location = useLocation();
+
+  // Check if current route is a JACC route
+  const isJACCRoute = location.pathname.startsWith('/jacc');
 
   const handleNavigation = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
@@ -52,7 +56,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <TopNav items={topMenuItems} onNavigate={handleNavigation} />
 
           
-          <main className="flex-1 overflow-y-auto p-6">
+          <main className={`flex-1 overflow-y-auto ${isJACCRoute ? '' : 'p-6'}`}>
             {children}
           </main>
         </div>

@@ -37,5 +37,24 @@ export default defineConfig({
   ],
   optimizeDeps: {
     exclude: ['lucide-react']
+  },
+  server: {
+    proxy: {
+      // Proxy JACC API calls to JACC server
+      '/jacc/api': {
+        target: process.env.VITE_JACC_URL || 'http://localhost:5000',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/jacc\/api/, '/api')
+      }
+    }
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom']
+        }
+      }
+    }
   }
 });

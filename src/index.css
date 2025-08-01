@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+iframe.jacc-iframe {
+    box-shadow: 0 0 0 2.5rem #fff;
+    background-color: #fff;
+}

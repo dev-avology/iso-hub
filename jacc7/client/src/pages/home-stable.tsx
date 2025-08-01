@@ -24,6 +24,61 @@ export default function HomeStable() {
   const queryClient = useQueryClient();
   const [isProcessingStatement, setIsProcessingStatement] = useState(false);
   const [processingProgress, setProcessingProgress] = useState(0);
+  
+  // State to store ISO-Hub user data received via postMessage
+  const [isoHubUser, setIsoHubUser] = useState<any>(null);
+  
+  // Listen for ISO-Hub auth data from parent window
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data.type === 'ISO_HUB_AUTH') {
+        console.log('HomeStable: Received ISO-Hub auth data:', event.data);
+        setIsoHubUser(event.data.user);
+        
+        // Send confirmation back to ISO-Hub
+        try {
+          window.parent.postMessage({
+            type: 'JACC_AUTH_RECEIVED',
+            success: true,
+            user: event.data.user
+          }, '*');
+          console.log('HomeStable: Sent confirmation to ISO-Hub that auth data was received');
+        } catch (err) {
+          console.error('HomeStable: Could not send confirmation to ISO-Hub:', err);
+        }
+      } else if (event.data.type === 'JACC_READY') {
+        console.log('HomeStable: JACC is ready to receive auth data:', event.data);
+        // Send ready message to ISO-Hub
+        try {
+          window.parent.postMessage({
+            type: 'JACC_READY',
+            message: 'JACC is ready to receive auth data'
+          }, '*');
+          console.log('HomeStable: Sent ready message to ISO-Hub');
+        } catch (err) {
+          console.error('HomeStable: Could not send ready message to ISO-Hub:', err);
+        }
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    
+    // Send ready message to ISO-Hub
+    try {
+      window.parent.postMessage({
+        type: 'JACC_READY',
+        message: 'JACC is ready to receive auth data'
+      }, '*');
+      console.log('HomeStable: Sent ready message to ISO-Hub');
+    } catch (err) {
+      console.error('HomeStable: Could not send ready message to ISO-Hub:', err);
+    }
+    
+    return () => window.removeEventListener('message', handleMessage);
+  }, []);
+  
+  // Use ISO-Hub user data if available, otherwise fall back to JACC user
+  const displayUser = isoHubUser || user;
 
   // Extract chatId from URL
   const activeChatId = location.includes('/chat/') ? location.split('/chat/')[1] : null;
@@ -249,7 +304,7 @@ Would you like me to run a competitive analysis and show you better processing o
             </SheetTrigger>
             <SheetContent side="left" className="w-80 p-0">
               <Sidebar
-                user={user}
+                user={displayUser}
                 chats={chats as any[]}
                 folders={folders as any[]}
                 activeChatId={activeChatId}
@@ -266,7 +321,19 @@ Would you like me to run a competitive analysis and show you better processing o
             alt="JACC" 
             className="w-8 h-8 rounded-full object-cover" 
           />
-          <h1 className="text-lg font-semibold text-slate-900 dark:text-white">JACC</h1>
+          <div className="flex flex-col">
+            <h1 className="text-lg font-semibold text-slate-900 dark:text-white">JACC</h1>
+            <p className="text-xs text-slate-500 dark:text-slate-400">
+              {displayUser?.firstName && displayUser?.lastName 
+                ? `${displayUser.firstName} ${displayUser.lastName}`
+                : displayUser?.first_name && displayUser?.last_name
+                ? `${displayUser.first_name} ${displayUser.last_name}`
+                : displayUser?.name
+                ? displayUser.name
+                : displayUser?.email || "User"
+              }
+            </p>
+          </div>
         </div>
         <div className="flex gap-2">
           <button
@@ -292,7 +359,7 @@ Would you like me to run a competitive analysis and show you better processing o
         {/* Sidebar - Fixed width grid column */}
         <div className="border-r border-border overflow-hidden">
           <Sidebar
-            user={user}
+            user={displayUser}
             chats={chats as any[]}
             folders={folders as any[]}
             activeChatId={activeChatId}

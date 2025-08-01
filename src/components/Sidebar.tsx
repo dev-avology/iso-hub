@@ -112,11 +112,17 @@ export default function Sidebar({
       href: `${import.meta.env.VITE_TRACER_URL}${queryParams}`,
       external: true,
     },
+    // {
+    //   name: "JACC",
+    //   icon: Cpu,
+    //   href: "/jacc",
+    // },
     {
       name: "ISO-AI",
       icon: Cpu,
-      href: "https://02aa0592-869c-416a-869f-4cb3baafbabd-00-17ngv8bepjtga.picard.replit.dev",
-      external: true,
+      // href: "https://02aa0592-869c-416a-869f-4cb3baafbabd-00-17ngv8bepjtga.picard.replit.dev",
+      href: "/jacc",
+      external: false,
     },
     { name: "Settings", icon: Settings },
 
@@ -139,8 +145,8 @@ export default function Sidebar({
     {
       name: "Documents",
       icon: File,
-      path: "https://02aa0592-869c-416a-869f-4cb3baafbabd-00-17ngv8bepjtga.picard.replit.dev",
-      external: true,
+      path: "/jacc/documents",
+      external: false,
     },
 
     // { name: 'All Reps', icon: User, path: '/all_reps' },

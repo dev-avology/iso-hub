@@ -6,6 +6,37 @@ import { initializeDatabase } from "./db";
 import { performanceService } from "./services/performance-service";
 
 const app = express();
+
+// CORS configuration for cross-origin requests
+app.use((req, res, next) => {
+  // Allow requests from ISO-Hub and other origins
+  const allowedOrigins = [
+    'http://localhost:5173',
+    'http://localhost:5174', 
+    'http://localhost:3000',
+    'http://localhost:5000',
+    'https://your-production-domain.com' // Add your production domain
+  ];
+  
+  const origin = req.headers.origin;
+  if (origin && allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+  
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, Cookie');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Access-Control-Expose-Headers', 'Set-Cookie');
+  
+  // Handle preflight requests
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+  
+  next();
+});
+
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: false, limit: '10mb' }));
 
@@ -86,15 +117,6 @@ app.use((req, res, next) => {
       });
     });
 
-    // API fallback middleware - ensure unmatched API routes return 404 JSON instead of HTML
-    app.use('/api/*', (req: Request, res: Response) => {
-      res.status(404).json({ 
-        error: 'API endpoint not found',
-        path: req.originalUrl,
-        method: req.method
-      });
-    });
-
     // Setup frontend serving based on environment with fallback
     if (process.env.NODE_ENV === 'production') {
       try {
@@ -111,6 +133,15 @@ app.use((req, res, next) => {
       await setupVite(app, server);
       log("Development mode: using Vite middleware");
     }
+
+    // API fallback middleware - ensure unmatched API routes return 404 JSON instead of HTML
+    app.use('/api/*', (req: Request, res: Response) => {
+      res.status(404).json({ 
+        error: 'API endpoint not found',
+        path: req.originalUrl,
+        method: req.method
+      });
+    });
 
     // Global error handler - placed after Vite setup to catch all errors
     app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {

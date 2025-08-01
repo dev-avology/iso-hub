@@ -39,10 +39,20 @@ export default function DocumentsPage() {
     queryKey: ["/api/folders"],
   });
 
-
+  // Debug logging to see what the API returns
+  console.log('Documents API Response:', documentsData);
+  console.log('Folders API Response:', foldersData);
+  console.log('API Response Type:', typeof documentsData);
+  console.log('API Response Keys:', documentsData ? Object.keys(documentsData) : 'No data');
+  console.log('Is Array:', Array.isArray(documentsData));
 
   // Extract folders from the documents API response or fallback to folders API
   const folders = (documentsData as any)?.folders || foldersData;
+  
+  // Use API total count as fallback if folders array is empty
+  const totalFoldersCount = folders.length > 0 
+    ? folders.length 
+    : (documentsData as any)?.totalFolders || 0;
 
   // Check if user is admin
   const isAdmin = user?.role === 'admin' || user?.role === 'dev-admin' || user?.role === 'client-admin';
@@ -53,9 +63,16 @@ export default function DocumentsPage() {
   let documents: any[] = [];
   
   if (documentsData) {
+    console.log('Processing documents data:', documentsData);
+    
     if (Array.isArray(documentsData)) {
       // API returns array format directly
       documents = documentsData;
+      console.log('Documents as array:', documents.length);
+    } else if ((documentsData as any).documents && Array.isArray((documentsData as any).documents)) {
+      // API returns object with documents property (current structure)
+      documents = (documentsData as any).documents;
+      console.log('Documents from documents property:', documents.length);
     } else if ((documentsData as any).folders && Array.isArray((documentsData as any).folders)) {
       // API returns integrated format with folders containing documents
       // Extract all documents from all folders
@@ -70,9 +87,20 @@ export default function DocumentsPage() {
       if ((documentsData as any).unassignedDocuments && Array.isArray((documentsData as any).unassignedDocuments)) {
         documents = documents.concat((documentsData as any).unassignedDocuments);
       }
-    } else if ((documentsData as any).documents && Array.isArray((documentsData as any).documents)) {
-      // API returns object with documents property
-      documents = (documentsData as any).documents;
+      console.log('Documents from folders structure:', documents.length);
+    } else {
+      // Try to find documents in any property
+      console.log('No standard structure found, checking all properties:', Object.keys(documentsData));
+      for (const key in documentsData) {
+        if (Array.isArray((documentsData as any)[key])) {
+          const array = (documentsData as any)[key];
+          if (array.length > 0 && array[0].id && (array[0].name || array[0].originalName)) {
+            documents = array;
+            console.log('Found documents in property:', key, documents.length);
+            break;
+          }
+        }
+      }
     }
     
     // Filter documents based on user role
@@ -80,6 +108,9 @@ export default function DocumentsPage() {
       if (isAdmin) return true; // Admins see all documents
       return !doc.adminOnly && !doc.admin_only; // Regular users only see non-admin documents
     });
+    
+    console.log('Final filtered documents:', documents.length);
+    console.log('Sample document:', documents[0]);
   }
 
   // Map the document structure to ensure consistent field names
@@ -88,6 +119,19 @@ export default function DocumentsPage() {
     folderId: doc.folder_id || doc.folderId,
     adminOnly: doc.admin_only || doc.adminOnly
   }));
+
+  // Use API total count as fallback if documents array is empty
+  const totalDocumentsCount = normalizedDocuments.length > 0 
+    ? normalizedDocuments.length 
+    : (documentsData as any)?.totalDocuments || 0;
+
+  // Debug logging for counts
+  console.log('Normalized Documents Count:', normalizedDocuments.length);
+  console.log('API Total Documents:', (documentsData as any)?.totalDocuments);
+  console.log('Final Total Count:', totalDocumentsCount);
+  console.log('Folders Count:', folders.length);
+  console.log('API Total Folders:', (documentsData as any)?.totalFolders);
+  console.log('Final Folders Count:', totalFoldersCount);
 
   // Delete document mutation
   const deleteMutation = useMutation({
@@ -170,8 +214,8 @@ export default function DocumentsPage() {
   };
 
   const handlePreviewDocument = (document: Document) => {
-    // Open document in new tab for viewing
-    window.open(`/api/documents/${document.id}/view`, '_blank');
+    // Navigate to document viewer page
+    window.location.href = `/documents/${document.id}`;
   };
 
   const handleDownloadDocument = (doc: Document) => {
@@ -252,7 +296,7 @@ export default function DocumentsPage() {
         <TabsList>
           <TabsTrigger value="folders">
             <Folder className="h-4 w-4 mr-2" />
-            Folders ({folders.length})
+            Folders ({totalFoldersCount})
           </TabsTrigger>
           <TabsTrigger value="my-documents">
             <UserIcon className="h-4 w-4 mr-2" />
@@ -274,6 +318,9 @@ export default function DocumentsPage() {
                   <CardTitle>Folder Organization</CardTitle>
                   <p className="text-sm text-muted-foreground">
                     Organize your documents into folders for better management
+                  </p>
+                  <p className="text-sm text-blue-600 dark:text-blue-400 mt-1">
+                    Total Documents: {totalDocumentsCount} document{totalDocumentsCount !== 1 ? 's' : ''}
                   </p>
                 </div>
                 {isAdmin && (
@@ -321,10 +368,17 @@ export default function DocumentsPage() {
                       doc.folderId === folder.id || doc.folder_id === folder.id
                     );
                     
+                    // Calculate document count more robustly - prioritize server count, then client count
+                    const serverCount = folder.document_count || folder.documentCount || 0;
+                    const clientCount = folderDocuments.length;
+                    const documentCount = serverCount > 0 ? serverCount : clientCount;
+                    
                     // Debug logging
                     console.log(`Folder ${folder.name}:`, {
                       folderId: folder.id,
-                      documentsCount: folderDocuments.length,
+                      serverCount,
+                      clientCount,
+                      finalCount: documentCount,
                       documents: folderDocuments.map(d => ({ id: d.id, name: d.name || d.originalName }))
                     });
                     
@@ -338,7 +392,7 @@ export default function DocumentsPage() {
                                 {folder.name}
                               </h3>
                               <p className="text-sm text-muted-foreground">
-                                {folder.document_count || folder.documentCount || folderDocuments.length} documents
+                                {documentCount} document{documentCount !== 1 ? 's' : ''}
                               </p>
                             </div>
                           </div>

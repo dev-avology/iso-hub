@@ -2,59 +2,68 @@ import { QueryClient, QueryFunction } from "@tanstack/react-query";
 
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
-    const text = (await res.text()) || res.statusText;
-    throw new Error(`${res.status}: ${text}`);
+    const error = await res.text();
+    throw new Error(error);
   }
-}
-
-export async function apiRequest(
-  method: string,
-  url: string,
-  data?: unknown | undefined,
-): Promise<Response> {
-  const res = await fetch(url, {
-    method,
-    headers: data ? { "Content-Type": "application/json" } : {},
-    body: data ? JSON.stringify(data) : undefined,
-    credentials: "include",
-  });
-
-  await throwIfResNotOk(res);
   return res;
 }
 
-type UnauthorizedBehavior = "returnNull" | "throw";
-export const getQueryFn: <T>(options: {
-  on401: UnauthorizedBehavior;
-}) => QueryFunction<T> =
-  ({ on401: unauthorizedBehavior }) =>
-  async ({ queryKey }) => {
+function getQueryFn({ on401 }: { on401: "throw" | "return" }): QueryFunction {
+  return async ({ queryKey }) => {
     const res = await fetch(queryKey[0] as string, {
       credentials: "include",
     });
 
-    if (unauthorizedBehavior === "returnNull" && res.status === 401) {
-      return null;
+    if (res.status === 401) {
+      if (on401 === "throw") {
+        throw new Error("Unauthorized");
+      } else {
+        return null;
+      }
     }
 
-    await throwIfResNotOk(res);
-    return await res.json();
+    return throwIfResNotOk(res).then((res) => res.json());
   };
+}
 
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       queryFn: getQueryFn({ on401: "throw" }),
-      refetchInterval: false,
-      refetchOnWindowFocus: false,
-      staleTime: 60000, // 1 minute default stale time
-      gcTime: 300000, // 5 minutes garbage collection
-      retry: 1, // Retry once on failure
-      retryDelay: 1000, // 1 second delay between retries
+      staleTime: 30 * 1000, // 30 seconds - data is fresh for 30 seconds
+      gcTime: 5 * 60 * 1000, // 5 minutes - keep in cache for 5 minutes
+      retry: 1, // Only retry once
+      refetchOnWindowFocus: false, // Don't refetch on window focus
+      refetchOnMount: true, // Refetch on mount
+      refetchOnReconnect: true, // Refetch on reconnect
     },
     mutations: {
-      retry: 1,
-      retryDelay: 1000,
+      retry: 1, // Only retry once for mutations
     },
   },
 });
+
+export async function apiRequest(
+  method: string,
+  url: string,
+  body?: any,
+  options?: { on401?: "throw" | "return" }
+) {
+  const res = await fetch(url, {
+    method,
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: body ? JSON.stringify(body) : undefined,
+  });
+
+  if (res.status === 401) {
+    if (options?.on401 === "return") {
+      return res;
+    }
+    throw new Error("Unauthorized");
+  }
+
+  return throwIfResNotOk(res);
+}

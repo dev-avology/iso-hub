@@ -227,6 +227,8 @@ export default function DocumentUpload({ folderId, onUploadComplete }: DocumentU
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/documents"] });
       queryClient.invalidateQueries({ queryKey: ["/api/folders"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/personal-documents"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/personal-folders"] });
       
       // Reset form
       setSelectedFiles([]);

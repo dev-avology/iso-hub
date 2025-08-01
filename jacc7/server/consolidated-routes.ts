@@ -502,8 +502,8 @@ export async function registerConsolidatedRoutes(app: Express): Promise<Server> 
       // Set session cookie with deployment-friendly configuration
       res.cookie('sessionId', sessionId, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production' ? true : false,
-        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        secure: false, // Set to false for development to allow HTTP
+        sameSite: 'none', // Allow cross-origin requests
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
         path: '/'
       });
@@ -776,9 +776,15 @@ export async function registerConsolidatedRoutes(app: Express): Promise<Server> 
         return res.status(401).json({ error: 'Not authenticated' });
       }
 
-      // Return user's personal documents - for now returning empty array
-      // This would be implemented when personal document upload is added
-      res.json([]);
+      // Get user's documents from the main documents table
+      const userDocuments = await storage.getUserDocuments(userId);
+      
+      // Filter to only show non-admin documents for personal view
+      const personalDocuments = userDocuments.filter(doc => !doc.adminOnly);
+      
+      console.log(`Returning ${personalDocuments.length} personal documents for user ${userId}`);
+      
+      res.json(personalDocuments);
     } catch (error) {
       console.error('Error fetching personal documents:', error);
       res.status(500).json({ error: 'Failed to fetch personal documents' });
@@ -794,9 +800,31 @@ export async function registerConsolidatedRoutes(app: Express): Promise<Server> 
         return res.status(401).json({ error: 'Not authenticated' });
       }
 
-      // For now, redirect to regular documents view endpoint
-      // This would be replaced with personal document viewing logic
-      res.redirect(`/api/documents/${documentId}/view`);
+      // Get the document from storage
+      const document = await storage.getDocument(documentId);
+      
+      if (!document) {
+        return res.status(404).json({ error: 'Document not found' });
+      }
+
+      // Check if user has access to this document
+      if (document.userId !== userId && document.adminOnly) {
+        return res.status(403).json({ error: 'Access denied' });
+      }
+
+      // Serve the document file
+      const filePath = document.path;
+      if (!fs.existsSync(filePath)) {
+        return res.status(404).json({ error: 'Document file not found' });
+      }
+
+      // Set appropriate headers for viewing
+      res.setHeader('Content-Type', document.mimeType || 'application/octet-stream');
+      res.setHeader('Content-Disposition', `inline; filename="${document.originalName || document.name}"`);
+      
+      // Stream the file
+      const fileStream = fs.createReadStream(filePath);
+      fileStream.pipe(res);
     } catch (error) {
       console.error('Error viewing personal document:', error);
       res.status(500).json({ error: 'Failed to view document' });
@@ -812,9 +840,31 @@ export async function registerConsolidatedRoutes(app: Express): Promise<Server> 
         return res.status(401).json({ error: 'Not authenticated' });
       }
 
-      // For now, redirect to regular documents download endpoint  
-      // This would be replaced with personal document download logic
-      res.redirect(`/api/documents/${documentId}/download`);
+      // Get the document from storage
+      const document = await storage.getDocument(documentId);
+      
+      if (!document) {
+        return res.status(404).json({ error: 'Document not found' });
+      }
+
+      // Check if user has access to this document
+      if (document.userId !== userId && document.adminOnly) {
+        return res.status(403).json({ error: 'Access denied' });
+      }
+
+      // Serve the document file for download
+      const filePath = document.path;
+      if (!fs.existsSync(filePath)) {
+        return res.status(404).json({ error: 'Document file not found' });
+      }
+
+      // Set appropriate headers for download
+      res.setHeader('Content-Type', 'application/octet-stream');
+      res.setHeader('Content-Disposition', `attachment; filename="${document.originalName || document.name}"`);
+      
+      // Stream the file
+      const fileStream = fs.createReadStream(filePath);
+      fileStream.pipe(res);
     } catch (error) {
       console.error('Error downloading personal document:', error);
       res.status(500).json({ error: 'Failed to download document' });
@@ -1017,6 +1067,48 @@ export async function registerConsolidatedRoutes(app: Express): Promise<Server> 
     } catch (error: any) {
       console.error("Error sending message:", error);
       res.status(500).json({ error: 'Failed to send message' });
+    }
+  });
+
+  // Delete chat
+  app.delete('/api/chats/:chatId', isAuthenticated, async (req, res) => {
+    try {
+      const { chatId } = req.params;
+      
+      let userId = (req.user as any)?.id || (req.user as any)?.userId;
+      
+      // Get user ID from session if not in req.user
+      const sessionId = req.cookies?.sessionId;
+      if (!userId && sessionId && sessions.has(sessionId)) {
+        const sessionUser = sessions.get(sessionId);
+        if (sessionUser) {
+          userId = (sessionUser as any).id || (sessionUser as any).userId;
+        }
+      }
+      
+      if (!userId) {
+        return res.status(401).json({ error: 'Not authenticated' });
+      }
+      
+      // Verify chat exists and user owns it
+      const existingChat = await db.select().from(chats).where(eq(chats.id, chatId)).limit(1);
+      if (existingChat.length === 0 || existingChat[0].userId !== userId) {
+        return res.status(404).json({ error: 'Chat not found' });
+      }
+      
+      // Delete all messages in the chat first
+      await db.delete(messages).where(eq(messages.chatId, chatId));
+      
+      // Delete the chat
+      await db.delete(chats).where(eq(chats.id, chatId));
+      
+      console.log(`🗑️ Chat deleted: ${chatId} by user: ${userId}`);
+      
+      res.json({ success: true, message: 'Chat deleted successfully' });
+      
+    } catch (error: any) {
+      console.error("Error deleting chat:", error);
+      res.status(500).json({ error: 'Failed to delete chat' });
     }
   });
   
@@ -1283,6 +1375,55 @@ Return only the title, no quotes or extra text.`;
   
   // === Document Routes ===
   
+  // Get document metadata
+  app.get('/api/documents/:id', async (req, res) => {
+    try {
+      const { id } = req.params;
+      console.log('Fetching document metadata:', id);
+      
+      // Get user from session (multiple sources for compatibility)
+      const sessionUser = (req as any).session?.user || req.user;
+      let userId = sessionUser?.id || sessionUser?.userId;
+      
+      // If no user found in session, try to get from cookies or use a fallback
+      if (!userId) {
+        const sessionId = req.cookies?.sessionId;
+        if (sessionId && sessions.has(sessionId)) {
+          const session = sessions.get(sessionId);
+          userId = session?.userId || session?.id;
+        }
+      }
+      
+      // If still no user, use a fallback for testing
+      if (!userId) {
+        console.log('No authenticated user found, using fallback user ID for testing');
+        userId = '0974010f-703a-434b-9776-faf1b174a69f'; // Test user
+      }
+      
+      // Regular document lookup
+      const docs = await db.select().from(documents).where(eq(documents.id, id));
+      
+      if (docs.length === 0) {
+        console.log('Document not found:', id);
+        return res.status(404).json({ error: 'Document not found' });
+      }
+      
+      const document = docs[0];
+      console.log('Found document:', document.name, 'type:', document.mimeType);
+      
+      // Check if user has access to this document
+      if (document.userId !== userId && document.adminOnly) {
+        return res.status(403).json({ error: 'Access denied' });
+      }
+      
+      res.json(document);
+      
+    } catch (error) {
+      console.error('Error fetching document metadata:', error);
+      res.status(500).json({ error: 'Failed to fetch document metadata' });
+    }
+  });
+  
   // Document view endpoint
   app.get('/api/documents/:id/view', async (req, res) => {
     try {
@@ -1327,16 +1468,26 @@ Return only the title, no quotes or extra text.`;
       const isImage = mimeType.includes('image');
       const isBinary = mimeType.includes('application/octet-stream') || isPDF || isImage;
       
-      // For binary files, provide metadata instead of attempting to read content
+      // For binary files (images, PDFs, etc.), serve the actual file
       if (isBinary) {
-        content = `This is a ${isPDF ? 'PDF' : isImage ? 'image' : 'binary'} file.
-        
+        // Check if file exists
+        if (document.path && require('fs').existsSync(document.path)) {
+          // Set appropriate headers for viewing
+          res.setHeader('Content-Type', document.mimeType || 'application/octet-stream');
+          res.setHeader('Content-Disposition', `inline; filename="${document.originalName || document.name}"`);
+          
+          // Stream the file
+          const fileStream = require('fs').createReadStream(document.path);
+          fileStream.pipe(res);
+          return;
+        } else {
+          content = `File not found on disk. Please try downloading the file instead.
+          
 File Information:
 - Name: ${document.name || 'Unknown'}
 - Size: ${document.size ? `${(document.size / 1024).toFixed(1)}KB` : 'Unknown'}
-- Type: ${mimeType}
-
-To access this file, please use the Download button to save it to your device.`;
+- Type: ${mimeType}`;
+        }
       } else {
         // For text files, try to read content if path exists
         if (document.path && require('fs').existsSync(document.path)) {

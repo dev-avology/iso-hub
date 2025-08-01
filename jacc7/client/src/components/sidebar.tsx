@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,12 +34,15 @@ import {
   BookmarkCheck,
   ExternalLink,
   Shield,
-  HelpCircle
+  HelpCircle,
+  Loader2
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
 import type { User, Chat, Folder as FolderType } from "@shared/schema";
 import { cn } from "@/lib/utils";
+import Loader from "./loader";
+import ConnectionStatus from "./connection-status";
 
 // Saved Documents Section Component
 function SavedDocumentsSection() {
@@ -145,6 +148,7 @@ function SavedDocumentsSection() {
   );
 }
 
+
 interface SidebarProps {
   user?: User;
   chats: Chat[];
@@ -170,40 +174,71 @@ export default function Sidebar({
   onChatDelete,
   collapsed = false
 }: SidebarProps) {
-  // Debug logging
+  // State to store ISO-Hub user data received via postMessage
+  const [isoHubUser, setIsoHubUser] = useState<any>(null);
+  
+  // Listen for ISO-Hub auth data from parent window
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data.type === 'ISO_HUB_AUTH') {
+        console.log('Received ISO-Hub auth data:', event.data);
+        setIsoHubUser(event.data.user);
+        
+        // Send confirmation back to ISO-Hub
+        try {
+          window.parent.postMessage({
+            type: 'JACC_AUTH_RECEIVED',
+            success: true,
+            user: event.data.user
+          }, '*');
+          console.log('Sent confirmation to ISO-Hub that auth data was received');
+        } catch (err) {
+          console.error('Could not send confirmation to ISO-Hub:', err);
+        }
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    
+    // Send ready message to ISO-Hub
+    try {
+      window.parent.postMessage({
+        type: 'JACC_READY',
+        message: 'JACC is ready to receive auth data'
+      }, '*');
+      console.log('Sent ready message to ISO-Hub');
+    } catch (err) {
+      console.error('Could not send ready message to ISO-Hub:', err);
+    }
+    
+    return () => window.removeEventListener('message', handleMessage);
+  }, []);
+  
+  // Use ISO-Hub user data if available, otherwise fall back to JACC user
+  const displayUser = isoHubUser || user;
+  
+  console.log('ISO-Hub user from postMessage:', isoHubUser);
+  console.log('JACC user:', user);
+  console.log('Display user:', displayUser);
+  console.log('ISO-Hub user keys:', isoHubUser ? Object.keys(isoHubUser) : 'No ISO-Hub user');
+  console.log('ISO-Hub user email:', isoHubUser?.email);
+  console.log('ISO-Hub user first_name:', isoHubUser?.first_name);
+  console.log('ISO-Hub user last_name:', isoHubUser?.last_name);
+
   console.log("Sidebar Debug:", {
     chatsCount: chats.length,
     hasOnChatDelete: !!onChatDelete,
     onChatDeleteType: typeof onChatDelete
   });
+
+  console.log('jacc user',user);
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
   const [creatingFolder, setCreatingFolder] = useState(false);
   const [newFolderName, setNewFolderName] = useState("");
   const [showAllChats, setShowAllChats] = useState(false);
   const [showAllFolders, setShowAllFolders] = useState(false);
 
-  const handleLogout = async () => {
-    try {
-      await fetch("/api/logout", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-      // Clear any local storage/session data
-      localStorage.clear();
-      sessionStorage.clear();
-      // Redirect to login screen
-      window.location.href = "/login";
-    } catch (error) {
-      console.error("Logout error:", error);
-      // Still clear data and redirect even if logout request fails
-      localStorage.clear();
-      sessionStorage.clear();
-      window.location.href = "/login";
-    }
-  };
+  // Remove handleLogout function - logout is handled by ISO-Hub
 
   const toggleFolder = (folderId: string) => {
     const newExpanded = new Set(expandedFolders);
@@ -279,14 +314,10 @@ export default function Sidebar({
           ))}
         </div>
 
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={handleLogout}
-          className="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
-        >
-          <LogOut className="w-4 h-4" />
-        </Button>
+        {/* Replace logout button with connection status */}
+        <div className="flex items-center justify-center">
+          <ConnectionStatus isConnected={true} />
+        </div>
       </div>
     );
   }
@@ -297,16 +328,20 @@ export default function Sidebar({
       <div className="p-4 border-b border-slate-200 dark:border-slate-700">
         <div className="flex items-center space-x-3">
           <Avatar className="w-10 h-10">
-            <AvatarImage src={user?.profileImageUrl || ""} alt={user?.firstName || ""} />
+            <AvatarImage src={displayUser?.profileImageUrl || ""} alt={displayUser?.firstName || displayUser?.first_name || ""} />
             <AvatarFallback className="navy-primary text-white">
-              {user?.firstName?.[0] || user?.email?.[0] || "U"}
+              {displayUser?.firstName?.[0] || displayUser?.first_name?.[0] || displayUser?.email?.[0] || "U"}
             </AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0">
             <h3 className="font-semibold text-slate-900 dark:text-white truncate">
-              {user?.firstName && user?.lastName 
-                ? `${user.firstName} ${user.lastName}`
-                : user?.email || "User"
+              {displayUser?.firstName && displayUser?.lastName 
+                ? `${displayUser.firstName} ${displayUser.lastName}`
+                : displayUser?.first_name && displayUser?.last_name
+                ? `${displayUser.first_name} ${displayUser.last_name}`
+                : displayUser?.name
+                ? displayUser.name
+                : displayUser?.email || "User"
               }
             </h3>
             <p className="text-sm text-slate-500 dark:text-slate-400">
@@ -325,10 +360,10 @@ export default function Sidebar({
               {(user?.role === 'admin' || user?.role === 'client-admin' || user?.role === 'dev-admin') && (
                 <>
                   <DropdownMenuItem asChild>
-                    <a href="/admin-control-center" className="flex items-center">
+                    <Link href="/admin-control-center" className="flex items-center">
                       <Shield className="w-4 h-4 mr-2" />
                       Admin Control Center
-                    </a>
+                    </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem disabled className="relative">
                     <div className="flex items-center opacity-50">
@@ -341,9 +376,9 @@ export default function Sidebar({
                   </DropdownMenuItem>
                 </>
               )}
-              <DropdownMenuItem onClick={handleLogout}>
-                <LogOut className="w-4 h-4 mr-2" />
-                Sign Out
+              {/* Show connection status instead of logout */}
+              <DropdownMenuItem disabled className="opacity-100">
+                <ConnectionStatus isConnected={true} />
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -651,13 +686,13 @@ export default function Sidebar({
                 <span className="text-sm text-slate-700 dark:text-slate-300">AI Prompts</span>
               </Link>
             </div>
-            <a 
+            <Link 
               href="/help" 
               className="flex items-center space-x-3 p-2 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-lg cursor-pointer transition-colors"
             >
               <HelpCircle className="w-4 h-4 text-green-500" />
               <span className="text-sm text-slate-700 dark:text-slate-300">Help Center</span>
-            </a>
+            </Link>
           </div>
         </div>
 
@@ -706,13 +741,13 @@ export default function Sidebar({
             Knowledge Base
           </h4>
           <div className="space-y-1">
-            <a 
+            <Link 
               href="/documents" 
               className="flex items-center space-x-3 p-2 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-lg cursor-pointer transition-colors"
             >
               <FileSearch className="w-4 h-4 text-blue-500" />
               <span className="text-sm text-slate-700 dark:text-slate-300">Document Center</span>
-            </a>
+            </Link>
           </div>
         </div>
       </ScrollArea>
@@ -724,14 +759,7 @@ export default function Sidebar({
             <div className="w-2 h-2 bg-green-500 rounded-full" />
             <span className="text-xs text-slate-500 dark:text-slate-400">Online</span>
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleLogout}
-            className="w-8 h-8 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
-          >
-            <LogOut className="w-4 h-4" />
-          </Button>
+          {/* Remove logout button from footer */}
         </div>
       </div>
     </div>

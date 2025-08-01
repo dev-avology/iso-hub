@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "start-dev": "node start-dev-servers.js",
+    "kill-port-5000": "node kill-port-5000.js",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
